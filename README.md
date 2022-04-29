@@ -52,4 +52,4 @@ Please leave your questions on [this page][issues]. it is very important because
 
 Thanks!
 
-[issues]: https://github.com/tangenx/ldfi/issues
+[issues]: https://github.com/tangenx/lfdi/issues

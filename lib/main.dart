@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dart_discord_rpc/dart_discord_rpc.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart' as acryllic;
@@ -60,13 +62,20 @@ class MyApp extends ConsumerWidget {
         final username = prefs.getString('username');
         final apiKey = prefs.getString('apiKey');
 
+        log('prefs discordAppID: ${prefs.getString('discordAppID')}');
+
         if (username != null &&
             apiKey != null &&
             username.isNotEmpty &&
             apiKey.isNotEmpty &&
             apiKey.length == 32) {
           RPC rpc = ref.read(rpcProvider);
-          rpc.initialize(username: username, apiKey: apiKey);
+          rpc.initialize(
+            username: username,
+            apiKey: apiKey,
+            discordAppId:
+                prefs.getString('discordAppID') ?? defaultDiscordAppID,
+          );
           rpc.start();
         }
 

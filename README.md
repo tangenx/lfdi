@@ -41,7 +41,19 @@ The app needs your [last.fm][last.fm] [API key][last.fm API key] and username.
 
 Just click **Apply** and magic happens!
 
-**IMPORTANT**: Don't close the window, or there will be no magic!
+~~**IMPORTANT**: Don't close the window, or there will be no magic!~~
+
+**You can minimize app to system tray!** Just click on close button and choose **Minimize**.
+
+<div align='center'>
+
+  ![Minimizing](https://i.imgur.com/zqlJ5Zr.png)
+
+</div>
+
+You can restore the window by right-clicking the app tray icon and selecting **Hide/Restore**.
+
+*Note*: You can hide or restore the app window simply by double-clicking the tray icon. What a beauty, isn't it?
 
 ## Discord status example
 <div align='center'>
@@ -55,6 +67,15 @@ You can hover over the cover of a track to see how many times you've listened to
 <div align='center'>
 
   ![Plays and time count](https://i.imgur.com/NZudqLs.jpg)
+
+</div>
+
+You can also change the text of the status of **Playing**!
+
+<div align='center'>
+
+  ![Change Playing status](https://i.imgur.com/BjMFkQp.png)
+  ###### *Oops it is debug window*
 
 </div>
 

@@ -50,6 +50,14 @@ Just click **Apply** and magic happens!
 
 </div>
 
+You can hover over the cover of a track to see how many times you've listened to it and how much time you've spent listening to it!
+
+<div align='center'>
+
+  ![Plays and time count](https://i.imgur.com/NZudqLs.jpg)
+
+</div>
+
 ## System requirements
 - Windows 10+ (cuz flutter requires it)
 - Linux and MacOS builds in the future

@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lfdi/components/window_buttons.dart';
 import 'package:lfdi/constants.dart';
+import 'package:lfdi/main.dart';
 import 'package:lfdi/pages/about.dart';
 import 'package:lfdi/pages/discord.dart';
 import 'package:lfdi/pages/settings.dart';
+import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -14,19 +18,84 @@ class HomePage extends ConsumerStatefulWidget {
   ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends ConsumerState<HomePage> with WindowListener {
+class _HomePageState extends ConsumerState<HomePage>
+    with WindowListener, TrayListener {
   int index = 0;
 
   @override
   void initState() {
     windowManager.addListener(this);
+    trayManager.addListener(this);
+    initTray();
+
     super.initState();
   }
 
   @override
   void dispose() {
+    trayManager.removeListener(this);
     windowManager.removeListener(this);
     super.dispose();
+  }
+
+  @override
+  void onTrayIconRightMouseDown() {
+    trayManager.popUpContextMenu();
+  }
+
+  // tray functions
+  Future<void> initTray() async {
+    await trayManager.setIcon(
+      Platform.isWindows
+          ? 'assets/images/app_icon.ico'
+          : 'assets/images/lastfm discord smol.png',
+    );
+    await Future.delayed(const Duration(milliseconds: 200));
+    await trayManager.setContextMenu(trayMenuItems);
+  }
+
+  @override
+  void onTrayMenuItemClick(MenuItem menuItem) {
+    switch (menuItem.key) {
+      case 'restore_window':
+        windowManager.isVisible().then(
+          (value) async {
+            if (value) {
+              await windowManager.minimize();
+              await windowManager.hide();
+
+              return;
+            }
+
+            await windowManager.show();
+            await windowManager.focus();
+          },
+        );
+        break;
+      case 'close_window':
+        final rpc = ref.read(rpcProvider);
+
+        rpc.dispose();
+        trayManager.destroy();
+        windowManager.destroy();
+        break;
+      default:
+    }
+  }
+
+  // window functions
+  @override
+  void onWindowClose() async {
+    bool _isPreventClose = await windowManager.isPreventClose();
+    if (_isPreventClose) {
+      windowManager.destroy();
+    }
+  }
+
+  @override
+  void onWindowMinimize() {
+    windowManager.minimize();
+    windowManager.hide();
   }
 
   @override
@@ -97,13 +166,5 @@ class _HomePageState extends ConsumerState<HomePage> with WindowListener {
         ],
       ),
     );
-  }
-
-  @override
-  void onWindowClose() async {
-    bool _isPreventClose = await windowManager.isPreventClose();
-    if (_isPreventClose) {
-      windowManager.destroy();
-    }
   }
 }

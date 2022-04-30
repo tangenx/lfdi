@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:dart_discord_rpc/dart_discord_rpc.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:lfdi/api/api.dart';
-import 'package:lfdi/api/track_handler.dart';
+import 'package:lfdi/handlers/track_handler.dart';
 
 final GlobalKey<SnackbarState> scaffoldKey = GlobalKey<SnackbarState>();
 

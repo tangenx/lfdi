@@ -15,6 +15,10 @@
 </p>
 
 <p align='center'>
+  [Эта страница на русском](./docs/README_rus.md)
+</p>
+
+<p align='center'>
 Shows what you are listening to in your <b>Discord</b> status 
 <p>
 

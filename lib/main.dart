@@ -25,6 +25,7 @@ void main() async {
     await acryllic.Window.setEffect(
       effect: acryllic.WindowEffect.mica,
     );
+    await windowManager.setPreventClose(true);
 
     await windowManager.show();
     await windowManager.focus();

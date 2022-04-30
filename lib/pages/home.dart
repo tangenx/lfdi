@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:fluent_ui/fluent_ui.dart';
@@ -21,6 +22,7 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<HomePage>
     with WindowListener, TrayListener {
   int index = 0;
+  int trayClickCount = 0;
 
   @override
   void initState() {
@@ -83,19 +85,72 @@ class _HomePageState extends ConsumerState<HomePage>
     }
   }
 
+  @override
+  void onTrayIconMouseDown() async {
+    setState(() {
+      trayClickCount++;
+    });
+
+    if (trayClickCount == 2) {
+      windowManager.isVisible().then(
+        (value) async {
+          if (value) {
+            await windowManager.minimize();
+            await windowManager.hide();
+
+            return;
+          }
+
+          await windowManager.show();
+          await windowManager.focus();
+        },
+      );
+
+      setState(() {
+        trayClickCount = 0;
+      });
+    }
+  }
+
   // window functions
   @override
   void onWindowClose() async {
     bool _isPreventClose = await windowManager.isPreventClose();
     if (_isPreventClose) {
-      windowManager.destroy();
+      showDialog(
+        context: context,
+        builder: (_) {
+          return ContentDialog(
+            title: const Text('Close or minimize to tray'),
+            content: const Text(
+                'Choose what you want: close the app or minimize it to tray'),
+            actions: [
+              Button(
+                child: const Text('Minimize'),
+                onPressed: () async {
+                  Navigator.pop(context);
+                  await windowManager.minimize();
+                  await windowManager.hide();
+                },
+              ),
+              Button(
+                child: const Text('Close'),
+                onPressed: () async {
+                  Navigator.pop(context);
+                  windowManager.destroy();
+                },
+              ),
+              FilledButton(
+                child: const Text('Cancel'),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        },
+      );
     }
-  }
-
-  @override
-  void onWindowMinimize() {
-    windowManager.minimize();
-    windowManager.hide();
   }
 
   @override

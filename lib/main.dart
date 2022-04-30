@@ -17,23 +17,24 @@ void main() async {
 
   await acryllic.Window.initialize();
   await WindowManager.instance.ensureInitialized();
-  windowManager.waitUntilReadyToShow().then((ready) async {
-    await Future.wait([
-      acryllic.Window.setEffect(
-        effect: acryllic.WindowEffect.mica,
-      ),
-      windowManager.setTitleBarStyle(
-        TitleBarStyle.hidden,
-        windowButtonVisibility: false,
-      ),
-      windowManager.setSize(windowSize),
-      windowManager.setMinimumSize(windowSize),
-      windowManager.center(),
-      windowManager.show(),
-      windowManager.setPreventClose(true),
-      windowManager.setSkipTaskbar(false),
-    ]);
+
+  WindowOptions windowOptions = WindowOptions(
+    size: windowSize,
+    minimumSize: windowSize,
+    center: true,
+    skipTaskbar: false,
+    titleBarStyle: TitleBarStyle.hidden,
+  );
+
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await acryllic.Window.setEffect(
+      effect: acryllic.WindowEffect.mica,
+    );
+
+    await windowManager.show();
+    await windowManager.focus();
   });
+
   DiscordRPC.initialize();
 
   runApp(const ProviderScope(child: MyApp()));

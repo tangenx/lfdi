@@ -39,8 +39,8 @@ class RPC {
     }
 
     timer = Timer.periodic(const Duration(seconds: 30), (timer) async {
+      // get info about current scrobbling track
       Map response = API.checkAPI(await API.getRecentTrack(username, apiKey));
-
       if (response['status'] == 'error') {
         return;
       }
@@ -55,13 +55,28 @@ class RPC {
       if (trackInfo['status'] == 'error') {
         return;
       }
+
+      // build large image text
+      String largeImageText = '';
+
       track.playCount =
           int.parse(trackInfo['message']['track']['userplaycount']);
 
+      largeImageText += '${track.playCount} plays';
+
+      String trackDuration = trackInfo['message']['track']['duration'] ?? '0';
+      int trackDurationMs = int.parse(trackDuration);
+
+      if (trackDurationMs != 0 && track.playCount > 1) {
+        track.duration = Duration(milliseconds: trackDurationMs);
+        largeImageText += ' (~${TrackHandler.getTotalListeningTime(track)})';
+      }
+
+      // update rich presence
       rpc.updatePresence(
         DiscordPresence(
           largeImageKey: track.cover,
-          largeImageText: '${track.playCount} plays',
+          largeImageText: largeImageText,
           smallImageKey:
               'https://cdn.discordapp.com/app-icons/969612309209186354/9d9a045feac2fa39d2a1598ad2d06e25.png',
           smallImageText: 'github.com/tangenx/lfdi',

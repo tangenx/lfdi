@@ -12,7 +12,31 @@ class TrackHandler {
       nowPlaying: recentTrack['@attr'] == null
           ? false
           : recentTrack['@attr']['nowplaying'] == 'true',
+      duration: const Duration(seconds: 0),
     );
+  }
+
+  static String getTotalListeningTime(Track track) {
+    Duration trackDuration = track.duration * track.playCount;
+
+    int hours = trackDuration.inHours;
+    int minutes = trackDuration.inMinutes.remainder(60);
+    int seconds = trackDuration.inSeconds.remainder(60);
+
+    String listeningTime = '';
+    if (hours != 0) {
+      listeningTime += '${hours}h';
+    }
+
+    if (minutes != 0) {
+      listeningTime += '${minutes}m';
+    }
+
+    if (seconds != 0) {
+      listeningTime += '${seconds}s';
+    }
+
+    return listeningTime;
   }
 }
 
@@ -23,6 +47,7 @@ class Track {
   int playCount;
   String cover;
   bool nowPlaying;
+  Duration duration;
 
   Track({
     required this.artist,
@@ -31,5 +56,6 @@ class Track {
     required this.playCount,
     required this.cover,
     required this.nowPlaying,
+    required this.duration,
   });
 }

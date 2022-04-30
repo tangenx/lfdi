@@ -14,13 +14,15 @@
   </a>  
 </p>
 
-<p align='center'>
-  [Эта страница на русском](./docs/README_rus.md)
-</p>
+<div align='center'>
+
+  **[Эта страница на русском](./docs/README_rus.md)**
+
+</div>
 
 <p align='center'>
 Shows what you are listening to in your <b>Discord</b> status 
-<p>
+</p>
 
 # Overview
 LFDI updates your [Discord][Discord] status every 30 seconds, showing what you are listening to.

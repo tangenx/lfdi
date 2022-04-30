@@ -1,8 +1,15 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutPage extends StatelessWidget {
   const AboutPage({Key? key}) : super(key: key);
+
+  Future<String> getVersion() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+    return packageInfo.version;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,19 +18,33 @@ class AboutPage extends StatelessWidget {
         title: Text('About'),
       ),
       children: [
-        Row(
-          children: [
-            const Image(
-              image: AssetImage('assets/images/lastfm discord smol.png'),
-            ),
-            const SizedBox(
-              width: 20,
-            ),
-            Text(
-              'LFDI v1.0.0-beta',
-              style: FluentTheme.of(context).typography.subtitle,
-            ),
-          ],
+        FutureBuilder(
+          future: getVersion(),
+          initialData: '',
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.hasData) {
+              return Row(
+                children: [
+                  const Image(
+                    image: AssetImage('assets/images/lastfm discord smol.png'),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Text(
+                    'LFDI ${snapshot.data}',
+                    style: FluentTheme.of(context).typography.subtitle,
+                  ),
+                ],
+              );
+            }
+
+            return const SizedBox(
+              width: 25,
+              height: 25,
+              child: ProgressRing(),
+            );
+          },
         ),
         const SizedBox(
           height: 20,

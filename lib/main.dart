@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dart_discord_rpc/dart_discord_rpc.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart' as acryllic;
@@ -62,8 +60,6 @@ class MyApp extends ConsumerWidget {
       data: (prefs) {
         final username = prefs.getString('username');
         final apiKey = prefs.getString('apiKey');
-
-        log('prefs discordAppID: ${prefs.getString('discordAppID')}');
 
         if (username != null &&
             apiKey != null &&

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:dart_discord_rpc/dart_discord_rpc.dart';
 import 'package:fluent_ui/fluent_ui.dart';
@@ -36,11 +35,9 @@ class RPC {
     required String apiKey,
     String? discordAppId,
   }) async {
-    log('Trying init');
     if (initialized) {
       return;
     }
-    log('init');
 
     initialized = true;
 
@@ -58,7 +55,6 @@ class RPC {
   reinitialize({
     required String applicationid,
   }) {
-    log('reinit');
     dispose();
 
     initialize(
@@ -68,19 +64,15 @@ class RPC {
     );
 
     start();
-    log('reinit done');
   }
 
   /// Start the RPC
   start() {
-    log('Trying start');
     if (!initialized || started) {
       return;
     }
-    log('start');
 
     timer = Timer.periodic(const Duration(seconds: 30), (timer) async {
-      log('update track');
       // get info about current scrobbling track
       Map response = API.checkAPI(await API.getRecentTrack(username, apiKey));
       if (response['status'] == 'error') {
@@ -135,11 +127,9 @@ class RPC {
 
   /// Stop the RPC
   stop() {
-    log('Trying stop');
     if (!started) {
       return;
     }
-    log('stop');
 
     started = false;
     timer.cancel();
@@ -147,11 +137,9 @@ class RPC {
 
   /// Dispose the RPC
   dispose() {
-    log('Trying dispose');
     if (!initialized) {
       return;
     }
-    log('dispose');
 
     timer.cancel();
     rpc?.updatePresence(DiscordPresence());

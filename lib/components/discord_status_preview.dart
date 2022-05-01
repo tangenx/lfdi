@@ -16,9 +16,11 @@ class DiscordStatusPreview extends StatelessWidget {
     return Container(
       width: 300,
       padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(
-        color: discordDarkBackgroundColor,
-        borderRadius: BorderRadius.all(Radius.circular(10)),
+      decoration: BoxDecoration(
+        color: FluentTheme.of(context).brightness.isLight
+            ? discordLightBackgroundColor
+            : discordDarkBackgroundColor,
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,7 +59,10 @@ class DiscordStatusPreview extends StatelessWidget {
                           width: 24,
                           height: 24,
                           child: CircleAvatar(
-                            backgroundColor: discordDarkBackgroundColor,
+                            backgroundColor:
+                                FluentTheme.of(context).brightness.isLight
+                                    ? discordLightBackgroundColor
+                                    : discordDarkBackgroundColor,
                             radius: 60,
                             child: Image.asset(
                               'assets/images/lastfm discord smol.png',

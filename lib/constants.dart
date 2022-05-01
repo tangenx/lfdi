@@ -32,6 +32,7 @@ const String defaultCoverURL =
 
 // Colors
 const Color discordDarkBackgroundColor = Color(0xFF18191c);
+const Color discordLightBackgroundColor = Color(0xFFf2f3f5);
 
 // Other
 enum RPCAppName {

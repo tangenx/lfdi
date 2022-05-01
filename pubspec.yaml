@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  fluent_ui: ^3.11.0
+  fluent_ui: ^3.11.1
   dart_discord_rpc: ^0.0.2
   flutter_riverpod: ^1.0.3
   shared_preferences: ^2.0.13

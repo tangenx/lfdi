@@ -77,6 +77,7 @@ class _HomePageState extends ConsumerState<HomePage>
         final rpc = ref.read(rpcProvider);
 
         rpc.dispose();
+        trayManager.removeListener(this);
         trayManager.destroy();
         windowManager.destroy();
         break;
@@ -176,11 +177,16 @@ class _HomePageState extends ConsumerState<HomePage>
             ),
           ),
         ),
-        actions: DragToMoveArea(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [Spacer(), WindowButtons()],
-          ),
+        actions: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [
+            Expanded(
+              child: DragToMoveArea(
+                child: SizedBox(),
+              ),
+            ),
+            WindowButtons()
+          ],
         ),
       ),
       pane: NavigationPane(

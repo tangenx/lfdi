@@ -43,13 +43,18 @@ Just click **Apply** and magic happens!
 
 ~~**IMPORTANT**: Don't close the window, or there will be no magic!~~
 
-**You can minimize app to system tray!** Just click on close button and choose **Minimize**.
+**You can minimize app to system tray!**
 
-<div align='center'>
+<details>
+  <summary>Just click on close button and choose <b>Minimize</b>.</summary>
+
+  <div align='center'>
 
   ![Minimizing](https://i.imgur.com/zqlJ5Zr.png)
 
-</div>
+  </div>
+
+</details>
 
 You can restore the window by right-clicking the app tray icon and selecting **Hide/Restore**.
 
@@ -62,22 +67,28 @@ You can restore the window by right-clicking the app tray icon and selecting **H
 
 </div>
 
-You can hover over the cover of a track to see how many times you've listened to it and how much time you've spent listening to it!
+<details>
+  <summary>You can hover over the cover of a track to see how many times you've listened to it and how much time you've spent listening to it!</summary>
 
-<div align='center'>
+  <div align='center'>
 
   ![Plays and time count](https://i.imgur.com/NZudqLs.jpg)
 
-</div>
+  </div>
 
-You can also change the text of the status of **Playing**!
+</details>
 
-<div align='center'>
+<details>
+  <summary>You can also change the text of the status of <b>Playing</b>!</summary>
+
+  <div align='center'>
 
   ![Change Playing status](https://i.imgur.com/BjMFkQp.png)
   ###### *Oops it is debug window*
 
-</div>
+  </div>
+
+</details>
 
 ## System requirements
 - Windows 10+ (cuz flutter requires it)

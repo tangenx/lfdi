@@ -40,3 +40,8 @@ enum RPCAppName {
 }
 
 const String defaultDiscordAppID = '969612309209186354';
+
+RegExp winRegExp = RegExp(
+  r'^\"(?<winstr>.*)\"\s(?<wincore>[\d]+.[\d])\s\(Build\s(?<winbuild>.*)\)$',
+  caseSensitive: true,
+);

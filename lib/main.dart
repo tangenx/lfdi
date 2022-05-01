@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dart_discord_rpc/dart_discord_rpc.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart' as acryllic;
@@ -6,6 +8,7 @@ import 'package:lfdi/constants.dart';
 import 'package:lfdi/pages/home.dart';
 import 'package:lfdi/handlers/rpc.dart';
 import 'package:lfdi/theme.dart';
+import 'package:lfdi/utils/get_window_effect.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -20,8 +23,10 @@ void main() async {
   await WindowManager.instance.ensureInitialized();
 
   windowManager.waitUntilReadyToShow(windowOptions, () async {
+    acryllic.WindowEffect windowEffect = getWindowEffect();
+
     await acryllic.Window.setEffect(
-      effect: acryllic.WindowEffect.mica,
+      effect: windowEffect,
     );
     await windowManager.setPreventClose(true);
 

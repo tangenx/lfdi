@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:system_theme/system_theme.dart';
 
 ThemeData lightTheme = ThemeData(
-  brightness: Brightness.light,
+  //brightness: Brightness.light,
   accentColor: systemAccentColor,
   visualDensity: VisualDensity.standard,
   focusTheme: FocusThemeData(

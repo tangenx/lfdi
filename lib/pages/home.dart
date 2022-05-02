@@ -65,23 +65,22 @@ class _HomePageState extends ConsumerState<HomePage>
     await trayManager.setContextMenu(trayMenuItems);
   }
 
+  Future<void> toggleWindowState() async {
+    bool isVisible = await windowManager.isVisible();
+    if (isVisible) {
+      await windowManager.minimize();
+      return windowManager.hide();
+    }
+
+    await windowManager.show();
+    await windowManager.focus();
+  }
+
   @override
-  void onTrayMenuItemClick(MenuItem menuItem) {
+  void onTrayMenuItemClick(MenuItem menuItem) async {
     switch (menuItem.key) {
       case 'restore_window':
-        windowManager.isVisible().then(
-          (value) async {
-            if (value) {
-              await windowManager.minimize();
-              await windowManager.hide();
-
-              return;
-            }
-
-            await windowManager.show();
-            await windowManager.focus();
-          },
-        );
+        await toggleWindowState();
         break;
       case 'close_window':
         final rpc = ref.read(rpcProvider);
@@ -101,16 +100,7 @@ class _HomePageState extends ConsumerState<HomePage>
     resetClickCountDebounced();
 
     if (trayClickCount == 2) {
-      bool isVisible = await windowManager.isVisible();
-      if (isVisible) {
-        await windowManager.minimize();
-        await windowManager.hide();
-
-        return;
-      }
-
-      await windowManager.show();
-      await windowManager.focus();
+      await toggleWindowState();
 
       trayClickCount = 0;
     }

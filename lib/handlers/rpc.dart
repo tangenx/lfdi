@@ -36,9 +36,11 @@ class RPC {
     required String apiKey,
     String? discordAppId,
   }) async {
+    log('[RPC] trying init');
     if (initialized) {
       return;
     }
+    log('[RPC] initializing...');
 
     initialized = true;
 
@@ -50,12 +52,14 @@ class RPC {
     applicationId = discordAppId ?? defaultDiscordAppID;
 
     rpc?.start(autoRegister: true);
+    log('[RPC] initialize complete.');
   }
 
   /// Required for changing ApplicationID
   reinitialize({
     required String applicationid,
   }) {
+    log('[RPC] re-initializing...');
     dispose();
 
     initialize(
@@ -65,24 +69,30 @@ class RPC {
     );
 
     start();
+    log('[RPC] re-init complete.');
   }
 
   /// Start the RPC
   start() {
+    log('[RPC] trying start');
     if (!initialized || started) {
       return;
     }
+    log('[RPC] starting..');
 
     timer = Timer.periodic(const Duration(seconds: 30), (timer) async {
+      log('[RPC] start updating track...');
       // get info about current scrobbling track
       Map response = API.checkAPI(await API.getRecentTrack(username, apiKey));
       if (response['status'] == 'error') {
+        log('[RPC] error getting recent tracks, abort.');
         return;
       }
 
       Track track = TrackHandler.getTrack(response['message']);
       currentTrack = track;
       if (!track.nowPlaying) {
+        log('[RPC] no playing tracks now, abort.');
         rpc?.clearPresence();
         return;
       }
@@ -90,6 +100,7 @@ class RPC {
       Map trackInfo = API.checkAPI(
           await API.getTrackInfo(username, apiKey, track.name, track.artist));
       if (trackInfo['status'] == 'error') {
+        log('[RPC] error getting track info, abort.');
         return;
       }
 
@@ -121,6 +132,7 @@ class RPC {
           state: track.artist,
         ),
       );
+      log('[RPC] track updated.');
     });
 
     started = true;
@@ -128,9 +140,11 @@ class RPC {
 
   /// Stop the RPC
   stop() {
+    log('[RPC] trying stop');
     if (!started) {
       return;
     }
+    log('[RPC] stopping...');
 
     started = false;
     timer.cancel();
@@ -138,9 +152,11 @@ class RPC {
 
   /// Dispose the RPC
   dispose() {
+    log('[RPC] trying dispose');
     if (!initialized) {
       return;
     }
+    log('[RPC] disposing...');
 
     timer.cancel();
     rpc?.updatePresence(DiscordPresence());

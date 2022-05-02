@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:lfdi/components/discord_status_preview.dart';
 import 'package:lfdi/constants.dart';
+import 'package:lfdi/handlers/discord_websocket/discord_websocket.dart';
 import 'package:lfdi/main.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DiscordRPCPage extends ConsumerStatefulWidget {
   const DiscordRPCPage({Key? key}) : super(key: key);
@@ -45,9 +47,6 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
             DiscordStatusPreview(
               track: rpc.currentTrack,
               playingText: discordAppEnumToAppName[boxValue]!,
-              // boxValue == RPCAppName.listeningToMusic
-              //     ? 'Listening to music'
-              //     : 'some music',
             ),
             const SizedBox(
               height: 10,
@@ -62,9 +61,6 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
                           value: e,
                           child: Text(
                             discordAppEnumToAppName[e]!,
-                            // e == RPCAppName.listeningToMusic
-                            //     ? 'Listening to music'
-                            //     : 'some music',
                           ),
                         ))
                     .toList(),
@@ -82,14 +78,6 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
 
                       String changingApplicationId =
                           discordAppNameToAppId[value]!;
-                      // switch (value) {
-                      //   case RPCAppName.listeningToMusic:
-                      //     changingApplicationId = defaultDiscordAppID;
-                      //     break;
-                      //   case RPCAppName.someMusic:
-                      //     changingApplicationId = '970076164947316746';
-                      //     break;
-                      // }
 
                       String? storedApplicationId = box.get('discordAppID');
 
@@ -116,7 +104,36 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
                   }
                 },
               ),
-            )
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              children: [
+                Text(
+                  'Set "Listening to" status (seems illegal)',
+                  style: typography.bodyLarge,
+                ),
+                const Spacer(),
+                Button(
+                  child: const Text('Why?'),
+                  onPressed: () {
+                    // TODO: write an article about it
+                    launchUrl(Uri.parse('https://flutter.dev'));
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Button(
+              child: const Text('Open ws connection'),
+              onPressed: () {
+                final ws = DiscordWebSoket();
+                ws.init();
+              },
+            ),
           ],
         ),
       ),

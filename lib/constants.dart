@@ -34,6 +34,10 @@ const String defaultCoverURL =
 const Color discordDarkBackgroundColor = Color(0xFF18191c);
 const Color discordLightBackgroundColor = Color(0xFFf2f3f5);
 
+// Gateway constants
+// Handlers error codes
+const String helloAlreadyRecievedError = 'HELLO_ALREADY_RECIEVED';
+
 // Other
 enum RPCAppName {
   someMusic,

@@ -35,6 +35,9 @@ const Color discordDarkBackgroundColor = Color(0xFF18191c);
 const Color discordLightBackgroundColor = Color(0xFFf2f3f5);
 
 // Gateway constants
+// User-agent
+const String userAgent =
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 11_3_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36';
 // Handlers error codes
 const String helloAlreadyRecievedError = 'HELLO_ALREADY_RECIEVED';
 

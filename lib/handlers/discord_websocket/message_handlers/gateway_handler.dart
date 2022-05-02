@@ -16,7 +16,10 @@ abstract class GatewayHandler {
   /// All handlers resieves their `messages`,
   /// so they can manipulate them
   /// (or just return they in GatewayHandlerData, why not?)
-  GatewayHandlerData handle(IOWebSocketChannel channel, int? lastSequence) {
+  GatewayHandlerData handle(
+    IOWebSocketChannel channel,
+    Function getLastSequence,
+  ) {
     return GatewayHandlerData(
       operationCode: 999,
       data: null,

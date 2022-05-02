@@ -4,6 +4,8 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:lfdi/components/discord_status_preview.dart';
 import 'package:lfdi/constants.dart';
 import 'package:lfdi/handlers/discord_websocket/discord_websocket.dart';
+import 'package:lfdi/handlers/discord_websocket/presence_generator.dart';
+import 'package:lfdi/handlers/discord_websocket/websocket_manager.dart';
 import 'package:lfdi/main.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -126,13 +128,6 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
             ),
             const SizedBox(
               height: 10,
-            ),
-            Button(
-              child: const Text('Open ws connection'),
-              onPressed: () {
-                final ws = DiscordWebSoket();
-                ws.init();
-              },
             ),
           ],
         ),

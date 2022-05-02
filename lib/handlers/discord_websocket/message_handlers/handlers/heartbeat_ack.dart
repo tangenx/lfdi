@@ -5,7 +5,10 @@ import 'package:web_socket_channel/io.dart';
 /// Handles the Heartbeat ACK operation (OP Code: `11`)
 class HeartbeatACKHandler extends GatewayHandler {
   @override
-  GatewayHandlerData handle(IOWebSocketChannel channel, int? lastSequence) {
+  GatewayHandlerData handle(
+    IOWebSocketChannel channel,
+    Function getLastSequence,
+  ) {
     return GatewayHandlerData(
       operationCode: 11,
       error: null,

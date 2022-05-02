@@ -16,7 +16,10 @@ class HelloHandler extends GatewayHandler {
   ///
   /// The timer sends a `heartbeat` (OP Code: 1) once every `heartbeat_inerval` milliseconds
   @override
-  GatewayHandlerData handle(IOWebSocketChannel channel, int? lastSequence) {
+  GatewayHandlerData handle(
+    IOWebSocketChannel channel,
+    Function getLastSequence,
+  ) {
     if (helloAlreadyRecieved) {
       return GatewayHandlerData(
         operationCode: 10,
@@ -30,13 +33,15 @@ class HelloHandler extends GatewayHandler {
     heartbeatTimer = Timer.periodic(
       Duration(milliseconds: message?.data['heartbeat_interval']),
       (timer) {
+        int? lastSequence = getLastSequence();
+
         final DiscordGatewayMessage messageToSent = DiscordGatewayMessage(
           operationCode: 1,
           data: lastSequence,
           eventName: null,
           sequence: null,
         );
-        log('[DWS: HelloHandler] Send heartbeat.');
+        log('[DWS: HelloHandler] Send heartbeat. Last sequence number is: $lastSequence');
         channel.sink.add(messageToSent.toJsonString());
       },
     );

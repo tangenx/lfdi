@@ -11,7 +11,6 @@ dependencies:
   flutter:
     sdk: flutter
 
-  fluent_ui: ^3.11.1
   dart_discord_rpc: ^0.0.2
   flutter_riverpod: ^1.0.3
   shared_preferences: ^2.0.13
@@ -22,6 +21,10 @@ dependencies:
   url_launcher: ^6.1.0
   package_info_plus: ^1.4.2
   tray_manager: ^0.1.4
+  fluent_ui:
+    git:
+      url: https://github.com/tangenx/fluent_ui.git
+
 
 
 dev_dependencies:
@@ -29,6 +32,7 @@ dev_dependencies:
     sdk: flutter
 
   flutter_lints: ^1.0.0
+  msix: ^3.5.1
 
 flutter:
   uses-material-design: false

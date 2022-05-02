@@ -11,6 +11,8 @@ import 'package:lfdi/pages/settings.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 
+import '../utils/debounce.dart';
+
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -23,10 +25,18 @@ class _HomePageState extends ConsumerState<HomePage>
   int index = 0;
   int trayClickCount = 0;
 
+  late final void Function() resetClickCountDebounced;
+
   @override
   void initState() {
     windowManager.addListener(this);
     trayManager.addListener(this);
+
+    resetClickCountDebounced = debounce(
+      () => trayClickCount = 0,
+      const Duration(milliseconds: 500),
+    );
+
     initTray();
 
     super.initState();
@@ -55,23 +65,22 @@ class _HomePageState extends ConsumerState<HomePage>
     await trayManager.setContextMenu(trayMenuItems);
   }
 
+  Future<void> toggleWindowState() async {
+    bool isVisible = await windowManager.isVisible();
+    if (isVisible) {
+      await windowManager.minimize();
+      return windowManager.hide();
+    }
+
+    await windowManager.show();
+    await windowManager.focus();
+  }
+
   @override
-  void onTrayMenuItemClick(MenuItem menuItem) {
+  void onTrayMenuItemClick(MenuItem menuItem) async {
     switch (menuItem.key) {
       case 'restore_window':
-        windowManager.isVisible().then(
-          (value) async {
-            if (value) {
-              await windowManager.minimize();
-              await windowManager.hide();
-
-              return;
-            }
-
-            await windowManager.show();
-            await windowManager.focus();
-          },
-        );
+        await toggleWindowState();
         break;
       case 'close_window':
         final rpc = ref.read(rpcProvider);
@@ -87,28 +96,13 @@ class _HomePageState extends ConsumerState<HomePage>
 
   @override
   void onTrayIconMouseDown() async {
-    setState(() {
-      trayClickCount++;
-    });
+    trayClickCount++;
+    resetClickCountDebounced();
 
     if (trayClickCount == 2) {
-      windowManager.isVisible().then(
-        (value) async {
-          if (value) {
-            await windowManager.minimize();
-            await windowManager.hide();
+      await toggleWindowState();
 
-            return;
-          }
-
-          await windowManager.show();
-          await windowManager.focus();
-        },
-      );
-
-      setState(() {
-        trayClickCount = 0;
-      });
+      trayClickCount = 0;
     }
   }
 

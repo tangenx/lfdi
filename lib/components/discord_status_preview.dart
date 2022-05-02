@@ -11,6 +11,14 @@ class DiscordStatusPreview extends StatelessWidget {
     required this.playingText,
   }) : super(key: key);
 
+  String trimTrackName() {
+    if (track.name.length < 25) {
+      return track.name;
+    }
+
+    return track.name.substring(0, 25) + '...';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -87,7 +95,7 @@ class DiscordStatusPreview extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    Text(track.name),
+                    Text(trimTrackName()),
                     Text(track.artist),
                   ],
                 ),

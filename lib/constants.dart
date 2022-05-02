@@ -45,6 +45,16 @@ const Map<String, RPCAppName> discordAppIdToAppName = {
   someMusicDiscordAppID: RPCAppName.someMusic
 };
 
+const Map<RPCAppName, String> discordAppNameToAppId = {
+  RPCAppName.listeningToMusic: defaultDiscordAppID,
+  RPCAppName.someMusic: someMusicDiscordAppID,
+};
+
+const Map<RPCAppName, String> discordAppEnumToAppName = {
+  RPCAppName.listeningToMusic: 'Listening to music',
+  RPCAppName.someMusic: 'some music',
+};
+
 const String defaultDiscordAppID = '969612309209186354';
 const String someMusicDiscordAppID = '970076164947316746';
 

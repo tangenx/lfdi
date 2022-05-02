@@ -23,9 +23,7 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
     final typography = FluentTheme.of(context).typography;
 
     setState(() {
-      boxValue = rpc.applicationId == defaultDiscordAppID
-          ? RPCAppName.listeningToMusic
-          : RPCAppName.someMusic;
+      boxValue = discordAppIdToAppName[rpc.applicationId];
     });
 
     return ScaffoldPage(
@@ -46,9 +44,10 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
             ),
             DiscordStatusPreview(
               track: rpc.currentTrack,
-              playingText: boxValue == RPCAppName.listeningToMusic
-                  ? 'Listening to music'
-                  : 'some music',
+              playingText: discordAppEnumToAppName[boxValue]!,
+              // boxValue == RPCAppName.listeningToMusic
+              //     ? 'Listening to music'
+              //     : 'some music',
             ),
             const SizedBox(
               height: 10,
@@ -62,9 +61,10 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
                     .map((e) => ComboboxItem<RPCAppName>(
                           value: e,
                           child: Text(
-                            e == RPCAppName.listeningToMusic
-                                ? 'Listening to music'
-                                : 'some music',
+                            discordAppEnumToAppName[e]!,
+                            // e == RPCAppName.listeningToMusic
+                            //     ? 'Listening to music'
+                            //     : 'some music',
                           ),
                         ))
                     .toList(),
@@ -80,15 +80,16 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
                         boxValue = value;
                       });
 
-                      String changingApplicationId;
-                      switch (value) {
-                        case RPCAppName.listeningToMusic:
-                          changingApplicationId = defaultDiscordAppID;
-                          break;
-                        case RPCAppName.someMusic:
-                          changingApplicationId = '970076164947316746';
-                          break;
-                      }
+                      String changingApplicationId =
+                          discordAppNameToAppId[value]!;
+                      // switch (value) {
+                      //   case RPCAppName.listeningToMusic:
+                      //     changingApplicationId = defaultDiscordAppID;
+                      //     break;
+                      //   case RPCAppName.someMusic:
+                      //     changingApplicationId = '970076164947316746';
+                      //     break;
+                      // }
 
                       String? storedApplicationId = box.get('discordAppID');
 

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:dart_discord_rpc/dart_discord_rpc.dart';
 import 'package:fluent_ui/fluent_ui.dart';

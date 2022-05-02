@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dart_discord_rpc/dart_discord_rpc.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart' as acryllic;
@@ -47,12 +45,10 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var box = Hive.box('lfdi');
 
-    String? username = box.get('username');
-    String? apiKey = box.get('apiKey');
-    String? discordApplicationId = box.get('discordAppID');
+    final username = box.get('username');
+    final apiKey = box.get('apiKey');
+    final discordApplicationId = box.get('discordAppID');
 
-    log('check for username and apiKey');
-    log('username is $username\napiKey is $apiKey');
     if (username != null && apiKey != null) {
       if (username.isNotEmpty && apiKey.isNotEmpty) {
         RPC rpc = ref.read(rpcProvider);
@@ -66,7 +62,6 @@ class MyApp extends ConsumerWidget {
       }
     }
 
-    log('build app');
     return FluentApp(
       title: 'Last.fm Discord Integrator',
       themeMode: ThemeMode.system,

@@ -40,7 +40,13 @@ enum RPCAppName {
   listeningToMusic,
 }
 
+const Map<String, RPCAppName> discordAppIdToAppName = {
+  defaultDiscordAppID: RPCAppName.listeningToMusic,
+  someMusicDiscordAppID: RPCAppName.someMusic
+};
+
 const String defaultDiscordAppID = '969612309209186354';
+const String someMusicDiscordAppID = '970076164947316746';
 
 RegExp winRegExp = RegExp(
   r'^\"(?<winstr>.*)\"\s(?<wincore>[\d]+.[\d])\s\(Build\s(?<winbuild>.*)\)$',

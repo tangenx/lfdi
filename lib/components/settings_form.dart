@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lfdi/api/api.dart';
 import 'package:lfdi/main.dart';
 import 'package:lfdi/handlers/rpc.dart';
@@ -27,10 +28,10 @@ class _SettingsFormState extends ConsumerState<SettingsForm> {
 
   @override
   Widget build(BuildContext context) {
-    final prefs = ref.watch(prefsProvider).value;
+    var box = Hive.box('lfdi');
 
-    final apiKey = prefs?.getString('apiKey');
-    final username = prefs?.getString('username');
+    final apiKey = box.get('apiKey');
+    final username = box.get('username');
 
     apiKeyController.text = apiKey ?? '';
     usernameController.text = username ?? '';
@@ -126,8 +127,10 @@ class _SettingsFormState extends ConsumerState<SettingsForm> {
 
                 if (testResponse['message']['recenttracks'] != null &&
                     testResponse['message']['recenttracks']['track'] != null) {
-                  await prefs?.setString('username', username);
-                  await prefs?.setString('apiKey', apiKey);
+                  box.putAll({
+                    'username': username,
+                    'apiKey': apiKey,
+                  });
 
                   showSnackbar(
                     context,

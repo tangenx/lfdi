@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:lfdi/components/discord_status_preview.dart';
 import 'package:lfdi/constants.dart';
 import 'package:lfdi/main.dart';
@@ -18,7 +19,7 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
   @override
   Widget build(BuildContext context) {
     final rpc = ref.watch(rpcProvider);
-    final prefs = ref.watch(prefsProvider);
+    var box = Hive.box('lfdi');
     final typography = FluentTheme.of(context).typography;
 
     setState(() {
@@ -89,32 +90,26 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
                           break;
                       }
 
-                      prefs.whenData((preferences) async {
-                        String? storedApplicationId =
-                            preferences.getString('discordAppID');
+                      String? storedApplicationId = box.get('discordAppID');
 
-                        if (storedApplicationId != null &&
-                            storedApplicationId == changingApplicationId) {
-                          return;
-                        }
+                      if (storedApplicationId != null &&
+                          storedApplicationId == changingApplicationId) {
+                        return;
+                      }
 
-                        await preferences.setString(
-                          'discordAppID',
-                          changingApplicationId,
-                        );
+                      box.put('discordAppID', changingApplicationId);
 
-                        rpc.reinitialize(applicationid: changingApplicationId);
+                      rpc.reinitialize(applicationid: changingApplicationId);
 
-                        showSnackbar(
-                          context,
-                          const Snackbar(
-                            content: Text('Playing text successfully changed'),
-                          ),
-                        );
+                      showSnackbar(
+                        context,
+                        const Snackbar(
+                          content: Text('Playing text successfully changed'),
+                        ),
+                      );
 
-                        setState(() {
-                          changing = false;
-                        });
+                      setState(() {
+                        changing = false;
                       });
                     }
                   }

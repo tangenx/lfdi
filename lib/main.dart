@@ -51,6 +51,7 @@ class MyApp extends ConsumerWidget {
     final username = box.get('username');
     final apiKey = box.get('apiKey');
     final discordApplicationId = box.get('discordAppID');
+    //final discordToken = box.get('discordToken');
 
     if (username != null && apiKey != null) {
       if (username.isNotEmpty && apiKey.isNotEmpty) {

@@ -33,6 +33,10 @@ const String defaultCoverURL =
 // Colors
 const Color discordDarkBackgroundColor = Color(0xFF18191c);
 const Color discordLightBackgroundColor = Color(0xFFf2f3f5);
+const Color discordDarkThemeHeadingColor = Color(0xFFb9bbbe);
+const Color discordDarkThemeLowerHeadingColor = Color(0xFFd7d8d9);
+const Color discordLightThemeHeadingColor = Color(0xFF4f5660);
+const Color discordLightThemeLowerHeadingColor = Color(0xFF2e3338);
 
 // Gateway constants
 // User-agent

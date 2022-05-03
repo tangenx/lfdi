@@ -4,9 +4,11 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lfdi/components/window_buttons.dart';
 import 'package:lfdi/constants.dart';
+import 'package:lfdi/icons/lfdi_icons.dart';
 import 'package:lfdi/main.dart';
 import 'package:lfdi/pages/about.dart';
-import 'package:lfdi/pages/discord.dart';
+import 'package:lfdi/pages/gateway_settings.dart';
+import 'package:lfdi/pages/rpc_settings.dart';
 import 'package:lfdi/pages/settings.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
@@ -195,8 +197,12 @@ class _HomePageState extends ConsumerState<HomePage>
         indicator: const StickyNavigationIndicator(),
         items: [
           PaneItem(
-            icon: const Icon(FluentIcons.settings),
+            icon: const Icon(LFDIIcons.lastfm),
             title: const Text('Last.fm settings'),
+          ),
+          PaneItem(
+            icon: const Icon(LFDIIcons.discord),
+            title: const Text('Discord Gateway settings'),
           ),
           PaneItem(
             icon: const Icon(FluentIcons.preview_link),
@@ -215,6 +221,7 @@ class _HomePageState extends ConsumerState<HomePage>
         index: index,
         children: const [
           SettingsPage(),
+          GatewaySettingsPage(),
           DiscordRPCPage(),
           AboutPage(),
         ],

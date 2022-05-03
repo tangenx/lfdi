@@ -1,11 +1,9 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:lfdi/components/discord_form.dart';
 import 'package:lfdi/components/discord_status_preview.dart';
 import 'package:lfdi/constants.dart';
 import 'package:lfdi/main.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class DiscordRPCPage extends ConsumerStatefulWidget {
   const DiscordRPCPage({Key? key}) : super(key: key);
@@ -103,52 +101,6 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
             },
           ),
         ),
-        const SizedBox(
-          height: 10,
-        ),
-        Row(
-          children: [
-            Text(
-              'Set "Listening to" status (seems illegal)',
-              style: typography.bodyLarge,
-            ),
-            const Spacer(),
-            Button(
-              child: const Text('Why?'),
-              onPressed: () {
-                // TODO: write an article about it
-                launchUrl(Uri.parse('https://flutter.dev'));
-              },
-            ),
-          ],
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        const Align(
-          alignment: Alignment.centerLeft,
-          child: DiscordForm(),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        // await Future.delayed(const Duration(seconds: 1));
-        // ws.sendPresence(
-        //   presence: DiscordPresence(
-        //     name: 'Music',
-        //     applicationId: '970447707602833458',
-        //     assets: PresenceAssets(
-        //       largeImage:
-        //           'spotify:ab67616d0000b2738863bc11d2aa12b54f5aeb36',
-        //       largeText: 'Binding Lights',
-        //       smallImage: '970447707602833458',
-        //       smallText: 'github.com/tangenx/lfdi',
-        //     ),
-        //     details: 'weekend',
-        //     state: 'album',
-        //     url: 'https://github.com/tangenx/lfdi',
-        //   ),
-        // );
       ],
     );
   }

@@ -43,3 +43,9 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/icons/
+
+  fonts:
+    - family: LFDI
+      fonts:
+      - asset: assets/fonts/LFDI.ttf

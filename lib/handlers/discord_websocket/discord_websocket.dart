@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:lfdi/constants.dart';
@@ -97,7 +96,7 @@ class DiscordWebSoket {
                 eventName: null,
                 sequence: null,
               );
-              log('[DWS: WSMessageHandler] Send heartbeat. Last sequence number is: $lastSequence');
+              log('[DWS: Heartbeat Timer] Send heartbeat. Last sequence number is: $lastSequence');
               webSocketChannel!.sink.add(messageToSent.toJsonString());
             },
           );

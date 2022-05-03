@@ -33,11 +33,14 @@ class DiscordStatusPreview extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'PLAYING A GAME',
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w900,
+              color: FluentTheme.of(context).brightness.isLight
+                  ? discordLightThemeHeadingColor
+                  : discordDarkThemeHeadingColor,
             ),
           ),
           const SizedBox(
@@ -55,10 +58,12 @@ class DiscordStatusPreview extends StatelessWidget {
                       ClipRRect(
                         borderRadius:
                             const BorderRadius.all(Radius.circular(10)),
-                        child: Image.network(
-                          track.cover,
-                          width: 60,
-                          height: 60,
+                        child: Image(
+                          image: ResizeImage(
+                            NetworkImage(track.cover),
+                            height: 60,
+                            width: 60,
+                          ),
                         ),
                       ),
                       Align(
@@ -91,8 +96,11 @@ class DiscordStatusPreview extends StatelessWidget {
                   children: [
                     Text(
                       playingText,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.w700,
+                        color: FluentTheme.of(context).brightness.isLight
+                            ? discordLightThemeLowerHeadingColor
+                            : discordDarkThemeLowerHeadingColor,
                       ),
                     ),
                     Text(trimTrackName()),

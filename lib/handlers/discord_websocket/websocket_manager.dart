@@ -1,8 +1,11 @@
+import 'dart:async';
 import 'dart:developer';
 
+import 'package:lfdi/api/api.dart';
 import 'package:lfdi/handlers/discord_websocket/discord_websocket.dart';
 import 'package:lfdi/handlers/discord_websocket/gateway_message.dart';
 import 'package:lfdi/handlers/discord_websocket/presence_generator.dart';
+import 'package:lfdi/handlers/track_handler.dart';
 
 class DiscordWebSocketManager {
   String discordToken;
@@ -10,24 +13,135 @@ class DiscordWebSocketManager {
     required this.discordToken,
   });
 
-  /// User to check for the use of a websocket
+  /// Used to check for the use of a websocket
   bool initialized = false;
+
+  /// Used to check if the identity is sent
+  bool identifyIsSent = false;
+
+  ///
+  bool started = false;
+
+  /// Update Presence timer
+  Timer? updatePresenceTimer;
+
+  // Needs for Presence updating
+  /// Last.fm username
+  String? lastFmUsername;
+
+  /// Last.fm API Key
+  String? lastFmApiKey;
+
+  /// Current track
+  Track? currentTrack;
 
   final DiscordWebSoket ws = DiscordWebSoket();
 
-  /// Init websockets and setup listeners (listeners not used yet)
+  /// Init websockets and setup listeners
   void init() {
+    log('[DWS: Manager]: Triggered init');
+    if (initialized) {
+      return;
+    }
     log('[DWS: Manager]: Start init');
     // Add listener to dispose manager after websocket closed state.
     ws.addListener(
       name: 'onClose_Manager',
       listener: () {
         initialized = false;
+        identifyIsSent = false;
+        started = false;
+        clearPresence();
+        stopUpdating();
       },
     );
     ws.init();
     initialized = true;
     log('[DWS: Manager]: Successfully initialized');
+  }
+
+  /// Start updating Presence
+  void startUpdating() {
+    log('[DWS: Manager]: Triggered startUpdating');
+    if (!initialized || started) {
+      return;
+    }
+
+    log('[DWS: Manager]: Presence updating started');
+    sendIdentify();
+    updatePresenceTimer = Timer.periodic(
+      const Duration(seconds: 30),
+      (timer) async {
+        // get info about current scrobbling track
+        Map response = API
+            .checkAPI(await API.getRecentTrack(lastFmUsername!, lastFmApiKey!));
+        if (response['status'] == 'error') {
+          log('[DWS: Manager] Error getting recent tracks, abort.');
+          return;
+        }
+
+        // Get curent scrobbling track
+        Track track = TrackHandler.getTrack(response['message']);
+        currentTrack = track;
+
+        if (!track.nowPlaying) {
+          log('[DWS: Manager] No playing tracks now, abort.');
+          clearPresence();
+          return;
+        }
+
+        // Get track info from Last.fm
+        Map trackInfo = API.checkAPI(await API.getTrackInfo(
+            lastFmUsername!, lastFmApiKey!, track.name, track.artist));
+        if (trackInfo['status'] == 'error') {
+          log('[DWS: Manager] Error getting track info, abort.');
+          return;
+        }
+
+        // Building large image text
+        String largeImageText = '';
+
+        track.playCount =
+            int.parse(trackInfo['message']['track']['userplaycount']);
+
+        largeImageText += '${track.playCount} plays';
+
+        String trackDuration = trackInfo['message']['track']['duration'] ?? '0';
+        int trackDurationMs = int.parse(trackDuration);
+
+        if (trackDurationMs != 0 && track.playCount > 1) {
+          track.duration = Duration(milliseconds: trackDurationMs);
+          largeImageText += ' (~${TrackHandler.getTotalListeningTime(track)})';
+        }
+
+        // Building Presence
+        DiscordPresence presence = DiscordPresence(
+          name: 'music',
+          applicationId: '970447707602833458',
+          assets: PresenceAssets(
+            largeImage: '970447707602833458',
+            largeText: largeImageText,
+            smallImage: '971195306563747900',
+            smallText: 'github.com/tangenx/lfdi',
+          ),
+          details: track.name,
+          state: track.artist,
+          url: 'https://github.com/tangenx/lfdi',
+        );
+
+        sendPresence(presence: presence);
+        log('[DWS: Manager] Presence updated.');
+      },
+    );
+
+    started = true;
+  }
+
+  void stopUpdating() {
+    log('[DWS: Manager] Triggered stopUpdating.');
+    clearPresence();
+    updatePresenceTimer?.cancel();
+    log('[DWS: Manager] updatePresenceTimer state: ${updatePresenceTimer?.isActive}.');
   }
 
   void dispose() {
@@ -52,6 +166,10 @@ class DiscordWebSocketManager {
   }
 
   void sendIdentify() {
+    if (identifyIsSent) {
+      return;
+    }
+
     DiscordGatewayMessage message = DiscordGatewayMessage(
       // OP Code 2 - Identify -	used for client handshake
       operationCode: 2,
@@ -74,6 +192,7 @@ class DiscordWebSocketManager {
     );
 
     sendMessage(message);
+    identifyIsSent = true;
   }
 
   void sendPresence({required DiscordPresence presence}) {
@@ -82,6 +201,22 @@ class DiscordWebSocketManager {
       data: {
         'status': 'offline',
         'game': presence.toMap(),
+        'afk': false,
+        'since': 0,
+      },
+      eventName: null,
+      sequence: null,
+    );
+
+    sendMessage(message);
+  }
+
+  void clearPresence() {
+    DiscordGatewayMessage message = DiscordGatewayMessage(
+      operationCode: 3,
+      data: {
+        'status': 'offline',
+        'game': null,
         'afk': false,
         'since': 0,
       },

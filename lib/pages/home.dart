@@ -201,7 +201,13 @@ class _HomePageState extends ConsumerState<HomePage>
             title: const Text('Last.fm settings'),
           ),
           PaneItem(
-            icon: const Icon(LFDIIcons.discord),
+            icon: const SizedBox(
+              width: 16,
+              child: Icon(
+                LFDIIcons.discord,
+                size: 13,
+              ),
+            ),
             title: const Text('Discord Gateway settings'),
           ),
           PaneItem(

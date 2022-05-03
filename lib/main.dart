@@ -51,10 +51,13 @@ class MyApp extends ConsumerWidget {
     final username = box.get('username');
     final apiKey = box.get('apiKey');
     final discordApplicationId = box.get('discordAppID');
-    //final discordToken = box.get('discordToken');
+    final discordToken = box.get('discordToken');
+    final priorUsing = box.get('priorUsing');
 
+    // Check for Last.fm username & apiKey
     if (username != null && apiKey != null) {
       if (username.isNotEmpty && apiKey.isNotEmpty) {
+        // Set up RPC
         RPC rpc = ref.read(rpcProvider);
         rpc.initialize(
           username: username,
@@ -62,7 +65,27 @@ class MyApp extends ConsumerWidget {
           discordAppId: discordApplicationId ?? defaultDiscordAppID,
         );
 
-        rpc.start();
+        if (priorUsing == 'lastfm') {
+          rpc.start();
+        }
+
+        // Check up Discord token
+        if (discordToken != null) {
+          if (discordToken.isNotEmpty) {
+            // Set up Gateway
+            DiscordWebSocketManager webSocketManager =
+                ref.read(discordGatewayProvider);
+            webSocketManager.discordToken = discordToken;
+            webSocketManager.lastFmApiKey = apiKey;
+            webSocketManager.lastFmUsername = username;
+
+            webSocketManager.init();
+
+            if (priorUsing == 'discord') {
+              webSocketManager.startUpdating();
+            }
+          }
+        }
       }
     }
 

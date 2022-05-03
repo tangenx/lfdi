@@ -147,6 +147,7 @@ class RPC {
     log('[RPC] stopping...');
 
     started = false;
+    rpc?.clearPresence();
     timer.cancel();
   }
 

@@ -3,7 +3,7 @@ import 'package:lfdi/handlers/discord_websocket/gateway_message.dart';
 import 'package:lfdi/handlers/discord_websocket/presence_generator.dart';
 
 class DiscordWebSocketManager {
-  final String discordToken;
+  String discordToken;
   DiscordWebSocketManager({
     required this.discordToken,
   });
@@ -15,6 +15,13 @@ class DiscordWebSocketManager {
 
   /// Init websockets and setup listeners (listeners not used yet)
   init() {
+    // Add listener to dispose manager after websocket closed state.
+    ws.addListener(
+      name: 'onClose_Manager',
+      listener: () {
+        initialized = false;
+      },
+    );
     ws.init();
     initialized = true;
   }
@@ -22,6 +29,17 @@ class DiscordWebSocketManager {
   /// Sends message to the websocket
   void sendMessage(DiscordGatewayMessage message) {
     ws.sendMessage(message);
+  }
+
+  void addListener({
+    required String name,
+    required Function listener,
+  }) {
+    ws.addListener(name: name, listener: listener);
+  }
+
+  void removeListener({required String listenerName}) {
+    ws.removeListener(listenerName: listenerName);
   }
 
   void sendIdentify() {

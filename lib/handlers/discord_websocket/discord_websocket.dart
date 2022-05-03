@@ -40,6 +40,15 @@ class DiscordWebSoket {
 
       // Handle a message
       webSocketMessagesHandler(webSocketMessage);
+    }, onDone: () {
+      log('[DWS: Main] WebSocket connection was closed.');
+      listeners['onClose_Manager']!();
+
+      if (listeners['onClose'] != null) {
+        listeners['onClose']!();
+      }
+    }, onError: (error) {
+      log('[DWS: Main] WebSocket error $error.');
     });
   }
 
@@ -91,10 +100,19 @@ class DiscordWebSoket {
   }
 
   /// Set up listeners (must before init)
-  ///
-  /// Not used yet
   void setUpListeners(Map<String, Function> listeners) {
     this.listeners = listeners;
+  }
+
+  void addListener({
+    required String name,
+    required Function listener,
+  }) {
+    listeners[name] = listener;
+  }
+
+  void removeListener({required String listenerName}) {
+    listeners.remove(listenerName);
   }
 }
 

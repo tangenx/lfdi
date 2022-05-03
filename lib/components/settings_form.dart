@@ -51,6 +51,9 @@ class _SettingsFormState extends ConsumerState<SettingsForm> {
       - fluent_ui/lib/src/controls/inputs/buttons.dart
         - line 42:
           - ButtonState.all(const Color.fromRGBO(255, 255, 255, 0.04))
+        - line 64:
+          - return theme.brightness.isLight ? Colors.black : Colors.white;
+          (without it brokes the button color text)
 
       - fluent_ui/lib/src/controls/inputs/theme.dart
         - lines 245-267:
@@ -122,6 +125,10 @@ class _SettingsFormState extends ConsumerState<SettingsForm> {
                       content: Text(testResponse['message']),
                     ),
                   );
+
+                  setState(() {
+                    processing = false;
+                  });
                   return;
                 }
 

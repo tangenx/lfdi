@@ -4,6 +4,7 @@ import 'package:flutter_acrylic/flutter_acrylic.dart' as acryllic;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:lfdi/constants.dart';
+import 'package:lfdi/handlers/discord_websocket/websocket_manager.dart';
 import 'package:lfdi/pages/home.dart';
 import 'package:lfdi/handlers/rpc.dart';
 import 'package:lfdi/theme.dart';
@@ -11,6 +12,8 @@ import 'package:lfdi/utils/get_window_effect.dart';
 import 'package:window_manager/window_manager.dart';
 
 final rpcProvider = Provider((ref) => RPC());
+final discordGatewayProvider =
+    Provider((ref) => DiscordWebSocketManager(discordToken: ''));
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

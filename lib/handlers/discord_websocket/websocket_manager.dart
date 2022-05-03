@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:lfdi/handlers/discord_websocket/discord_websocket.dart';
 import 'package:lfdi/handlers/discord_websocket/gateway_message.dart';
 import 'package:lfdi/handlers/discord_websocket/presence_generator.dart';
@@ -14,7 +16,8 @@ class DiscordWebSocketManager {
   final DiscordWebSoket ws = DiscordWebSoket();
 
   /// Init websockets and setup listeners (listeners not used yet)
-  init() {
+  void init() {
+    log('[DWS: Manager]: Start init');
     // Add listener to dispose manager after websocket closed state.
     ws.addListener(
       name: 'onClose_Manager',
@@ -24,6 +27,12 @@ class DiscordWebSocketManager {
     );
     ws.init();
     initialized = true;
+    log('[DWS: Manager]: Successfully initialized');
+  }
+
+  void dispose() {
+    log('[DWS: Manager]: Triggered dispose');
+    ws.dispose();
   }
 
   /// Sends message to the websocket

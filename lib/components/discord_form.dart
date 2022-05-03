@@ -38,7 +38,7 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
           TextFormBox(
             header: 'Discord User token',
             placeholder: 'Yes, your token. Not bot.',
-            autovalidateMode: AutovalidateMode.onUserInteraction,
+            autovalidateMode: AutovalidateMode.disabled,
             controller: discordTokenController,
             validator: (text) {
               if (text == null || text.isEmpty) {
@@ -52,68 +52,111 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
               return null;
             },
           ),
-          Button(
-            child: const Text('Apply'),
-            onPressed: () async {
-              if (processing) {
-                return;
-              }
+          Row(
+            children: [
+              Button(
+                child: const Text('Apply'),
+                onPressed: () async {
+                  discordFormKey.currentState!.save();
 
-              if (discordFormKey.currentState!.validate()) {
-                setState(() {
-                  processing = true;
-                });
+                  if (processing) {
+                    return;
+                  }
 
-                final token = discordTokenController.text.toString();
+                  if (discordFormKey.currentState!.validate()) {
+                    setState(() {
+                      processing = true;
+                    });
 
-                DiscordWebSocketManager webSocketManager =
-                    ref.read(discordGatewayProvider);
-                webSocketManager.discordToken = token;
+                    final token = discordTokenController.text.toString();
 
-                bool isWebSocketDead = false;
-                webSocketManager.addListener(
-                  name: 'onClose',
-                  listener: () {
-                    isWebSocketDead = true;
-                  },
-                );
-                webSocketManager.init();
+                    DiscordWebSocketManager webSocketManager =
+                        ref.read(discordGatewayProvider);
+                    webSocketManager.discordToken = token;
 
-                await Future.delayed(const Duration(seconds: 1));
-                webSocketManager.sendIdentify();
-                await Future.delayed(const Duration(seconds: 1));
+                    bool isWebSocketDead = false;
+                    webSocketManager.addListener(
+                      name: 'onClose',
+                      listener: () {
+                        isWebSocketDead = true;
+                      },
+                    );
+                    webSocketManager.init();
 
-                if (isWebSocketDead) {
-                  webSocketManager.removeListener(listenerName: 'onClose');
+                    await Future.delayed(const Duration(seconds: 1));
+                    webSocketManager.sendIdentify();
+                    await Future.delayed(const Duration(seconds: 3));
 
-                  showSnackbar(
-                    context,
-                    const Snackbar(
-                      content: Text('Invalid user token'),
-                    ),
-                  );
+                    if (isWebSocketDead) {
+                      webSocketManager.dispose();
 
+                      showSnackbar(
+                        context,
+                        const Snackbar(
+                          content: Text('Invalid user token'),
+                        ),
+                      );
+
+                      setState(() {
+                        processing = false;
+                      });
+
+                      return;
+                    }
+
+                    box.put('discordToken', token);
+
+                    showSnackbar(
+                      context,
+                      const Snackbar(
+                        content:
+                            Text('Discord Gateway successfully configured'),
+                      ),
+                    );
+                  }
+
+                  setState(() {
+                    processing = false;
+                  });
+                },
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Button(
+                child: const Text('Clear'),
+                onPressed: () {
+                  if (processing) {
+                    return;
+                  }
                   setState(() {
                     processing = true;
                   });
 
-                  return;
-                }
+                  discordTokenController.text = '';
 
-                box.put('discordToken', token);
+                  box.put('discordToken', '');
 
-                showSnackbar(
-                  context,
-                  const Snackbar(
-                    content: Text('Discord Gateway successfully configured'),
-                  ),
-                );
-              }
+                  DiscordWebSocketManager webSocketManager =
+                      ref.read(discordGatewayProvider);
 
-              setState(() {
-                processing = false;
-              });
-            },
+                  if (webSocketManager.initialized) {
+                    webSocketManager.dispose();
+                  }
+
+                  showSnackbar(
+                    context,
+                    const Snackbar(
+                      content: Text('Done'),
+                    ),
+                  );
+
+                  setState(() {
+                    processing = false;
+                  });
+                },
+              ),
+            ],
           ),
         ],
       ),

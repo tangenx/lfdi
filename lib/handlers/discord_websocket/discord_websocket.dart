@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:lfdi/constants.dart';
@@ -20,6 +22,10 @@ class DiscordWebSoket {
 
   /// Stores all listeners
   Map<String, Function> listeners = {};
+
+  /// Used for checking timer heartbeat
+  bool heartbeatIsConfigured = false;
+  Timer? heartbeatTimer;
 
   /// Initialize websokcet
   void init() {
@@ -75,6 +81,29 @@ class DiscordWebSoket {
 
     // Set lastSequence
     lastSequence = gatewayMessage.sequence;
+
+    // Check for heartbeat
+    if (gatewayMessage.operationCode == 10) {
+      if (dataFromHandler.data != null &&
+          dataFromHandler.data!['configureHeartbeat'] != null) {
+        if (!heartbeatIsConfigured) {
+          log('[DWS: WSMessageHandler] Setup heartbeat timer.');
+          heartbeatTimer = Timer.periodic(
+            Duration(milliseconds: gatewayMessage.data['heartbeat_interval']),
+            (timer) {
+              final DiscordGatewayMessage messageToSent = DiscordGatewayMessage(
+                operationCode: 1,
+                data: lastSequence,
+                eventName: null,
+                sequence: null,
+              );
+              log('[DWS: WSMessageHandler] Send heartbeat. Last sequence number is: $lastSequence');
+              webSocketChannel!.sink.add(messageToSent.toJsonString());
+            },
+          );
+        }
+      }
+    }
   }
 
   /// Returns the last sequence number
@@ -96,7 +125,20 @@ class DiscordWebSoket {
   /// Closes the connection
   void closeConnection() {
     log('[DWS: Main] Closing connection');
+
     webSocketChannel!.sink.close();
+  }
+
+  /// Dispose the WebSocket
+  void dispose() {
+    log('[DWS: Main] Triggered dispose');
+    closeConnection();
+
+    heartbeatIsConfigured = false;
+    heartbeatTimer?.cancel();
+
+    Future.delayed(const Duration(milliseconds: 200))
+        .then((value) => removeAllListeners());
   }
 
   /// Set up listeners (must before init)
@@ -113,6 +155,10 @@ class DiscordWebSoket {
 
   void removeListener({required String listenerName}) {
     listeners.remove(listenerName);
+  }
+
+  void removeAllListeners() {
+    listeners.clear();
   }
 }
 

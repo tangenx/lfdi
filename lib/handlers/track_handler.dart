@@ -1,3 +1,6 @@
+import 'package:lfdi/constants.dart';
+import 'package:spotify/spotify.dart' as spotify;
+
 class TrackHandler {
   static Track getTrack(Map response) {
     Map recentTrack = response['recenttracks']['track'][0] ??
@@ -37,6 +40,17 @@ class TrackHandler {
     }
 
     return listeningTime;
+  }
+
+  static String? getSpotifyCoverId(String coverURL) {
+    RegExpMatch coverRegExpMatch =
+        spotifyCoverRegExp.allMatches(coverURL).first;
+
+    return coverRegExpMatch.namedGroup('cover');
+  }
+
+  static String removeFeat(String trackName) {
+    return trackName.replaceAll('feat.', '').replaceAll(' & ', ' ');
   }
 }
 

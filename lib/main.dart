@@ -9,6 +9,7 @@ import 'package:lfdi/pages/home.dart';
 import 'package:lfdi/handlers/rpc.dart';
 import 'package:lfdi/theme.dart';
 import 'package:lfdi/utils/get_window_effect.dart';
+import 'package:spotify/spotify.dart';
 import 'package:window_manager/window_manager.dart';
 
 final rpcProvider = Provider((ref) => RPC());
@@ -54,6 +55,9 @@ class MyApp extends ConsumerWidget {
     final discordToken = box.get('discordToken');
     final priorUsing = box.get('priorUsing');
 
+    final spotifyApiKey = box.get('spotifyApiKey');
+    final spotifyApiSecret = box.get('spotifyApiSecret');
+
     // Check for Last.fm username & apiKey
     if (username != null && apiKey != null) {
       if (username.isNotEmpty && apiKey.isNotEmpty) {
@@ -69,7 +73,7 @@ class MyApp extends ConsumerWidget {
           rpc.start();
         }
 
-        // Check up Discord token
+        // Check for Discord token
         if (discordToken != null) {
           if (discordToken.isNotEmpty) {
             // Set up Gateway
@@ -81,8 +85,18 @@ class MyApp extends ConsumerWidget {
 
             webSocketManager.init();
 
-            if (priorUsing == 'discord') {
-              webSocketManager.startUpdating();
+            // Check for Spotify dev app
+            if (spotifyApiKey != null && spotifyApiSecret != null) {
+              webSocketManager.spotifyApi = SpotifyApi(
+                SpotifyApiCredentials(
+                  spotifyApiKey,
+                  spotifyApiSecret,
+                ),
+              );
+
+              if (priorUsing == 'discord') {
+                webSocketManager.startUpdating();
+              }
             }
           }
         }

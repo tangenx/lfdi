@@ -1,8 +1,12 @@
+import 'dart:developer';
+
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lfdi/handlers/discord_websocket/websocket_manager.dart';
 import 'package:lfdi/main.dart';
+import 'package:spotify/spotify.dart';
+import 'package:oauth2/oauth2.dart' as oauth2;
 
 class DiscordForm extends ConsumerStatefulWidget {
   const DiscordForm({Key? key}) : super(key: key);
@@ -15,6 +19,21 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
   bool processing = false;
   final discordFormKey = GlobalKey<FormState>();
   final discordTokenController = TextEditingController();
+  final spotifyApiKeyController = TextEditingController();
+  final spotifyApiSecretController = TextEditingController();
+  var box = Hive.box('lfdi');
+
+  @override
+  void initState() {
+    final discordToken = box.get('discordToken');
+    final spotifyApiKey = box.get('spotifyApiKey');
+    final spotifyApiSecret = box.get('spotifyApiSecret');
+
+    discordTokenController.text = discordToken ?? '';
+    spotifyApiKeyController.text = spotifyApiKey ?? '';
+    spotifyApiSecretController.text = spotifyApiSecret ?? '';
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -24,12 +43,6 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
 
   @override
   Widget build(BuildContext context) {
-    var box = Hive.box('lfdi');
-
-    final discordToken = box.get('discordToken');
-
-    discordTokenController.text = discordToken ?? '';
-
     return Form(
       key: discordFormKey,
       child: Column(
@@ -38,7 +51,7 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
           TextFormBox(
             header: 'Discord User token',
             placeholder: 'Yes, your token. Not bot.',
-            autovalidateMode: AutovalidateMode.disabled,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
             controller: discordTokenController,
             validator: (text) {
               if (text == null || text.isEmpty) {
@@ -52,13 +65,53 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
               return null;
             },
           ),
+          const SizedBox(
+            height: 10,
+          ),
+          TextFormBox(
+            header: 'Spotify App Client ID',
+            placeholder:
+                'Get your Client ID at developer.spotify.com/dashboard/applications',
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            controller: spotifyApiKeyController,
+            validator: (text) {
+              if (text == null || text.isEmpty) {
+                return 'Provide a Client ID';
+              }
+
+              if (text.length != 32) {
+                return 'Client ID is invalid';
+              }
+
+              return null;
+            },
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          TextFormBox(
+            header: 'Spotify App Client Secret',
+            placeholder:
+                'Get your Client Secret at developer.spotify.com/dashboard/applications',
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            controller: spotifyApiSecretController,
+            validator: (text) {
+              if (text == null || text.isEmpty) {
+                return 'Provide a Client Secret';
+              }
+
+              if (text.length != 32) {
+                return 'Client Secret is invalid';
+              }
+
+              return null;
+            },
+          ),
           Row(
             children: [
               Button(
                 child: const Text('Apply'),
                 onPressed: () async {
-                  discordFormKey.currentState!.save();
-
                   if (processing) {
                     return;
                   }
@@ -67,11 +120,17 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
                     setState(() {
                       processing = true;
                     });
+                    // Test Discord
 
                     final token = discordTokenController.text.toString();
 
                     DiscordWebSocketManager webSocketManager =
                         ref.read(discordGatewayProvider);
+
+                    if (webSocketManager.identifyIsSent) {
+                      webSocketManager.reinit();
+                    }
+
                     webSocketManager.discordToken = token;
 
                     bool isWebSocketDead = false;
@@ -106,14 +165,68 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
 
                     box.put('discordToken', token);
 
-                    showSnackbar(
-                      context,
-                      const Snackbar(
-                        content:
-                            Text('Discord Gateway successfully configured'),
-                      ),
+                    // Test Spotify
+                    final spotifyApiKey = spotifyApiKeyController.text;
+                    final spotifyApiSecret = spotifyApiSecretController.text;
+
+                    bool isSpotifyError = false;
+
+                    try {
+                      final credentials = SpotifyApiCredentials(
+                        spotifyApiKey,
+                        spotifyApiSecret,
+                      );
+
+                      final spotifyApi = SpotifyApi(credentials);
+                      await spotifyApi.search.get('metallica').first(2);
+
+                      // If it ever stops working, I have a way
+                      // around the spotify library (I spent 6 hours on it):
+
+                      // await oauth2.clientCredentialsGrant(
+                      //   Uri.parse('https://accounts.spotify.com/api/token'),
+                      //   spotifyApiKey,
+                      //   spotifyApiSecret,
+                      //   httpClient: null,
+                      // );
+                    } catch (error) {
+                      log('Caught error while connecting to Spotify: ${error.runtimeType}');
+                      isSpotifyError = true;
+                    }
+
+                    if (isSpotifyError) {
+                      showSnackbar(
+                        context,
+                        const Snackbar(
+                          content: Text(
+                            'Spotify Client ID or Client Secret is invalid.',
+                          ),
+                        ),
+                      );
+
+                      setState(() {
+                        processing = false;
+                      });
+
+                      return;
+                    }
+
+                    box.put('spotifyApiKey', spotifyApiKey);
+                    box.put('spotifyApiSecret', spotifyApiSecret);
+
+                    webSocketManager.spotifyApi = SpotifyApi(
+                      SpotifyApiCredentials(spotifyApiKey, spotifyApiSecret),
                     );
                   }
+
+                  showSnackbar(
+                    context,
+                    const Snackbar(
+                      content: Text(
+                        'Gateway successfully configured.',
+                      ),
+                    ),
+                  );
 
                   setState(() {
                     processing = false;

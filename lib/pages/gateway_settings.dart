@@ -86,23 +86,6 @@ class _GatewaySettingsPageState extends ConsumerState<GatewaySettingsPage> {
         const SizedBox(
           height: 20,
         ),
-        // await Future.delayed(const Duration(seconds: 1));
-        // ws.sendPresence(
-        //   presence: DiscordPresence(
-        //     name: 'Music',
-        //     applicationId: '970447707602833458',
-        //     assets: PresenceAssets(
-        //       largeImage:
-        //           'spotify:ab67616d0000b2738863bc11d2aa12b54f5aeb36',
-        //       largeText: 'Binding Lights',
-        //       smallImage: '970447707602833458',
-        //       smallText: 'github.com/tangenx/lfdi',
-        //     ),
-        //     details: 'weekend',
-        //     state: 'album',
-        //     url: 'https://github.com/tangenx/lfdi',
-        //   ),
-        // );
         Row(
           children: [
             Align(

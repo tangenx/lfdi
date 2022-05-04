@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:lfdi/api/api.dart';
+import 'package:lfdi/constants.dart';
 import 'package:lfdi/handlers/discord_websocket/discord_websocket.dart';
 import 'package:lfdi/handlers/discord_websocket/gateway_message.dart';
 import 'package:lfdi/handlers/discord_websocket/presence_generator.dart';
@@ -35,6 +36,9 @@ class DiscordWebSocketManager {
 
   /// Spotify API instance
   SpotifyApi? spotifyApi;
+
+  /// Current Presence type
+  GatewayPresenceType? presenceType;
 
   /// Current track
   rpc_track.Track? currentTrack;
@@ -87,7 +91,9 @@ class DiscordWebSocketManager {
     }
 
     log('[DWS: Manager]: Presence updating started');
-    sendIdentify();
+    if (!identifyIsSent) {
+      sendIdentify();
+    }
     updatePresenceTimer = Timer.periodic(
       const Duration(seconds: 30),
       (timer) async {
@@ -152,6 +158,8 @@ class DiscordWebSocketManager {
 
         track.playCount =
             int.parse(trackInfo['message']['track']['userplaycount']);
+        currentTrack!.playCount =
+            int.parse(trackInfo['message']['track']['userplaycount']);
 
         largeImageText += '${track.playCount} plays';
 
@@ -168,6 +176,7 @@ class DiscordWebSocketManager {
 
         if (trackDurationMs != 0 && track.playCount > 1) {
           track.duration = Duration(milliseconds: trackDurationMs);
+          currentTrack!.duration = Duration(milliseconds: trackDurationMs);
           largeImageText +=
               ' (~${rpc_track.TrackHandler.getTotalListeningTime(track)})';
         }
@@ -187,6 +196,7 @@ class DiscordWebSocketManager {
           if (trackUrl == null) {
             coverId = '971488024401690635';
           } else {
+            currentTrack!.cover = trackUrl;
             String? getCoverId =
                 rpc_track.TrackHandler.getSpotifyCoverId(trackUrl);
             coverId = getCoverId != null
@@ -198,18 +208,11 @@ class DiscordWebSocketManager {
         }
 
         // Building Presence
-        DiscordPresence presence = DiscordPresence(
-          name: 'music',
-          applicationId: '970447707602833458',
-          assets: PresenceAssets(
-            largeImage: coverId,
-            largeText: largeImageText,
-            smallImage: '971195306563747900',
-            smallText: 'github.com/tangenx/lfdi',
-          ),
-          details: track.name,
-          state: track.artist,
-          url: 'https://github.com/tangenx/lfdi',
+        DiscordPresence presence = DiscordPresence.generateWithType(
+          type: presenceType!,
+          largeImage: coverId,
+          largeText: largeImageText,
+          track: track,
         );
 
         sendPresence(presence: presence);
@@ -222,6 +225,7 @@ class DiscordWebSocketManager {
 
   void stopUpdating() {
     log('[DWS: Manager] Triggered stopUpdating.');
+    started = false;
     clearPresence();
     updatePresenceTimer?.cancel();
     log('[DWS: Manager] updatePresenceTimer state: ${updatePresenceTimer?.isActive}.');

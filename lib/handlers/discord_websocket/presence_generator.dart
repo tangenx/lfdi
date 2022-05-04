@@ -1,3 +1,6 @@
+import 'package:lfdi/constants.dart';
+import 'package:lfdi/handlers/track_handler.dart' as rpc_track;
+
 class DiscordPresence {
   /// App name
   String? name;
@@ -40,6 +43,64 @@ class DiscordPresence {
       'url': url,
       'state': state,
     };
+  }
+
+  static DiscordPresence generateWithType({
+    required GatewayPresenceType type,
+    required rpc_track.Track track,
+    required String largeImage,
+    required String largeText,
+  }) {
+    DiscordPresence presence;
+
+    switch (type) {
+      case GatewayPresenceType.listeningToMusic:
+        presence = DiscordPresence(
+          name: 'music',
+          applicationId: '970447707602833458',
+          assets: PresenceAssets(
+            largeImage: largeImage,
+            largeText: largeText,
+            smallImage: '971195306563747900',
+            smallText: 'github.com/tangenx/lfdi',
+          ),
+          details: track.name,
+          state: track.artist,
+          url: 'https://github.com/tangenx/lfdi',
+        );
+        break;
+
+      case GatewayPresenceType.fullTrackInHeader:
+        presence = DiscordPresence(
+          name: '${track.artist} - ${track.name}',
+          applicationId: '970447707602833458',
+          assets: PresenceAssets(
+            largeImage: largeImage,
+            largeText: largeText,
+            smallImage: '971195306563747900',
+            smallText: 'github.com/tangenx/lfdi',
+          ),
+          details: track.album,
+          url: 'https://github.com/tangenx/lfdi',
+        );
+        break;
+
+      case GatewayPresenceType.trackNameInHeader:
+        presence = DiscordPresence(
+          name: track.name,
+          applicationId: '970447707602833458',
+          assets: PresenceAssets(
+            largeImage: largeImage,
+            largeText: largeText,
+            smallImage: '971195306563747900',
+            smallText: 'github.com/tangenx/lfdi',
+          ),
+          details: track.artist,
+        );
+        break;
+    }
+
+    return presence;
   }
 }
 

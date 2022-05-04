@@ -53,10 +53,15 @@ class MyApp extends ConsumerWidget {
     final apiKey = box.get('apiKey');
     final discordApplicationId = box.get('discordAppID');
     final discordToken = box.get('discordToken');
+    final gatewayPresenceType = box.get('gatewayPresenceType');
     final priorUsing = box.get('priorUsing');
 
     final spotifyApiKey = box.get('spotifyApiKey');
     final spotifyApiSecret = box.get('spotifyApiSecret');
+
+    if (gatewayPresenceType == null) {
+      box.put('gatewayPresenceType', 'listeningToMusic');
+    }
 
     // Check for Last.fm username & apiKey
     if (username != null && apiKey != null) {
@@ -82,6 +87,8 @@ class MyApp extends ConsumerWidget {
             webSocketManager.discordToken = discordToken;
             webSocketManager.lastFmApiKey = apiKey;
             webSocketManager.lastFmUsername = username;
+            webSocketManager.presenceType =
+                stringIdToPresenceType[box.get('gatewayPresenceType')];
 
             webSocketManager.init();
 
@@ -111,53 +118,5 @@ class MyApp extends ConsumerWidget {
       darkTheme: darkTheme,
       home: const HomePage(),
     );
-
-    // final prefs = ref.watch(prefsProvider);
-
-    // return prefs.when(
-    //   loading: () => FluentApp(
-    //     title: 'Last.fm Discord Integrator',
-    //     themeMode: ThemeMode.system,
-    //     color: systemAccentColor,
-    //     theme: lightTheme,
-    //     darkTheme: darkTheme,
-    //     home: const Center(
-    //       child: SizedBox(
-    //         width: 40,
-    //         height: 40,
-    //         child: ProgressRing(),
-    //       ),
-    //     ),
-    //   ),
-    //   error: (error, stack) => Text('Error: $error'),
-    //   data: (prefs) {
-    //     final username = prefs.getString('username');
-    //     final apiKey = prefs.getString('apiKey');
-
-    //     if (username != null &&
-    //         apiKey != null &&
-    //         username.isNotEmpty &&
-    //         apiKey.isNotEmpty &&
-    //         apiKey.length == 32) {
-    //       RPC rpc = ref.read(rpcProvider);
-    //       rpc.initialize(
-    //         username: username,
-    //         apiKey: apiKey,
-    //         discordAppId:
-    //             prefs.getString('discordAppID') ?? defaultDiscordAppID,
-    //       );
-    //       rpc.start();
-    //     }
-
-    //     return FluentApp(
-    //       title: 'Last.fm Discord Integrator',
-    //       themeMode: ThemeMode.system,
-    //       color: systemAccentColor,
-    //       theme: lightTheme,
-    //       darkTheme: darkTheme,
-    //       home: const HomePage(),
-    //     );
-    //   },
-    // );
   }
 }

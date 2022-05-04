@@ -14,16 +14,19 @@ class DiscordRPCPage extends ConsumerStatefulWidget {
 
 class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
   RPCAppName? boxValue;
+  GatewayPresenceType? currentGatewayPresenceType;
   bool changing = false;
 
   @override
   Widget build(BuildContext context) {
     final rpc = ref.watch(rpcProvider);
+    final gateway = ref.watch(discordGatewayProvider);
     var box = Hive.box('lfdi');
     final typography = FluentTheme.of(context).typography;
 
     setState(() {
       boxValue = discordAppIdToAppName[rpc.applicationId];
+      currentGatewayPresenceType = gateway.presenceType;
     });
 
     return ScaffoldPage.scrollable(
@@ -38,69 +41,137 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
         const SizedBox(
           height: 10,
         ),
-        Align(
+        const Align(
           alignment: Alignment.centerLeft,
-          child: DiscordStatusPreview(
-            track: rpc.currentTrack,
-            playingText: discordAppEnumToAppName[boxValue]!,
-          ),
+          child: DiscordStatusPreview(),
         ),
         const SizedBox(
           height: 10,
         ),
-        InfoLabel(
-          label: 'Playing text',
-          child: Combobox<RPCAppName>(
-            placeholder: const Text('Choose a playing text'),
-            isExpanded: true,
-            items: RPCAppName.values
-                .map((e) => ComboboxItem<RPCAppName>(
-                      value: e,
-                      child: Text(
-                        discordAppEnumToAppName[e]!,
+        box.get('priorUsing') == 'lastfm'
+            ? InfoLabel(
+                label: '"Playing to" text',
+                child: Combobox<RPCAppName>(
+                  placeholder: const Text('Choose a playing text'),
+                  isExpanded: true,
+                  items: RPCAppName.values
+                      .map((e) => ComboboxItem<RPCAppName>(
+                            value: e,
+                            child: Text(
+                              discordAppEnumToAppName[e]!,
+                            ),
+                          ))
+                      .toList(),
+                  value: boxValue,
+                  onChanged: (value) async {
+                    if (!changing) {
+                      setState(() {
+                        changing = true;
+                      });
+
+                      if (value != null) {
+                        setState(() {
+                          boxValue = value;
+                        });
+
+                        String changingApplicationId =
+                            discordAppNameToAppId[value]!;
+
+                        String? storedApplicationId = box.get('discordAppID');
+
+                        if (storedApplicationId != null &&
+                            storedApplicationId == changingApplicationId) {
+                          setState(() {
+                            changing = false;
+                          });
+                          return;
+                        }
+
+                        box.put('discordAppID', changingApplicationId);
+
+                        rpc.reinitialize(applicationid: changingApplicationId);
+
+                        showSnackbar(
+                          context,
+                          const Snackbar(
+                            content: Text('Playing text successfully changed'),
+                          ),
+                        );
+
+                        setState(() {
+                          changing = false;
+                        });
+                      }
+                    }
+                  },
+                ),
+              )
+            : InfoLabel(
+                label: 'Presence style',
+                child: Combobox<GatewayPresenceType>(
+                  placeholder: const Text('Choose a Presence style'),
+                  isExpanded: true,
+                  items: GatewayPresenceType.values
+                      .map((e) => ComboboxItem<GatewayPresenceType>(
+                            value: e,
+                            child: Text(
+                              presenceTypeToName[e]!,
+                            ),
+                          ))
+                      .toList(),
+                  value: currentGatewayPresenceType,
+                  onChanged: (value) {
+                    if (changing) {
+                      return;
+                    }
+
+                    setState(() {
+                      changing = true;
+                    });
+
+                    if (value != null) {
+                      setState(() {
+                        currentGatewayPresenceType = value;
+                      });
+                    }
+
+                    GatewayPresenceType? presenceType = value;
+
+                    String changingPresenceType =
+                        presenceTypeToStringID[presenceType]!;
+
+                    String storedPresenceType = box.get('gatewayPresenceType');
+
+                    if (storedPresenceType == changingPresenceType) {
+                      setState(() {
+                        changing = false;
+                      });
+                      return;
+                    }
+
+                    box.put('gatewayPresenceType', changingPresenceType);
+
+                    if (gateway.started) {
+                      gateway.stopUpdating();
+                    }
+
+                    gateway.presenceType = presenceType;
+
+                    gateway.startUpdating();
+
+                    showSnackbar(
+                      context,
+                      const Snackbar(
+                        content: Text('Presence style successfully changed'),
                       ),
-                    ))
-                .toList(),
-            value: boxValue,
-            onChanged: (value) async {
-              if (!changing) {
-                setState(() {
-                  changing = true;
-                });
+                    );
 
-                if (value != null) {
-                  setState(() {
-                    boxValue = value;
-                  });
-
-                  String changingApplicationId = discordAppNameToAppId[value]!;
-
-                  String? storedApplicationId = box.get('discordAppID');
-
-                  if (storedApplicationId != null &&
-                      storedApplicationId == changingApplicationId) {
-                    return;
-                  }
-
-                  box.put('discordAppID', changingApplicationId);
-
-                  rpc.reinitialize(applicationid: changingApplicationId);
-
-                  showSnackbar(
-                    context,
-                    const Snackbar(
-                      content: Text('Playing text successfully changed'),
-                    ),
-                  );
-
-                  setState(() {
-                    changing = false;
-                  });
-                }
-              }
-            },
-          ),
-        ),
+                    setState(() {
+                      changing = false;
+                    });
+                  },
+                ),
+              ),
       ],
     );
   }

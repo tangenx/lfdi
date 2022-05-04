@@ -51,6 +51,7 @@ const String userAgent =
 const String helloAlreadyRecievedError = 'HELLO_ALREADY_RECIEVED';
 
 // Other
+// Used for RPC Presence
 enum RPCAppName {
   someMusic,
   listeningToMusic,
@@ -73,6 +74,56 @@ const Map<RPCAppName, String> discordAppEnumToAppName = {
 
 const String defaultDiscordAppID = '969612309209186354';
 const String someMusicDiscordAppID = '970076164947316746';
+
+// Used for Gateway Presence
+enum GatewayPresenceType {
+  /// `listeningToMusic`:
+  ///
+  /// LISTENING TO MUSIC
+  ///
+  /// {track.artist}
+  ///
+  /// {track.name}
+  ///
+  /// {track.plays}
+  listeningToMusic,
+
+  /// `fullTrackInHeader`:
+  ///
+  /// LISTENING TO {track.artist} - {track.name}
+  ///
+  /// {track.album (if exists)}
+  ///
+  /// {track.plays}
+  fullTrackInHeader,
+
+  /// `trackNameInHeader`
+  ///
+  /// LISTENING TO {track.name}
+  ///
+  /// {track.artist}
+  ///
+  /// {track.plays}
+  trackNameInHeader,
+}
+
+const Map<GatewayPresenceType, String> presenceTypeToName = {
+  GatewayPresenceType.listeningToMusic: 'Listening to music',
+  GatewayPresenceType.fullTrackInHeader: 'Full track info in header',
+  GatewayPresenceType.trackNameInHeader: 'Track name in header',
+};
+
+const Map<String, GatewayPresenceType> stringIdToPresenceType = {
+  'listeningToMusic': GatewayPresenceType.listeningToMusic,
+  'fullTrackInHeader': GatewayPresenceType.fullTrackInHeader,
+  'trackNameInHeader': GatewayPresenceType.trackNameInHeader,
+};
+
+const Map<GatewayPresenceType, String> presenceTypeToStringID = {
+  GatewayPresenceType.listeningToMusic: 'listeningToMusic',
+  GatewayPresenceType.fullTrackInHeader: 'fullTrackInHeader',
+  GatewayPresenceType.trackNameInHeader: 'trackNameInHeader',
+};
 
 RegExp winRegExp = RegExp(
   r'^\"(?<winstr>.*)\"\s(?<wincore>[\d]+.[\d])\s\(Build\s(?<winbuild>.*)\)$',

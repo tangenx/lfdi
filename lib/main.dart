@@ -58,9 +58,14 @@ class MyApp extends ConsumerWidget {
 
     final spotifyApiKey = box.get('spotifyApiKey');
     final spotifyApiSecret = box.get('spotifyApiSecret');
+    final defaultMusicApp = box.get('defaultMusicApp');
 
     if (gatewayPresenceType == null) {
       box.put('gatewayPresenceType', 'listeningToMusic');
+    }
+
+    if (defaultMusicApp == null) {
+      box.put('defaultMusicApp', 'Spotify');
     }
 
     // Check for Last.fm username & apiKey
@@ -89,6 +94,7 @@ class MyApp extends ConsumerWidget {
             webSocketManager.lastFmUsername = username;
             webSocketManager.presenceType =
                 stringIdToPresenceType[box.get('gatewayPresenceType')];
+            webSocketManager.defaultMusicApp = box.get('defaultMusicApp');
 
             webSocketManager.init();
 

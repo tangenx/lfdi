@@ -16,17 +16,20 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
   RPCAppName? boxValue;
   GatewayPresenceType? currentGatewayPresenceType;
   bool changing = false;
+  String? currentMusicApp;
 
   @override
   Widget build(BuildContext context) {
+    var box = Hive.box('lfdi');
+
     final rpc = ref.watch(rpcProvider);
     final gateway = ref.watch(discordGatewayProvider);
-    var box = Hive.box('lfdi');
     final typography = FluentTheme.of(context).typography;
 
     setState(() {
       boxValue = discordAppIdToAppName[rpc.applicationId];
       currentGatewayPresenceType = gateway.presenceType;
+      currentMusicApp = gateway.defaultMusicApp;
     });
 
     return ScaffoldPage.scrollable(
@@ -172,6 +175,68 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
                   },
                 ),
               ),
+        const SizedBox(
+          height: 10,
+        ),
+        currentGatewayPresenceType == GatewayPresenceType.musicAppInHeader
+            ? InfoLabel(
+                label: 'Music app',
+                child: Combobox<String>(
+                  placeholder: const Text('Choose a Presence style'),
+                  isExpanded: true,
+                  items: musicApps
+                      .map(
+                        (e) => ComboboxItem<String>(
+                          child: Text(e),
+                          value: e,
+                        ),
+                      )
+                      .toList(),
+                  value: currentMusicApp,
+                  onChanged: (value) {
+                    if (changing) {
+                      return;
+                    }
+
+                    setState(() {
+                      changing = true;
+                    });
+
+                    if (value != null) {
+                      setState(() {
+                        currentMusicApp = value;
+                      });
+                    }
+
+                    String changingMusicApp = value!;
+
+                    String storedMusicApp = box.get('defaultMusicApp');
+
+                    if (storedMusicApp == changingMusicApp) {
+                      setState(() {
+                        changing = false;
+                      });
+                      return;
+                    }
+
+                    box.put('defaultMusicApp', changingMusicApp);
+
+                    gateway.defaultMusicApp = changingMusicApp;
+
+                    showSnackbar(
+                      context,
+                      const Snackbar(
+                        content: Text('Music app successfully changed'),
+                      ),
+                    );
+
+                    setState(() {
+                      changing = false;
+                    });
+                  },
+                ),
+              )
+            : const SizedBox(),
       ],
     );
   }

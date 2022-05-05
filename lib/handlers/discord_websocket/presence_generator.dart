@@ -50,6 +50,7 @@ class DiscordPresence {
     required rpc_track.Track track,
     required String largeImage,
     required String largeText,
+    required String musicApp,
   }) {
     DiscordPresence presence;
 
@@ -96,6 +97,22 @@ class DiscordPresence {
             smallText: 'github.com/tangenx/lfdi',
           ),
           details: track.artist,
+        );
+        break;
+
+      case GatewayPresenceType.musicAppInHeader:
+        presence = DiscordPresence(
+          name: musicApp,
+          applicationId: '970447707602833458',
+          assets: PresenceAssets(
+            largeImage: largeImage,
+            largeText: largeText,
+            smallImage: '971195306563747900',
+            smallText: 'github.com/tangenx/lfdi',
+          ),
+          details: track.name,
+          state: track.artist,
+          url: 'https://github.com/tangenx/lfdi',
         );
         break;
     }

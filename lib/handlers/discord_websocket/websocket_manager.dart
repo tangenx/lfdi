@@ -42,6 +42,9 @@ class DiscordWebSocketManager {
   /// Current Presence type
   GatewayPresenceType? presenceType;
 
+  /// Default music app
+  String? defaultMusicApp;
+
   /// Current track
   rpc_track.Track? currentTrack;
 
@@ -237,6 +240,7 @@ class DiscordWebSocketManager {
           largeImage: coverId,
           largeText: largeImageText,
           track: track,
+          musicApp: defaultMusicApp!,
         );
 
         sendPresence(presence: presence);

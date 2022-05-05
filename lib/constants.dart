@@ -105,25 +105,57 @@ enum GatewayPresenceType {
   ///
   /// {track.plays}
   trackNameInHeader,
+
+  /// `musicAppInHeader`
+  ///
+  /// LISTENING TO {listeningApp}
+  ///
+  /// {track.artist}
+  ///
+  /// {track.name}
+  ///
+  /// {track.plays}
+  musicAppInHeader,
 }
 
 const Map<GatewayPresenceType, String> presenceTypeToName = {
   GatewayPresenceType.listeningToMusic: 'Listening to music',
   GatewayPresenceType.fullTrackInHeader: 'Full track info in header',
   GatewayPresenceType.trackNameInHeader: 'Track name in header',
+  GatewayPresenceType.musicAppInHeader: 'Music app name in header',
 };
 
 const Map<String, GatewayPresenceType> stringIdToPresenceType = {
   'listeningToMusic': GatewayPresenceType.listeningToMusic,
   'fullTrackInHeader': GatewayPresenceType.fullTrackInHeader,
   'trackNameInHeader': GatewayPresenceType.trackNameInHeader,
+  'musicAppInHeader': GatewayPresenceType.musicAppInHeader,
 };
 
 const Map<GatewayPresenceType, String> presenceTypeToStringID = {
   GatewayPresenceType.listeningToMusic: 'listeningToMusic',
   GatewayPresenceType.fullTrackInHeader: 'fullTrackInHeader',
   GatewayPresenceType.trackNameInHeader: 'trackNameInHeader',
+  GatewayPresenceType.musicAppInHeader: 'musicAppInHeader',
 };
+
+const List<String> musicApps = [
+  'Apple Music',
+  'Deezer',
+  'IDAGIO',
+  'Jamendo',
+  'Pandora',
+  'Qobuz',
+  'Spotify',
+  'SoundCloud',
+  'Tidal',
+  'VK Music',
+  'Yandex Music',
+  'YouTube Music',
+  'Zaycev.net',
+  'Звук',
+  'МТС Music',
+];
 
 RegExp winRegExp = RegExp(
   r'^\"(?<winstr>.*)\"\s(?<wincore>[\d]+.[\d])\s\(Build\s(?<winbuild>.*)\)$',

@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:lfdi/utils/get_window_effect.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -121,8 +118,6 @@ class AboutPage extends StatelessWidget {
         const SizedBox(
           height: 20,
         ),
-        Text('Window effect: ${getWindowEffect().toString()}'),
-        Text('Windows version: ${Platform.operatingSystemVersion}'),
       ],
     );
   }

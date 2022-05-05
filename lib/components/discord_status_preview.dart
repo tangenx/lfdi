@@ -21,11 +21,11 @@ class _DiscordStatusPreviewState extends ConsumerState<DiscordStatusPreview> {
   var box = Hive.box('lfdi');
 
   String trimText(String text) {
-    if (text.length < 25) {
+    if (text.length < 26) {
       return text;
     }
 
-    return text.substring(0, 25) + '...';
+    return text.substring(0, 26) + '...';
   }
 
   Widget buildLastfmPreview(RPC rpc) {
@@ -158,6 +158,14 @@ class _DiscordStatusPreviewState extends ConsumerState<DiscordStatusPreview> {
       case GatewayPresenceType.trackNameInHeader:
         listeningToText = track.name;
 
+        detailedViewWidgets.add(Text(trimText(track.artist)));
+        detailedViewWidgets.add(Text(playsText));
+        break;
+
+      case GatewayPresenceType.musicAppInHeader:
+        listeningToText = gateway.defaultMusicApp!;
+
+        detailedViewWidgets.add(Text(trimText(track.name)));
         detailedViewWidgets.add(Text(trimText(track.artist)));
         detailedViewWidgets.add(Text(playsText));
         break;

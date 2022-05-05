@@ -1,5 +1,4 @@
 import 'package:lfdi/constants.dart';
-import 'package:spotify/spotify.dart' as spotify;
 
 class TrackHandler {
   static Track getTrack(Map response) {

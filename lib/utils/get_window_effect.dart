@@ -18,7 +18,7 @@ WindowEffect getWindowEffect() {
 
       // Windows 10 1803 and higher
       if (buildNumber >= 17134 && buildNumber < 22000) {
-        return WindowEffect.acrylic;
+        return WindowEffect.disabled;
       }
 
       // Windows 11+

@@ -6,7 +6,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lfdi/handlers/discord_websocket/websocket_manager.dart';
 import 'package:lfdi/main.dart';
 import 'package:spotify/spotify.dart';
-import 'package:oauth2/oauth2.dart' as oauth2;
 
 class DiscordForm extends ConsumerStatefulWidget {
   const DiscordForm({Key? key}) : super(key: key);
@@ -116,6 +115,28 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
                     return;
                   }
 
+                  // Check lastfm
+                  final lastfmApiKey = box.get('apiKey');
+                  final lastfmUsername = box.get('username');
+
+                  if (lastfmUsername == null ||
+                      lastfmApiKey == null ||
+                      lastfmUsername.isEmpty ||
+                      lastfmApiKey.isEmpty) {
+                    setState(() {
+                      processing = false;
+                    });
+
+                    showSnackbar(
+                      context,
+                      const Snackbar(
+                        content: Text(
+                          'Set up Last.fm firstly.',
+                        ),
+                      ),
+                    );
+                  }
+
                   if (discordFormKey.currentState!.validate()) {
                     setState(() {
                       processing = true;
@@ -126,6 +147,9 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
 
                     DiscordWebSocketManager webSocketManager =
                         ref.read(discordGatewayProvider);
+
+                    webSocketManager.lastFmApiKey = lastfmApiKey;
+                    webSocketManager.lastFmUsername = lastfmUsername;
 
                     if (webSocketManager.identifyIsSent) {
                       webSocketManager.reinit();
@@ -217,6 +241,18 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
                     webSocketManager.spotifyApi = SpotifyApi(
                       SpotifyApiCredentials(spotifyApiKey, spotifyApiSecret),
                     );
+
+                    if (!webSocketManager.initialized) {
+                      webSocketManager.init();
+
+                      final priorUsing = box.get('priorUsing');
+
+                      if (priorUsing == 'discord') {
+                        if (!webSocketManager.started) {
+                          webSocketManager.startUpdating();
+                        }
+                      }
+                    }
                   }
 
                   showSnackbar(

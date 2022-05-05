@@ -29,6 +29,7 @@ class ReconnectHandler extends GatewayHandler {
         );
 
         discordWebSoket.sendMessage(gatewayMessage);
+        discordWebSoket.removeListener(listenerName: 'on_resume_hadler');
       },
     );
     log('[DWS: ReconnectHandler]: Closing connection for reconnect');

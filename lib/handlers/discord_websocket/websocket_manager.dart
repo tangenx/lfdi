@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:hive_flutter/adapters.dart';
 import 'package:lfdi/api/api.dart';
 import 'package:lfdi/constants.dart';
 import 'package:lfdi/handlers/discord_websocket/discord_websocket.dart';
@@ -8,6 +9,7 @@ import 'package:lfdi/handlers/discord_websocket/gateway_message.dart';
 import 'package:lfdi/handlers/discord_websocket/presence_generator.dart';
 import 'package:lfdi/handlers/track_handler.dart' as rpc_track;
 import 'package:spotify/spotify.dart';
+import 'package:oauth2/oauth2.dart';
 
 class DiscordWebSocketManager {
   String discordToken;
@@ -133,11 +135,24 @@ class DiscordWebSocketManager {
         String coverId;
         log('Search track: ${track.artist} - ${track.name}');
         log('Search query: ${rpc_track.TrackHandler.removeFeat(track.artist)} ${track.name}');
-        final search = await spotifyApi!.search
-            .get(
-              '${rpc_track.TrackHandler.removeFeat(track.artist)} ${track.name}',
-            )
-            .first(1);
+        List<Page<dynamic>> search;
+
+        try {
+          search = await spotifyApi!.search
+              .get(
+                '${rpc_track.TrackHandler.removeFeat(track.artist)} ${track.name}',
+              )
+              .first(1);
+        } on ExpirationException {
+          refreshSpotify();
+
+          search = await spotifyApi!.search
+              .get(
+                '${rpc_track.TrackHandler.removeFeat(track.artist)} ${track.name}',
+              )
+              .first(1);
+        }
+
         List<Track> results = [];
 
         if (search.isNotEmpty) {
@@ -150,9 +165,13 @@ class DiscordWebSocketManager {
           listPages.remove(listPages[4]);
 
           for (var pages in listPages) {
-            for (var item in pages.items!) {
-              if (item is Track) {
-                results.add(item);
+            if (pages.items != null &&
+                pages.items.length != 0 &&
+                pages.items!.first != null) {
+              for (var item in pages.items!) {
+                if (item is Track) {
+                  results.add(item);
+                }
               }
             }
           }
@@ -317,5 +336,18 @@ class DiscordWebSocketManager {
     );
 
     sendMessage(message);
+  }
+
+  void refreshSpotify() {
+    var box = Hive.box('lfdi');
+    final clientId = box.get('spotifyApiKey');
+    final clientSecret = box.get('spotifyApiSecret');
+
+    spotifyApi = SpotifyApi(
+      SpotifyApiCredentials(
+        clientId,
+        clientSecret,
+      ),
+    );
   }
 }

@@ -66,6 +66,11 @@ class DiscordWebSocketManager {
         stopUpdating();
       },
     );
+    ws.addListener(
+        name: 'onReconnect_Manager',
+        listener: () {
+          sendIdentify();
+        });
     ws.init();
     initialized = true;
     log('[DWS: Manager]: Successfully initialized');

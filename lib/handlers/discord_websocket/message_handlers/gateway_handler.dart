@@ -1,7 +1,7 @@
 // Default Handler class, used for extending other Handlers
+import 'package:lfdi/handlers/discord_websocket/discord_websocket.dart';
 import 'package:lfdi/handlers/discord_websocket/gateway_message.dart';
 import 'package:lfdi/handlers/discord_websocket/message_handlers/handler_data.dart';
-import 'package:web_socket_channel/io.dart';
 
 abstract class GatewayHandler {
   DiscordGatewayMessage? message;
@@ -17,8 +17,7 @@ abstract class GatewayHandler {
   /// so they can manipulate them
   /// (or just return they in GatewayHandlerData, why not?)
   GatewayHandlerData handle(
-    IOWebSocketChannel channel,
-    Function getLastSequence,
+    DiscordWebSoket discordWebSoket,
   ) {
     return GatewayHandlerData(
       operationCode: 999,

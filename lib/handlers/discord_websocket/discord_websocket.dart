@@ -7,6 +7,7 @@ import 'package:lfdi/constants.dart';
 import 'package:lfdi/handlers/discord_websocket/gateway_message.dart';
 import 'package:lfdi/handlers/discord_websocket/message_handlers/handler_data.dart';
 import 'package:lfdi/handlers/discord_websocket/message_handlers/handler_factory.dart';
+import 'package:lfdi/utils/generate_random_string.dart';
 import 'package:web_socket_channel/io.dart';
 
 class DiscordWebSoket {
@@ -25,6 +26,12 @@ class DiscordWebSoket {
   /// Used for checking timer heartbeat
   bool heartbeatIsConfigured = false;
   Timer? heartbeatTimer;
+
+  /// Session token (random string?)
+  String sessionToken = getRandomString(32);
+
+  /// Session ID (even more random string?)
+  String sessionId = getRandomString(16);
 
   /// Initialize websokcet
   void init() {
@@ -47,6 +54,16 @@ class DiscordWebSoket {
       webSocketMessagesHandler(webSocketMessage);
     }, onDone: () {
       log('[DWS: Main] WebSocket connection was closed.');
+      // When OP Code `7` has recieved
+      if (listeners['on_resume_hadler'] != null) {
+        listeners['on_resume_hadler']!();
+
+        if (listeners['onReconnect_Manager'] != null) {
+          listeners['onReconnect_Manager']!();
+        }
+
+        return;
+      }
       listeners['onClose_Manager']!();
 
       if (listeners['onClose'] != null) {
@@ -74,8 +91,7 @@ class DiscordWebSoket {
 
     // All handlers must return data, regardless of whether they are empty
     // Return class is `GatewayHandlerData`
-    final GatewayHandlerData dataFromHandler =
-        handler.handle(webSocketChannel, getlastSequence);
+    final GatewayHandlerData dataFromHandler = handler.handle(this);
     log('[DWS: WSMessageHandler] Handler returns data: ${dataFromHandler.toString()}');
 
     // Set lastSequence

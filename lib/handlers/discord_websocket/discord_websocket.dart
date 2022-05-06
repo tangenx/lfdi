@@ -71,6 +71,9 @@ class DiscordWebSoket {
         // Stop updates from Manager (if started)
 
         listeners['onReconnect_Manager']!();
+        if (listeners['onReconnect_showSnackbar'] != null) {
+          listeners['onReconnect_showSnackbar']!();
+        }
         return;
       }
 
@@ -78,8 +81,12 @@ class DiscordWebSoket {
       if (listeners['on_resume_hadler'] != null) {
         listeners['on_resume_hadler']!();
 
-        if (listeners['onReconnect_Manager'] != null) {
-          listeners['onReconnect_Manager']!();
+        if (listeners['onReconnectOp7_Manager'] != null) {
+          listeners['onReconnectOp7_Manager']!();
+
+          if (listeners['onReconnect_showSnackbar'] != null) {
+            listeners['onReconnect_showSnackbar']!();
+          }
         }
 
         return;
@@ -133,6 +140,10 @@ class DiscordWebSoket {
           dataFromHandler.data!['configureHeartbeat'] != null) {
         if (!heartbeatIsConfigured) {
           log('Setup heartbeat timer.', name: 'DWS: WSMessageHandler');
+          if (listeners['onConnect_showSnackbar'] != null) {
+            listeners['onConnect_showSnackbar']!();
+          }
+
           heartbeatTimer = Timer.periodic(
             Duration(milliseconds: gatewayMessage.data['heartbeat_interval']),
             (timer) {

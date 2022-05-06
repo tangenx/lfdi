@@ -39,6 +39,30 @@ class _HomePageState extends ConsumerState<HomePage>
       const Duration(milliseconds: 500),
     );
 
+    final ws = ref.read(discordGatewayProvider);
+    ws.addListener(
+      name: 'onReconnect_showSnackbar',
+      listener: () {
+        showSnackbar(
+          context,
+          const Snackbar(
+            content: Text('Reconnecting to Gateway...'),
+          ),
+        );
+      },
+    );
+    ws.addListener(
+      name: 'onConnect_showSnackbar',
+      listener: () {
+        showSnackbar(
+          context,
+          const Snackbar(
+            content: Text('Connected to Gateway.'),
+          ),
+        );
+      },
+    );
+
     initTray();
 
     super.initState();
@@ -119,7 +143,8 @@ class _HomePageState extends ConsumerState<HomePage>
           return ContentDialog(
             title: const Text('Close or minimize to tray'),
             content: const Text(
-                'Choose what you want: close the app or minimize it to tray'),
+              'Choose what you want: close the app or minimize it to tray',
+            ),
             actions: [
               Button(
                 child: const Text('Minimize'),

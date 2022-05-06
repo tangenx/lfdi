@@ -100,7 +100,7 @@ class DiscordWebSocketManager {
       },
     );
     ws.addListener(
-        name: 'onReconnect_Manager',
+        name: 'onReconnectOp7_Manager',
         listener: () {
           log('Triggered.', name: 'DWS: Manager onReconnect_Manager');
           sendIdentify();

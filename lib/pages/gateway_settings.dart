@@ -99,8 +99,9 @@ class _GatewaySettingsPageState extends ConsumerState<GatewaySettingsPage> {
             Button(
               child: const Text('Why?'),
               onPressed: () {
-                // TODO: write an article about it
-                launchUrl(Uri.parse('https://flutter.dev'));
+                launchUrl(Uri.parse(
+                  'https://github.com/tangenx/lfdi/blob/lord/docs/en/why%20the%20gateway%20seems%20illegal.md',
+                ));
               },
             ),
           ],

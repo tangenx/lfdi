@@ -57,14 +57,42 @@ class DiscordWebSocketManager {
       return;
     }
     log('[DWS: Manager]: Start init');
+
+    ws.addListener(
+      name: 'onReconnect_Manager',
+      listener: () {
+        log('Triggered.', name: 'DWS: Manager onReconnect_Manager');
+        if (started) {
+          log('Stop updating.', name: 'DWS: Manager onReconnect_Manager');
+          stopUpdating();
+        }
+      },
+    );
+    ws.addListener(
+        name: 'onReconnected_Manager',
+        listener: () async {
+          log('Triggered.', name: 'DWS: Manager onReconnected_Manager');
+          if (initialized) {
+            identifyIsSent = false;
+            log('Sending identify.',
+                name: 'DWS: Manager onReconnected_Manager');
+            await Future.delayed(const Duration(seconds: 1));
+            sendIdentify();
+            if (spotifyApi != null) {
+              var box = Hive.box('lfdi');
+
+              if (box.get('priorUsing') == 'discord') {
+                startUpdating();
+              }
+            }
+          }
+        });
+
     // Add listener to dispose manager after websocket closed state.
     ws.addListener(
       name: 'onClose_Manager',
       listener: () {
-        if (identifyIsSent) {
-          clearPresence();
-        }
-
+        log('Triggered.', name: 'DWS: Manager onClose_Manager');
         initialized = false;
         identifyIsSent = false;
         started = false;
@@ -74,7 +102,10 @@ class DiscordWebSocketManager {
     ws.addListener(
         name: 'onReconnect_Manager',
         listener: () {
+          log('Triggered.', name: 'DWS: Manager onReconnect_Manager');
           sendIdentify();
+          initialized = true;
+          started = true;
         });
     ws.init();
     initialized = true;
@@ -111,7 +142,7 @@ class DiscordWebSocketManager {
         Map response = API
             .checkAPI(await API.getRecentTrack(lastFmUsername!, lastFmApiKey!));
         if (response['status'] == 'error') {
-          log('[DWS: Manager] Error getting recent tracks, abort.');
+          log('Error getting recent tracks, abort.', name: 'DWS: Manager');
           return;
         }
 
@@ -121,7 +152,7 @@ class DiscordWebSocketManager {
         currentTrack = track;
 
         if (!track.nowPlaying) {
-          log('[DWS: Manager] No playing tracks now, abort.');
+          log('No playing tracks now, abort.', name: 'DWS: Manager');
           clearPresence();
           return;
         }
@@ -130,7 +161,7 @@ class DiscordWebSocketManager {
         Map trackInfo = API.checkAPI(await API.getTrackInfo(
             lastFmUsername!, lastFmApiKey!, track.name, track.artist));
         if (trackInfo['status'] == 'error') {
-          log('[DWS: Manager] Error getting track info, abort.');
+          log('Error getting track info, abort.', name: 'DWS: Manager');
           return;
         }
 
@@ -244,7 +275,7 @@ class DiscordWebSocketManager {
         );
 
         sendPresence(presence: presence);
-        log('[DWS: Manager] Presence updated.');
+        log('Presence updated.', name: 'DWS: Manager');
       },
     );
 
@@ -252,11 +283,11 @@ class DiscordWebSocketManager {
   }
 
   void stopUpdating() {
-    log('[DWS: Manager] Triggered stopUpdating.');
+    log('Triggered stopUpdating.', name: 'DWS: Manager');
     started = false;
-    clearPresence();
     updatePresenceTimer?.cancel();
-    log('[DWS: Manager] updatePresenceTimer state: ${updatePresenceTimer?.isActive}.');
+    log('updatePresenceTimer state: ${updatePresenceTimer?.isActive}.',
+        name: 'DWS: Manager');
   }
 
   void dispose() {
@@ -281,10 +312,13 @@ class DiscordWebSocketManager {
   }
 
   void sendIdentify() {
+    log('Triggered.', name: 'DWS: Manager sendIdentify');
     if (identifyIsSent) {
+      log('Identify is sent, aborting.', name: 'DWS: Manager sendIdentify');
       return;
     }
 
+    log('Sending identify.', name: 'DWS: Manager sendIdentify');
     DiscordGatewayMessage message = DiscordGatewayMessage(
       // OP Code 2 - Identify -	used for client handshake
       operationCode: 2,

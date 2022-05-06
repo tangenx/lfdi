@@ -278,45 +278,49 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
               const SizedBox(
                 width: 10,
               ),
-              Button(
-                child: const Text('Clear'),
-                onPressed: () {
-                  if (processing) {
-                    return;
-                  }
-                  setState(() {
-                    processing = true;
-                  });
+              Row(
+                children: [
+                  Button(
+                    child: const Text('Clear'),
+                    onPressed: () {
+                      if (processing) {
+                        return;
+                      }
+                      setState(() {
+                        processing = true;
+                      });
 
-                  discordTokenController.text = '';
+                      discordTokenController.text = '';
 
-                  box.put('discordToken', '');
+                      box.put('discordToken', '');
 
-                  DiscordWebSocketManager webSocketManager =
-                      ref.read(discordGatewayProvider);
+                      DiscordWebSocketManager webSocketManager =
+                          ref.read(discordGatewayProvider);
 
-                  if (webSocketManager.initialized) {
-                    webSocketManager.dispose();
-                  }
+                      if (webSocketManager.initialized) {
+                        webSocketManager.dispose();
+                      }
 
-                  spotifyApiKeyController.text = '';
-                  spotifyApiSecretController.text = '';
+                      spotifyApiKeyController.text = '';
+                      spotifyApiSecretController.text = '';
 
-                  box.put('spotifyApiKey', '');
-                  box.put('spotifyApiSecret', '');
+                      box.put('spotifyApiKey', '');
+                      box.put('spotifyApiSecret', '');
 
-                  showSnackbar(
-                    context,
-                    const Snackbar(
-                      content: Text('Done'),
-                    ),
-                  );
+                      showSnackbar(
+                        context,
+                        const Snackbar(
+                          content: Text('Done'),
+                        ),
+                      );
 
-                  setState(() {
-                    processing = false;
-                  });
-                },
-              ),
+                      setState(() {
+                        processing = false;
+                      });
+                    },
+                  ),
+                ],
+              )
             ],
           ),
         ],

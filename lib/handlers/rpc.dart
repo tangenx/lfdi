@@ -18,6 +18,9 @@ class RPC {
   String applicationId = defaultDiscordAppID;
   DiscordRPC? rpc;
 
+  /// Stores all listeners
+  Map<String, Function> listeners = {};
+
   Track currentTrack = Track(
     album: 'Test album',
     artist: 'Test artist',
@@ -133,6 +136,9 @@ class RPC {
         ),
       );
       logger.info('track updated.', name: 'RPC');
+      if (listeners['onTrackChange'] != null) {
+        listeners['onTrackChange']!();
+      }
     });
 
     started = true;
@@ -164,5 +170,25 @@ class RPC {
     started = false;
     initialized = false;
     rpc?.shutDown();
+  }
+
+  /// Set up listeners (must before init)
+  void setUpListeners(Map<String, Function> listeners) {
+    this.listeners = listeners;
+  }
+
+  void addListener({
+    required String name,
+    required Function listener,
+  }) {
+    listeners[name] = listener;
+  }
+
+  void removeListener({required String listenerName}) {
+    listeners.remove(listenerName);
+  }
+
+  void removeAllListeners() {
+    listeners.clear();
   }
 }

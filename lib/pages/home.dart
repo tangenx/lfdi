@@ -145,6 +145,7 @@ class _HomePageState extends ConsumerState<HomePage>
   @override
   void onWindowClose() async {
     bool _isPreventClose = await windowManager.isPreventClose();
+
     if (_isPreventClose) {
       showDialog(
         context: context,
@@ -250,7 +251,7 @@ class _HomePageState extends ConsumerState<HomePage>
           ),
           PaneItem(
             icon: const Icon(FluentIcons.content_feed),
-            title: const Text('Logs Console'),
+            title: const Text('Log Console'),
           ),
         ],
         footerItems: [

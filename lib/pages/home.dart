@@ -8,6 +8,7 @@ import 'package:lfdi/icons/lfdi_icons.dart';
 import 'package:lfdi/main.dart';
 import 'package:lfdi/pages/about.dart';
 import 'package:lfdi/pages/gateway_settings.dart';
+import 'package:lfdi/pages/log_console.dart';
 import 'package:lfdi/pages/rpc_settings.dart';
 import 'package:lfdi/pages/settings.dart';
 import 'package:tray_manager/tray_manager.dart';
@@ -247,6 +248,10 @@ class _HomePageState extends ConsumerState<HomePage>
             icon: const Icon(FluentIcons.preview_link),
             title: const Text('Discord Rich Presence'),
           ),
+          PaneItem(
+            icon: const Icon(FluentIcons.content_feed),
+            title: const Text('Logs Console'),
+          ),
         ],
         footerItems: [
           PaneItemSeparator(),
@@ -262,6 +267,7 @@ class _HomePageState extends ConsumerState<HomePage>
           SettingsPage(),
           GatewaySettingsPage(),
           DiscordRPCPage(),
+          LogConsole(),
           AboutPage(),
         ],
       ),

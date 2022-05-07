@@ -10,7 +10,7 @@ class ReconnectHandler extends GatewayHandler {
   GatewayHandlerData handle(
     DiscordWebSoket discordWebSoket,
   ) {
-    logger.i('[DWS: ReconnectHandler]: Set up reconnect listeners');
+    logger.info('Set up reconnect listeners', name: 'DWS: ReconnectHandler');
     discordWebSoket.addListener(
       name: 'on_resume_hadler',
       listener: () {
@@ -31,7 +31,10 @@ class ReconnectHandler extends GatewayHandler {
         discordWebSoket.removeListener(listenerName: 'on_resume_hadler');
       },
     );
-    logger.i('[DWS: ReconnectHandler]: Closing connection for reconnect');
+    logger.info(
+      'Closing connection for reconnect',
+      name: 'DWS: ReconnectHandler',
+    );
     discordWebSoket.closeConnection();
 
     return GatewayHandlerData(operationCode: 7, error: null, data: {

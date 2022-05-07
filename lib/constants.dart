@@ -43,7 +43,7 @@ const Color discordDarkThemeLowerHeadingColor = Color(0xFFd7d8d9);
 const Color discordLightThemeHeadingColor = Color(0xFF4f5660);
 const Color discordLightThemeLowerHeadingColor = Color(0xFF2e3338);
 
-Map<String, Color> typeToColor = {
+Map<String, Color> logTypeToColor = {
   'info': const Color(0xFF5d93ff),
   'warning': const Color(0xFFff6600),
   'error': Colors.red,

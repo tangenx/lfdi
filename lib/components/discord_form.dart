@@ -214,7 +214,7 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
                       //   httpClient: null,
                       // );
                     } catch (error) {
-                      logger.e(
+                      logger.error(
                           'Caught error while connecting to Spotify: ${error.runtimeType}');
                       isSpotifyError = true;
                     }

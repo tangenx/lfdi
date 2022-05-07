@@ -10,6 +10,7 @@ import 'package:lfdi/pages/home.dart';
 import 'package:lfdi/handlers/rpc.dart';
 import 'package:lfdi/theme.dart';
 import 'package:lfdi/utils/get_window_effect.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:spotify/spotify.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -25,6 +26,7 @@ void main() async {
   await WindowManager.instance.ensureInitialized();
   await Hive.initFlutter();
   await Hive.openBox('lfdi');
+  await getApplicationDocumentsDirectory();
 
   windowManager.waitUntilReadyToShow(windowOptions, () async {
     acryllic.WindowEffect windowEffect = getWindowEffect();

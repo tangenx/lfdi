@@ -52,18 +52,19 @@ class DiscordWebSocketManager {
 
   /// Init websockets and setup listeners
   void init() {
-    logger.i('[DWS: Manager]: Triggered init');
+    logger.info('Triggered init', name: 'DWS: Manager');
     if (initialized) {
       return;
     }
-    logger.i('[DWS: Manager]: Start init');
+    logger.info('Start init', name: 'DWS: Manager');
 
     ws.addListener(
       name: 'onReconnect_Manager',
       listener: () {
-        logger.i('[DWS: Manager onReconnect_Manager] Triggered.');
+        logger.info('Triggered.', name: 'DWS: Manager onReconnect_Manager');
         if (started) {
-          logger.i('[DWS: Manager onReconnect_Manager] Stop updating.');
+          logger.info('Stop updating.',
+              name: 'DWS: Manager onReconnect_Manager');
           stopUpdating();
         }
       },
@@ -71,10 +72,13 @@ class DiscordWebSocketManager {
     ws.addListener(
         name: 'onReconnected_Manager',
         listener: () async {
-          logger.i('[DWS: Manager onReconnected_Manager] Triggered.');
+          logger.info('Triggered.', name: 'DWS: Manager onReconnected_Manager');
           if (initialized) {
             identifyIsSent = false;
-            logger.i('[DWS: Manager onReconnected_Manager] Sending identify.');
+            logger.info(
+              'Sending identify.',
+              name: 'DWS: Manager onReconnected_Manager',
+            );
             await Future.delayed(const Duration(seconds: 1));
             sendIdentify();
             if (spotifyApi != null) {
@@ -91,7 +95,7 @@ class DiscordWebSocketManager {
     ws.addListener(
       name: 'onClose_Manager',
       listener: () {
-        logger.i('[DWS: Manager onClose_Manager] Triggered.');
+        logger.info('Triggered.', name: 'DWS: Manager onClose_Manager');
         initialized = false;
         identifyIsSent = false;
         started = false;
@@ -101,22 +105,22 @@ class DiscordWebSocketManager {
     ws.addListener(
         name: 'onReconnectOp7_Manager',
         listener: () {
-          logger.i('[DWS: Manager onReconnect_Manager] Triggered.');
+          logger.info('Triggered.', name: 'DWS: Manager onReconnect_Manager');
           sendIdentify();
           initialized = true;
           started = true;
         });
     ws.init();
     initialized = true;
-    logger.i('[DWS: Manager]: Successfully initialized');
+    logger.info('Successfully initialized', name: 'DWS: Manager');
   }
 
   void reinit() {
-    logger.i('[DWS: Manager]: Triggered reinit');
+    logger.info('Triggered reinit', name: 'DWS: Manager');
     if (!initialized) {
       return;
     }
-    logger.i('[DWS: Manager]: Start reinit');
+    logger.info('Start reinit', name: 'DWS: Manager');
 
     dispose();
 
@@ -125,12 +129,12 @@ class DiscordWebSocketManager {
 
   /// Start updating Presence
   void startUpdating() {
-    logger.i('[DWS: Manager]: Triggered startUpdating');
+    logger.info('Triggered startUpdating', name: 'DWS: Manager');
     if (!initialized || started) {
       return;
     }
 
-    logger.i('[DWS: Manager]: Presence updating started');
+    logger.info('Presence updating started', name: 'DWS: Manager');
     if (!identifyIsSent) {
       sendIdentify();
     }
@@ -141,7 +145,10 @@ class DiscordWebSocketManager {
         Map response = API
             .checkAPI(await API.getRecentTrack(lastFmUsername!, lastFmApiKey!));
         if (response['status'] == 'error') {
-          logger.w('[DWS: Manager] Error getting recent tracks, abort.');
+          logger.warning(
+            'Error getting recent tracks, abort.',
+            name: 'DWS: Manager',
+          );
           return;
         }
 
@@ -151,7 +158,7 @@ class DiscordWebSocketManager {
         currentTrack = track;
 
         if (!track.nowPlaying) {
-          logger.w('[DWS: Manager] No playing tracks now, abort.');
+          logger.warning('No playing tracks now, abort.', name: 'DWS: Manager');
           clearPresence();
           return;
         }
@@ -160,14 +167,17 @@ class DiscordWebSocketManager {
         Map trackInfo = API.checkAPI(await API.getTrackInfo(
             lastFmUsername!, lastFmApiKey!, track.name, track.artist));
         if (trackInfo['status'] == 'error') {
-          logger.w('[DWS: Manager] Error getting track info, abort.');
+          logger.warning(
+            'Error getting track info, abort.',
+            name: 'DWS: Manager',
+          );
           return;
         }
 
         // Building track cover from Spotify
         String coverId;
-        logger.i('Search track: ${track.artist} - ${track.name}');
-        logger.i(
+        logger.info('Search track: ${track.artist} - ${track.name}');
+        logger.info(
           'Search query: ${rpc_track.TrackHandler.removeFeat(track.artist)} ${track.name}',
         );
         List<Page<dynamic>> search;
@@ -227,7 +237,7 @@ class DiscordWebSocketManager {
 
         // Get duration from Spotify (why not)
         if (trackDurationMs == 0) {
-          logger.i('Last.fm didnt give the duration, look at Spotify...');
+          logger.info('Last.fm didnt give the duration, look at Spotify...');
           if (results.isNotEmpty) {
             trackDurationMs = results.first.durationMs ?? 0;
           }
@@ -240,7 +250,7 @@ class DiscordWebSocketManager {
               ' (~${rpc_track.TrackHandler.getTotalListeningTime(track)})';
         }
 
-        logger.i('Music search results length: ${results.length}');
+        logger.info('Music search results length: ${results.length}');
 
         if (results.isNotEmpty) {
           final spotifyTrack = results.first;
@@ -276,7 +286,7 @@ class DiscordWebSocketManager {
         );
 
         sendPresence(presence: presence);
-        logger.i('[DWS: Manager] Presence updated.');
+        logger.info('Presence updated.', name: 'DWS: Manager');
       },
     );
 
@@ -284,16 +294,17 @@ class DiscordWebSocketManager {
   }
 
   void stopUpdating() {
-    logger.i('[DWS: Manager] Triggered stopUpdating.');
+    logger.info('Triggered stopUpdating.', name: 'DWS: Manager');
     started = false;
     updatePresenceTimer?.cancel();
-    logger.i(
-      '[DWS: Manager] updatePresenceTimer state: ${updatePresenceTimer?.isActive}.',
+    logger.info(
+      'updatePresenceTimer state: ${updatePresenceTimer?.isActive}.',
+      name: 'DWS: Manager',
     );
   }
 
   void dispose() {
-    logger.i('[DWS: Manager]: Triggered dispose');
+    logger.info('Triggered dispose', name: 'DWS: Manager');
     ws.dispose();
   }
 
@@ -314,13 +325,16 @@ class DiscordWebSocketManager {
   }
 
   void sendIdentify() {
-    logger.i('[DWS: Manager sendIdentify] Triggered.');
+    logger.info('Triggered.', name: 'DWS: Manager sendIdentify');
     if (identifyIsSent) {
-      logger.w('[DWS: Manager sendIdentify] Identify is sent, aborting.');
+      logger.warning(
+        'Identify is sent, aborting.',
+        name: 'DWS: Manager sendIdentify',
+      );
       return;
     }
 
-    logger.i('[DWS: Manager sendIdentify] Sending identify.');
+    logger.info('Sending identify.', name: 'DWS: Manager sendIdentify');
     DiscordGatewayMessage message = DiscordGatewayMessage(
       // OP Code 2 - Identify -	used for client handshake
       operationCode: 2,

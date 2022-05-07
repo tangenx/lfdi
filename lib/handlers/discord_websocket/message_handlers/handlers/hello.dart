@@ -25,7 +25,7 @@ class HelloHandler extends GatewayHandler {
 
     helloAlreadyRecieved = true;
 
-    logger.i('[DWS: HelloHandler] Received timer setup command.');
+    logger.info('Received timer setup command.', name: 'DWS: HelloHandler');
     return GatewayHandlerData(
       operationCode: 10,
       data: {
@@ -37,7 +37,7 @@ class HelloHandler extends GatewayHandler {
   }
 
   void disposeHeartbeat() {
-    logger.i('[DWS: HelloHandler] Triggered dispose');
+    logger.info('Triggered dispose', name: 'DWS: HelloHandler');
     helloAlreadyRecieved = false;
   }
 }

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:lfdi/globals.dart';
 import 'package:lfdi/handlers/discord_websocket/discord_websocket.dart';
 import 'package:lfdi/handlers/discord_websocket/gateway_message.dart';
@@ -12,7 +10,7 @@ class ReconnectHandler extends GatewayHandler {
   GatewayHandlerData handle(
     DiscordWebSoket discordWebSoket,
   ) {
-    logger.info('[DWS: ReconnectHandler]: Set up reconnect listeners');
+    logger.i('[DWS: ReconnectHandler]: Set up reconnect listeners');
     discordWebSoket.addListener(
       name: 'on_resume_hadler',
       listener: () {
@@ -33,7 +31,7 @@ class ReconnectHandler extends GatewayHandler {
         discordWebSoket.removeListener(listenerName: 'on_resume_hadler');
       },
     );
-    logger.info('[DWS: ReconnectHandler]: Closing connection for reconnect');
+    logger.i('[DWS: ReconnectHandler]: Closing connection for reconnect');
     discordWebSoket.closeConnection();
 
     return GatewayHandlerData(operationCode: 7, error: null, data: {

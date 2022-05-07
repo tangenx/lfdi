@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:dart_discord_rpc/dart_discord_rpc.dart';
 import 'package:fluent_ui/fluent_ui.dart';
@@ -37,11 +36,11 @@ class RPC {
     required String apiKey,
     String? discordAppId,
   }) async {
-    logger.info('[RPC] trying init');
+    logger.i('[RPC] trying init');
     if (initialized) {
       return;
     }
-    logger.info('[RPC] initializing...');
+    logger.i('[RPC] initializing...');
 
     initialized = true;
 
@@ -53,14 +52,14 @@ class RPC {
     applicationId = discordAppId ?? defaultDiscordAppID;
 
     rpc?.start(autoRegister: true);
-    logger.info('[RPC] initialize complete.');
+    logger.i('[RPC] initialize complete.');
   }
 
   /// Required for changing ApplicationID
   reinitialize({
     required String applicationid,
   }) {
-    logger.info('[RPC] re-initializing...');
+    logger.i('[RPC] re-initializing...');
     dispose();
 
     initialize(
@@ -70,30 +69,30 @@ class RPC {
     );
 
     start();
-    logger.info('[RPC] re-init complete.');
+    logger.i('[RPC] re-init complete.');
   }
 
   /// Start the RPC
   start() {
-    logger.info('[RPC] trying start');
+    logger.i('[RPC] trying start');
     if (!initialized || started) {
       return;
     }
-    logger.info('[RPC] starting..');
+    logger.i('[RPC] starting..');
 
     timer = Timer.periodic(const Duration(seconds: 30), (timer) async {
-      logger.info('[RPC] start updating track...');
+      logger.i('[RPC] start updating track...');
       // get info about current scrobbling track
       Map response = API.checkAPI(await API.getRecentTrack(username, apiKey));
       if (response['status'] == 'error') {
-        logger.warning('[RPC] error getting recent tracks, abort.');
+        logger.w('[RPC] error getting recent tracks, abort.');
         return;
       }
 
       Track track = TrackHandler.getTrack(response['message']);
       currentTrack = track;
       if (!track.nowPlaying) {
-        logger.warning('[RPC] no playing tracks now, abort.');
+        logger.w('[RPC] no playing tracks now, abort.');
         rpc?.clearPresence();
         return;
       }
@@ -101,7 +100,7 @@ class RPC {
       Map trackInfo = API.checkAPI(
           await API.getTrackInfo(username, apiKey, track.name, track.artist));
       if (trackInfo['status'] == 'error') {
-        logger.warning('[RPC] error getting track info, abort.');
+        logger.w('[RPC] error getting track info, abort.');
         return;
       }
 
@@ -133,7 +132,7 @@ class RPC {
           state: track.artist,
         ),
       );
-      logger.info('[RPC] track updated.');
+      logger.i('[RPC] track updated.');
     });
 
     started = true;
@@ -141,11 +140,11 @@ class RPC {
 
   /// Stop the RPC
   stop() {
-    logger.info('[RPC] trying stop');
+    logger.i('[RPC] trying stop');
     if (!started) {
       return;
     }
-    logger.info('[RPC] stopping...');
+    logger.i('[RPC] stopping...');
 
     started = false;
     rpc?.clearPresence();
@@ -154,11 +153,11 @@ class RPC {
 
   /// Dispose the RPC
   dispose() {
-    logger.info('[RPC] trying dispose');
+    logger.i('[RPC] trying dispose');
     if (!initialized) {
       return;
     }
-    logger.info('[RPC] disposing...');
+    logger.i('[RPC] disposing...');
 
     timer.cancel();
     rpc?.updatePresence(DiscordPresence());

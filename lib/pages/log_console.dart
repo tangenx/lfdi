@@ -13,17 +13,19 @@ class LogConsole extends StatefulWidget {
 
 class _LogConsoleState extends State<LogConsole> {
   Timer? updateTimer;
-  final ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController(
+    keepScrollOffset: true,
+    initialScrollOffset: 1.0,
+  );
   List<Map<String, String>> logMessages = [];
 
   @override
   void initState() {
     logMessages = logger.logMessages;
+
     updateTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
       setState(() {
-        if (!_scrollController.hasClients) {
-          logMessages = logger.logMessages;
-        }
+        logMessages = logger.logMessages;
       });
     });
     super.initState();
@@ -47,12 +49,12 @@ class _LogConsoleState extends State<LogConsole> {
         ),
         child: ListView.builder(
           controller: _scrollController,
-          itemCount: logger.logMessages.length,
+          itemCount: logMessages.length,
           shrinkWrap: true,
           itemBuilder: (context, index) => SelectableText(
-            logger.logMessages[index]['message']!,
+            logMessages[index]['message']!,
             style: TextStyle(
-              color: typeToColor[logger.logMessages[index]['type']],
+              color: typeToColor[logMessages[index]['type']],
               fontSize: 12,
             ),
           ),

@@ -110,8 +110,16 @@ class _HomePageState extends ConsumerState<HomePage>
         break;
       case 'close_window':
         final rpc = ref.read(rpcProvider);
+        final gateway = ref.read(discordGatewayProvider);
 
-        rpc.dispose();
+        if (rpc.started) {
+          rpc.dispose();
+        }
+
+        if (gateway.started) {
+          gateway.dispose();
+        }
+
         trayManager.removeListener(this);
         trayManager.destroy();
         windowManager.destroy();

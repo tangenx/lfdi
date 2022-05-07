@@ -18,6 +18,17 @@ class _SettingsFormState extends ConsumerState<SettingsForm> {
   final settingsFormKey = GlobalKey<FormState>();
   final apiKeyController = TextEditingController();
   final usernameController = TextEditingController();
+  var box = Hive.box('lfdi');
+
+  @override
+  void initState() {
+    final apiKey = box.get('apiKey');
+    final username = box.get('username');
+
+    apiKeyController.text = apiKey ?? '';
+    usernameController.text = username ?? '';
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -28,14 +39,6 @@ class _SettingsFormState extends ConsumerState<SettingsForm> {
 
   @override
   Widget build(BuildContext context) {
-    var box = Hive.box('lfdi');
-
-    final apiKey = box.get('apiKey');
-    final username = box.get('username');
-
-    apiKeyController.text = apiKey ?? '';
-    usernameController.text = username ?? '';
-
     /*
       at this point i realized
       that i had to edit the fluent_ui library
@@ -115,6 +118,25 @@ class _SettingsFormState extends ConsumerState<SettingsForm> {
 
                 final username = usernameController.text;
                 final apiKey = apiKeyController.text;
+
+                final lastfmApiKey = box.get('apiKey');
+                final lastfmUsername = box.get('username');
+
+                // Check on change
+                if (lastfmUsername == username && lastfmApiKey == apiKey) {
+                  showSnackbar(
+                    context,
+                    const Snackbar(
+                      content: Text('This data has already been saved'),
+                    ),
+                  );
+
+                  setState(() {
+                    processing = false;
+                  });
+                  return;
+                }
+
                 final testResponse =
                     API.checkAPI(await API.getRecentTrack(username, apiKey));
 

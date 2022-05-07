@@ -37,23 +37,40 @@ class _LogConsoleState extends State<LogConsole> {
       content: Column(
         children: [
           Container(
-            decoration: const BoxDecoration(
-              color: Colors.black,
-            ),
-            height: 340,
-            child: ListView.builder(
-              controller: _scrollController,
-              itemCount: logger.logMessages.length,
-              shrinkWrap: true,
-              itemBuilder: (context, index) => SelectableText(
-                logger.logMessages[index]['message']!,
-                style: TextStyle(
-                  color: logTypeToColor[logger.logMessages[index]['type']],
-                  fontSize: 12,
-                ),
+              decoration: const BoxDecoration(
+                color: Colors.black,
               ),
-            ),
-          ),
+              height: 340,
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                child: SelectableText.rich(
+                  TextSpan(
+                    children: logMessages
+                        .map(
+                          (e) => TextSpan(
+                            text: e['message']! + '\n',
+                            style: TextStyle(
+                              color: logTypeToColor[e['type']],
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ),
+              )
+              // ListView.builder(
+              //   controller: _scrollController,
+              //   itemCount: logMessages.length,
+              //   shrinkWrap: true,
+              //   itemBuilder: (context, index) => SelectableText(
+              //     logMessages[index]['message']!,
+              //     style: TextStyle(
+              //       color: logTypeToColor[logMessages[index]['type']],
+              //       fontSize: 12,
+              //     ),
+              //   ),
+              // ),
+              ),
           const SizedBox(
             height: 10,
           ),

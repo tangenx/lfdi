@@ -249,13 +249,17 @@ class _DiscordStatusPreviewState extends ConsumerState<DiscordStatusPreview> {
     gateway.addListener(
       name: 'onTrackChange',
       listener: () {
-        setState(() {});
+        if (mounted) {
+          setState(() {});
+        }
       },
     );
     rpc.addListener(
       name: 'onTrackChange',
       listener: () {
-        setState(() {});
+        if (mounted) {
+          setState(() {});
+        }
       },
     );
 

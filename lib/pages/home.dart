@@ -27,6 +27,7 @@ class _HomePageState extends ConsumerState<HomePage>
     with WindowListener, TrayListener {
   int index = 0;
   int trayClickCount = 0;
+  int altF4ClickCount = 0;
 
   late final void Function() resetClickCountDebounced;
 
@@ -147,6 +148,11 @@ class _HomePageState extends ConsumerState<HomePage>
     bool _isPreventClose = await windowManager.isPreventClose();
 
     if (_isPreventClose) {
+      altF4ClickCount++;
+      if (altF4ClickCount == 2) {
+        windowManager.destroy();
+      }
+
       showDialog(
         context: context,
         builder: (_) {
@@ -159,6 +165,7 @@ class _HomePageState extends ConsumerState<HomePage>
               Button(
                 child: const Text('Minimize'),
                 onPressed: () async {
+                  altF4ClickCount = 0;
                   Navigator.pop(context);
                   await windowManager.minimize();
                   await windowManager.hide();
@@ -167,6 +174,7 @@ class _HomePageState extends ConsumerState<HomePage>
               Button(
                 child: const Text('Close'),
                 onPressed: () async {
+                  altF4ClickCount = 0;
                   Navigator.pop(context);
                   windowManager.destroy();
                 },
@@ -174,6 +182,7 @@ class _HomePageState extends ConsumerState<HomePage>
               FilledButton(
                 child: const Text('Cancel'),
                 onPressed: () {
+                  altF4ClickCount = 0;
                   Navigator.pop(context);
                 },
               ),

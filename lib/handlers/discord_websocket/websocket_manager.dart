@@ -287,6 +287,9 @@ class DiscordWebSocketManager {
 
         sendPresence(presence: presence);
         logger.info('Presence updated.', name: 'DWS: Manager');
+        if (ws.listeners['onTrackChange'] != null) {
+          ws.listeners['onTrackChange']!();
+        }
       },
     );
 

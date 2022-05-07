@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:lfdi/components/discord_status_preview.dart';
 import 'package:lfdi/constants.dart';
+import 'package:lfdi/handlers/discord_websocket/websocket_manager.dart';
+import 'package:lfdi/handlers/rpc.dart';
 import 'package:lfdi/main.dart';
 
 class DiscordRPCPage extends ConsumerStatefulWidget {
@@ -17,19 +19,26 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
   GatewayPresenceType? currentGatewayPresenceType;
   bool changing = false;
   String? currentMusicApp;
+  var box = Hive.box('lfdi');
+  RPC? rpc;
+  DiscordWebSocketManager? gateway;
+
+  @override
+  void initState() {
+    rpc = ref.read(rpcProvider);
+    gateway = ref.read(discordGatewayProvider);
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    var box = Hive.box('lfdi');
-
-    final rpc = ref.watch(rpcProvider);
-    final gateway = ref.watch(discordGatewayProvider);
     final typography = FluentTheme.of(context).typography;
 
     setState(() {
-      boxValue = discordAppIdToAppName[rpc.applicationId];
-      currentGatewayPresenceType = gateway.presenceType;
-      currentMusicApp = gateway.defaultMusicApp;
+      boxValue = discordAppIdToAppName[rpc!.applicationId];
+      currentGatewayPresenceType = gateway!.presenceType;
+      currentMusicApp = gateway!.defaultMusicApp;
     });
 
     return ScaffoldPage.scrollable(
@@ -92,7 +101,7 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
 
                         box.put('discordAppID', changingApplicationId);
 
-                        rpc.reinitialize(applicationid: changingApplicationId);
+                        rpc!.reinitialize(applicationid: changingApplicationId);
 
                         showSnackbar(
                           context,
@@ -154,13 +163,13 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
 
                     box.put('gatewayPresenceType', changingPresenceType);
 
-                    if (gateway.started) {
-                      gateway.stopUpdating();
+                    if (gateway!.started) {
+                      gateway!.stopUpdating();
                     }
 
-                    gateway.presenceType = presenceType;
+                    gateway!.presenceType = presenceType;
 
-                    gateway.startUpdating();
+                    gateway!.startUpdating();
 
                     showSnackbar(
                       context,
@@ -221,7 +230,7 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
 
                     box.put('defaultMusicApp', changingMusicApp);
 
-                    gateway.defaultMusicApp = changingMusicApp;
+                    gateway!.defaultMusicApp = changingMusicApp;
 
                     showSnackbar(
                       context,

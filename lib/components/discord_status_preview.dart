@@ -20,6 +20,14 @@ class DiscordStatusPreview extends ConsumerStatefulWidget {
 class _DiscordStatusPreviewState extends ConsumerState<DiscordStatusPreview> {
   var box = Hive.box('lfdi');
 
+  @override
+  void dispose() {
+    final gateway = ref.read(discordGatewayProvider);
+    gateway.ws.removeListener(listenerName: 'onTrackChanged');
+
+    super.dispose();
+  }
+
   String trimText(String text) {
     if (text.length < 26) {
       return text;
@@ -246,6 +254,12 @@ class _DiscordStatusPreviewState extends ConsumerState<DiscordStatusPreview> {
   Widget build(BuildContext context) {
     final rpc = ref.watch(rpcProvider);
     final gateway = ref.watch(discordGatewayProvider);
+    gateway.addListener(
+      name: 'onTrackChange',
+      listener: () {
+        setState(() {});
+      },
+    );
 
     return Container(
       width: 300,

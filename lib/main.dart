@@ -4,6 +4,7 @@ import 'package:flutter_acrylic/flutter_acrylic.dart' as acryllic;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:lfdi/constants.dart';
+import 'package:lfdi/globals.dart';
 import 'package:lfdi/handlers/discord_websocket/websocket_manager.dart';
 import 'package:lfdi/pages/home.dart';
 import 'package:lfdi/handlers/rpc.dart';
@@ -38,6 +39,7 @@ void main() async {
   });
 
   DiscordRPC.initialize();
+  logger.init();
 
   runApp(const ProviderScope(child: MyApp()));
 }

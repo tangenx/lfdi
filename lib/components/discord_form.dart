@@ -4,6 +4,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lfdi/constants.dart';
+import 'package:lfdi/globals.dart';
 import 'package:lfdi/handlers/discord_websocket/websocket_manager.dart';
 import 'package:lfdi/main.dart';
 import 'package:spotify/spotify.dart';
@@ -215,7 +216,8 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
                       //   httpClient: null,
                       // );
                     } catch (error) {
-                      log('Caught error while connecting to Spotify: ${error.runtimeType}');
+                      logger.error(
+                          'Caught error while connecting to Spotify: ${error.runtimeType}');
                       isSpotifyError = true;
                     }
 

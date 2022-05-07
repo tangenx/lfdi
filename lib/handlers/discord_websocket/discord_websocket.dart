@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:lfdi/constants.dart';
+import 'package:lfdi/globals.dart';
 import 'package:lfdi/handlers/discord_websocket/gateway_message.dart';
 import 'package:lfdi/handlers/discord_websocket/message_handlers/handler_data.dart';
 import 'package:lfdi/handlers/discord_websocket/message_handlers/handler_factory.dart';
@@ -39,20 +40,20 @@ class DiscordWebSoket {
 
   /// Initialize websokcet
   void init() {
-    log('Creating connection', name: 'DWS: Main');
+    logger.info('[DWS: Main] Creating connection');
     webSocketChannel = IOWebSocketChannel.connect(Uri.parse(baseUrl), headers: {
       'User-Agent': userAgent,
     });
 
-    log('Starting listen to events', name: 'DWS: Main');
+    logger.info('[DWS: Main] Starting listen to events');
     webSocketChannel!.stream.listen((message) {
       if (message is Uint8List) {
-        log('Gateway sent array of bytes.', name: 'DWS: Main');
+        logger.info('[DWS: Main] Gateway sent array of bytes.');
 
         return;
       }
       Map webSocketMessage = jsonDecode(message);
-      log('New message.', name: 'DWS: Main');
+      logger.info('[DWS: Main] New message.');
 
       // Start Manager updating if needed
       if (isReconnecting) {
@@ -63,9 +64,10 @@ class DiscordWebSoket {
       // Handle a message
       webSocketMessagesHandler(webSocketMessage);
     }, onDone: () {
-      log('WebSocket connection was closed.', name: 'DWS: Main');
-      log('WebSocket close code: ${webSocketChannel?.closeCode}',
-          name: 'DWS: Main');
+      logger.error('[DWS: Main] WebSocket connection was closed.');
+      logger.error(
+        '[DWS: Main] WebSocket close code: ${webSocketChannel?.closeCode}',
+      );
       // Stop WebSocketManager death process if WebSocket trying reconnect
       if (isReconnecting) {
         // Stop updates from Manager (if started)
@@ -97,10 +99,10 @@ class DiscordWebSoket {
         listeners['onClose']!();
       }
     }, onError: (error) async {
-      log('WebSocket error $error.', name: 'DWS: Main');
+      logger.error('[DWS: Main] WebSocket error $error.');
 
       if (error is WebSocketChannelException) {
-        log('Reconnecting to WebSocket...', name: 'DWS: Main');
+        logger.info('[DWS: Main] Reconnecting to WebSocket...');
         heartbeatTimer?.cancel();
         isReconnecting = true;
         await Future.delayed(const Duration(seconds: 1));
@@ -114,13 +116,16 @@ class DiscordWebSoket {
     // Make a class
     final DiscordGatewayMessage gatewayMessage =
         DiscordGatewayMessage.fromWebSocketMessage(message);
-    log('Message info: OP Code is ${gatewayMessage.operationCode} (${opToName[gatewayMessage.operationCode]}). ${gatewayMessage.eventName != null ? 'Event name: ${gatewayMessage.eventName}' : ''}',
-        name: 'DWS: WSMessageHandler');
+    logger.info(
+      '[DWS: WSMessageHandler] Message info: OP Code is ${gatewayMessage.operationCode} (${opToName[gatewayMessage.operationCode]}). ${gatewayMessage.eventName != null ? 'Event name: ${gatewayMessage.eventName}' : ''}',
+    );
 
     // Select a handler from opcode
     final handler =
         handlerFactory.getHandlerByOpcode(gatewayMessage.operationCode);
-    log('Selected handler: $handler', name: 'DWS: WSMessageHandler');
+    if (gatewayMessage.operationCode != 0) {
+      logger.info('[DWS: WSMessageHandler]  Selected handler: $handler');
+    }
 
     // Set up message to a handler
     handler.setUpMessage(gatewayMessage);
@@ -128,8 +133,11 @@ class DiscordWebSoket {
     // All handlers must return data, regardless of whether they are empty
     // Return class is `GatewayHandlerData`
     final GatewayHandlerData dataFromHandler = handler.handle(this);
-    log('Handler returns data: ${dataFromHandler.toString()}',
-        name: 'DWS: WSMessageHandler');
+    if (gatewayMessage.operationCode != 0) {
+      logger.info(
+        '[DWS: WSMessageHandler] Handler returns data: ${dataFromHandler.toString()}',
+      );
+    }
 
     // Set lastSequence
     lastSequence = gatewayMessage.sequence;
@@ -139,7 +147,7 @@ class DiscordWebSoket {
       if (dataFromHandler.data != null &&
           dataFromHandler.data!['configureHeartbeat'] != null) {
         if (!heartbeatIsConfigured) {
-          log('Setup heartbeat timer.', name: 'DWS: WSMessageHandler');
+          logger.info('[DWS: WSMessageHandler] Setup heartbeat timer.');
           if (listeners['onConnect_showSnackbar'] != null) {
             listeners['onConnect_showSnackbar']!();
           }
@@ -153,8 +161,9 @@ class DiscordWebSoket {
                 eventName: null,
                 sequence: null,
               );
-              log('Send heartbeat. Last sequence number is: $lastSequence',
-                  name: 'DWS: Heartbeat Timer');
+              logger.info(
+                '[DWS: Heartbeat Timer] Send heartbeat. Last sequence number is: $lastSequence',
+              );
               webSocketChannel!.sink.add(messageToSent.toJsonString());
             },
           );
@@ -175,20 +184,20 @@ class DiscordWebSoket {
   /// Sends the message to Gateway
   void sendMessage(DiscordGatewayMessage messageToSend) {
     String message = messageToSend.toJsonString();
-    log('Sending message: $message', name: 'DWS: Main');
+    logger.info('[DWS: Main] Sending message: $message');
     webSocketChannel!.sink.add(message);
   }
 
   /// Closes the connection
   void closeConnection() {
-    log('Closing connection', name: 'DWS: Main');
+    logger.info('[DWS: Main] Closing connection');
 
     webSocketChannel!.sink.close();
   }
 
   /// Dispose the WebSocket
   void dispose() {
-    log('Triggered dispose', name: 'DWS: Main');
+    logger.info('[DWS: Main] Triggered dispose');
     closeConnection();
 
     heartbeatIsConfigured = false;

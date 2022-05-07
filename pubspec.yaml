@@ -27,6 +27,7 @@ dependencies:
   hive_flutter: ^1.1.0
   web_socket_channel: ^2.2.0
   spotify: ^0.7.0
+  logger: ^1.1.0
 
 
 

@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:lfdi/constants.dart';
+import 'package:lfdi/globals.dart';
 import 'package:lfdi/handlers/discord_websocket/discord_websocket.dart';
 import 'package:lfdi/handlers/discord_websocket/message_handlers/gateway_handler.dart';
 import 'package:lfdi/handlers/discord_websocket/message_handlers/handler_data.dart';
@@ -26,7 +27,7 @@ class HelloHandler extends GatewayHandler {
 
     helloAlreadyRecieved = true;
 
-    log('Received timer setup command.', name: 'DWS: HelloHandler');
+    logger.info('[DWS: HelloHandler] Received timer setup command.');
     return GatewayHandlerData(
       operationCode: 10,
       data: {
@@ -38,7 +39,7 @@ class HelloHandler extends GatewayHandler {
   }
 
   void disposeHeartbeat() {
-    log('Triggered dispose', name: 'DWS: HelloHandler');
+    logger.info('[DWS: HelloHandler] Triggered dispose');
     helloAlreadyRecieved = false;
   }
 }

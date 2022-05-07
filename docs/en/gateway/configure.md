@@ -9,9 +9,9 @@
 </div>
 
 ## Table of contents
-1. Getting a Discord token
-2. Getting the Spotify Client ID and Client Secret
-3. Enabling the Discord Gateway
+1. [Getting a Discord token](#getting-a-discord-token)
+2. [Getting the Spotify Client ID and Client Secret](#getting-the-spotify-client-id-and-client-secret)
+3. [Enabling the Discord Gateway](#enabling-the-discord-gateway)
 
 ## Getting a Discord token
 

@@ -20,7 +20,11 @@ class Logger {
   }
 
   String formatString(String message, {String? name}) {
-    return '${name != null ? '[$name] ' : ''}$message';
+    DateTime now = DateTime.now();
+    String formatTime =
+        '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}';
+
+    return '($formatTime) ${name != null ? '[$name] ' : ''}$message';
   }
 
   void addToPool({

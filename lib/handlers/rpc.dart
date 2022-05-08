@@ -39,11 +39,11 @@ class RPC {
     required String apiKey,
     String? discordAppId,
   }) async {
-    logger.info('Triggered init', name: 'RPC');
+    logger.debug('Triggered init', name: 'RPC');
     if (initialized) {
       return;
     }
-    logger.info('Initializing...', name: 'RPC');
+    logger.debug('Initializing...', name: 'RPC');
 
     initialized = true;
 
@@ -62,7 +62,7 @@ class RPC {
   reinitialize({
     required String applicationid,
   }) {
-    logger.info('Triggered reinit', name: 'RPC');
+    logger.debug('Triggered reinit', name: 'RPC');
     dispose();
 
     initialize(
@@ -77,7 +77,7 @@ class RPC {
 
   /// Start the RPC
   start() {
-    logger.info('Triggered start', name: 'RPC');
+    logger.debug('Triggered start', name: 'RPC');
     if (!initialized || started) {
       return;
     }
@@ -146,7 +146,7 @@ class RPC {
 
   /// Stop the RPC
   stop() {
-    logger.info('Triggered stop', name: 'RPC');
+    logger.debug('Triggered stop', name: 'RPC');
     if (!started) {
       return;
     }
@@ -159,7 +159,7 @@ class RPC {
 
   /// Dispose the RPC
   dispose() {
-    logger.info('Triggered dispose', name: 'RPC');
+    logger.debug('Triggered dispose', name: 'RPC');
     if (!initialized) {
       return;
     }

@@ -19,6 +19,11 @@ class _LogConsoleState extends State<LogConsole> {
   @override
   void initState() {
     logMessages = logger.logMessages;
+    updateTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      setState(() {
+        logMessages = logger.logMessages;
+      });
+    });
     super.initState();
   }
 
@@ -34,59 +39,41 @@ class _LogConsoleState extends State<LogConsole> {
       header: const PageHeader(
         title: Text('Log Console'),
       ),
-      content: Column(
-        children: [
-          Container(
-              decoration: const BoxDecoration(
-                color: Colors.black,
-              ),
-              height: 340,
-              child: SingleChildScrollView(
-                controller: _scrollController,
-                child: SelectableText.rich(
-                  TextSpan(
-                    children: logMessages
-                        .map(
-                          (e) => TextSpan(
-                            text: e['message']! + '\n',
-                            style: TextStyle(
-                              color: logTypeToColor[e['type']],
-                            ),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                ),
-              )
-              // ListView.builder(
-              //   controller: _scrollController,
-              //   itemCount: logMessages.length,
-              //   shrinkWrap: true,
-              //   itemBuilder: (context, index) => SelectableText(
-              //     logMessages[index]['message']!,
-              //     style: TextStyle(
-              //       color: logTypeToColor[logMessages[index]['type']],
-              //       fontSize: 12,
-              //     ),
-              //   ),
-              // ),
-              ),
-          const SizedBox(
-            height: 10,
+      content: Container(
+          decoration: const BoxDecoration(
+            color: Colors.black,
           ),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Button(
-              child: const Text('Reload'),
-              onPressed: () {
-                setState(() {
-                  logMessages = logger.logMessages;
-                });
-              },
+          height: 340,
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            child: SelectableText.rich(
+              TextSpan(
+                children: logMessages
+                    .map(
+                      (e) => TextSpan(
+                        text: e['message']! + '\n',
+                        style: TextStyle(
+                          color: logTypeToColor[e['type']],
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
             ),
+          )
+          // ListView.builder(
+          //   controller: _scrollController,
+          //   itemCount: logMessages.length,
+          //   shrinkWrap: true,
+          //   itemBuilder: (context, index) => SelectableText(
+          //     logMessages[index]['message']!,
+          //     style: TextStyle(
+          //       color: logTypeToColor[logMessages[index]['type']],
+          //       fontSize: 12,
+          //     ),
+          //   ),
+          // ),
           ),
-        ],
-      ),
     );
   }
 }

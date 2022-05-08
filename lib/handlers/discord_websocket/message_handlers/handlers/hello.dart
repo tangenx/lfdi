@@ -37,7 +37,7 @@ class HelloHandler extends GatewayHandler {
   }
 
   void disposeHeartbeat() {
-    logger.info('Triggered dispose', name: 'DWS: HelloHandler');
+    logger.debug('Triggered dispose', name: 'DWS: HelloHandler');
     helloAlreadyRecieved = false;
   }
 }

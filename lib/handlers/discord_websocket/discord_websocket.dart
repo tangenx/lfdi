@@ -200,7 +200,7 @@ class DiscordWebSoket {
 
   /// Dispose the WebSocket
   void dispose() {
-    logger.info('Triggered dispose', name: 'DWS: Main');
+    logger.debug('Triggered dispose', name: 'DWS: Main');
     closeConnection();
 
     heartbeatIsConfigured = false;

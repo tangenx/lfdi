@@ -52,7 +52,7 @@ class DiscordWebSocketManager {
 
   /// Init websockets and setup listeners
   void init() {
-    logger.info('Triggered init', name: 'DWS: Manager');
+    logger.debug('Triggered init', name: 'DWS: Manager');
     if (initialized) {
       return;
     }
@@ -61,7 +61,7 @@ class DiscordWebSocketManager {
     ws.addListener(
       name: 'onReconnect_Manager',
       listener: () {
-        logger.info('Triggered.', name: 'DWS: Manager onReconnect_Manager');
+        logger.debug('Triggered.', name: 'DWS: Manager onReconnect_Manager');
         if (started) {
           logger.info('Stop updating.',
               name: 'DWS: Manager onReconnect_Manager');
@@ -72,7 +72,10 @@ class DiscordWebSocketManager {
     ws.addListener(
         name: 'onReconnected_Manager',
         listener: () async {
-          logger.info('Triggered.', name: 'DWS: Manager onReconnected_Manager');
+          logger.debug(
+            'Triggered.',
+            name: 'DWS: Manager onReconnected_Manager',
+          );
           if (initialized) {
             identifyIsSent = false;
             logger.info(
@@ -95,7 +98,7 @@ class DiscordWebSocketManager {
     ws.addListener(
       name: 'onClose_Manager',
       listener: () {
-        logger.info('Triggered.', name: 'DWS: Manager onClose_Manager');
+        logger.debug('Triggered.', name: 'DWS: Manager onClose_Manager');
         initialized = false;
         identifyIsSent = false;
         started = false;
@@ -105,7 +108,7 @@ class DiscordWebSocketManager {
     ws.addListener(
         name: 'onReconnectOp7_Manager',
         listener: () {
-          logger.info('Triggered.', name: 'DWS: Manager onReconnect_Manager');
+          logger.debug('Triggered.', name: 'DWS: Manager onReconnect_Manager');
           sendIdentify();
           initialized = true;
           started = true;
@@ -116,7 +119,7 @@ class DiscordWebSocketManager {
   }
 
   void reinit() {
-    logger.info('Triggered reinit', name: 'DWS: Manager');
+    logger.debug('Triggered reinit', name: 'DWS: Manager');
     if (!initialized) {
       return;
     }
@@ -129,7 +132,7 @@ class DiscordWebSocketManager {
 
   /// Start updating Presence
   void startUpdating() {
-    logger.info('Triggered startUpdating', name: 'DWS: Manager');
+    logger.debug('Triggered startUpdating', name: 'DWS: Manager');
     if (!initialized || started) {
       return;
     }
@@ -307,7 +310,7 @@ class DiscordWebSocketManager {
   }
 
   void dispose() {
-    logger.info('Triggered dispose', name: 'DWS: Manager');
+    logger.debug('Triggered dispose', name: 'DWS: Manager');
     ws.dispose();
   }
 
@@ -328,7 +331,7 @@ class DiscordWebSocketManager {
   }
 
   void sendIdentify() {
-    logger.info('Triggered.', name: 'DWS: Manager sendIdentify');
+    logger.debug('Triggered.', name: 'DWS: Manager sendIdentify');
     if (identifyIsSent) {
       logger.warning(
         'Identify is sent, aborting.',

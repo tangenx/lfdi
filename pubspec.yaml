@@ -61,3 +61,11 @@ flutter:
     - family: LFDI
       fonts:
       - asset: assets/fonts/LFDI.ttf
+
+msix_config:
+  display_name: Last.fm Discord Integrator
+  publisher_display_name: tangenx
+  identity_name: tangenx.lfdi
+  msix_version: 1.0.0.0
+  logo_path: "D:\\Code Projects\\lfdi\\assets\\images\\logo_big.png"
+  capabilities: internetClient

@@ -173,6 +173,13 @@ class DiscordWebSoket {
         }
       }
     }
+
+    // Check for Invalid Session (opcode 9)
+    if (gatewayMessage.operationCode == 9) {
+      if (listeners['onInvalidSession_Manager'] != null) {
+        listeners['onInvalidSession_Manager']!();
+      }
+    }
   }
 
   /// Returns the last sequence number

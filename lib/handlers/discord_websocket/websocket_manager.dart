@@ -106,13 +106,20 @@ class DiscordWebSocketManager {
       },
     );
     ws.addListener(
-        name: 'onReconnectOp7_Manager',
-        listener: () {
-          logger.debug('Triggered.', name: 'DWS: Manager onReconnect_Manager');
-          sendIdentify();
-          initialized = true;
-          started = true;
-        });
+      name: 'onReconnectOp7_Manager',
+      listener: () {
+        logger.debug('Triggered.', name: 'DWS: Manager onReconnectOp7_Manager');
+        initialized = true;
+        started = true;
+      },
+    );
+    ws.addListener(
+      name: 'onInvalidSession_Manager',
+      listener: () {
+        identifyIsSent = false;
+        sendIdentify();
+      },
+    );
     ws.init();
     initialized = true;
     logger.info('Successfully initialized', name: 'DWS: Manager');

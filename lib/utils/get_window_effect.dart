@@ -8,6 +8,11 @@ WindowEffect getWindowEffect() {
   if (Platform.isWindows) {
     WindowsVersionInfo windowsInfo = extractWindowsInfo();
 
+    if (windowsInfo.ntVersion != null &&
+        double.parse(windowsInfo.ntVersion!) < 10) {
+      return windowsWindowEffect[windowsInfo.ntVersion]!;
+    }
+
     // Detect Windows version (10 or 11) by build number (fuck Microsoft)
     if (windowsInfo.build != null) {
       int buildNumber = int.parse(windowsInfo.build!);
@@ -18,7 +23,7 @@ WindowEffect getWindowEffect() {
 
       // Windows 10 1803 and higher
       if (buildNumber >= 17134 && buildNumber < 22000) {
-        return WindowEffect.solid;
+        return WindowEffect.aero;
       }
 
       // Windows 11+
@@ -38,17 +43,17 @@ WindowEffect getWindowEffect() {
 /// Windows window effect dependent on Windows NT version
 Map<String, WindowEffect> windowsWindowEffect = {
   /// Windows Vista
-  '6.0': WindowEffect.disabled,
+  '6.0': WindowEffect.solid,
 
   /// Windows 7
-  '6.1': WindowEffect.disabled,
+  '6.1': WindowEffect.solid,
 
   /// Windows 8
-  '6.2': WindowEffect.disabled,
+  '6.2': WindowEffect.solid,
 
   /// Windows 8.1
-  '6.3': WindowEffect.disabled,
+  '6.3': WindowEffect.solid,
 
   /// Windows 10+
-  '10.0': WindowEffect.acrylic,
+  '10.0': WindowEffect.aero,
 };

@@ -13,6 +13,7 @@ import 'package:lfdi/handlers/discord_websocket/websocket_manager.dart';
 import 'package:lfdi/pages/home.dart';
 import 'package:lfdi/handlers/rpc.dart';
 import 'package:lfdi/theme.dart';
+import 'package:lfdi/utils/extract_windows_info.dart';
 import 'package:lfdi/utils/get_window_effect.dart';
 import 'package:spotify/spotify.dart';
 import 'package:system_theme/system_theme.dart';
@@ -24,24 +25,20 @@ final discordGatewayProvider =
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  WindowsVersionInfo windowsInfo = extractWindowsInfo();
+
   // set up window
   await acryllic.Window.initialize();
-  acryllic.Window.hideWindowControls();
+  if (windowsInfo.ntVersion != null &&
+      double.parse(windowsInfo.ntVersion!) >= 10) {
+    acryllic.Window.hideWindowControls();
+  }
+
+  // set up Hive
   await Hive.initFlutter();
   await Hive.openBox('lfdi');
+
   logger.init();
-
-  // windowManager.waitUntilReadyToShow(windowOptions, () async {
-  //   acryllic.WindowEffect windowEffect = getWindowEffect();
-
-  //   await acryllic.Window.setEffect(
-  //     effect: windowEffect,
-  //   );
-  //   await windowManager.setPreventClose(true);
-
-  //   await windowManager.show();
-  //   await windowManager.focus();
-  // });
 
   DiscordRPC.initialize();
 

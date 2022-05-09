@@ -10,6 +10,7 @@ import 'package:lfdi/pages/gateway_settings.dart';
 import 'package:lfdi/pages/log_console.dart';
 import 'package:lfdi/pages/rpc_settings.dart';
 import 'package:lfdi/pages/settings.dart';
+import 'package:lfdi/utils/extract_windows_info.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -52,37 +53,52 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    WindowsVersionInfo windowsInfo = extractWindowsInfo();
+    bool hideHeader = false;
+
+    if (windowsInfo.ntVersion != null &&
+        double.parse(windowsInfo.ntVersion!) < 10) {
+      hideHeader = true;
+    }
+
     return NavigationView(
       appBar: NavigationAppBar(
         // Why the fuck this is moving??
         automaticallyImplyLeading: false,
-        leading: const Padding(
-          padding: EdgeInsets.only(right: 8),
-          child: SizedBox(
-            height: 20,
-            width: 20,
-            child: Image(
-              image: AssetImage('assets/images/lastfm discord smol.png'),
-            ),
-          ),
-        ),
-        title: MoveWindow(
-          child: const Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: Text(
-              appTitle,
-            ),
-          ),
-        ),
-        actions: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: MoveWindow(),
-            ),
-            const WindowButtons()
-          ],
-        ),
+        height: hideHeader ? 10 : 50,
+        leading: hideHeader
+            ? null
+            : const Padding(
+                padding: EdgeInsets.only(right: 8),
+                child: SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: Image(
+                    image: AssetImage('assets/images/lastfm discord smol.png'),
+                  ),
+                ),
+              ),
+        title: hideHeader
+            ? null
+            : MoveWindow(
+                child: const Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Text(
+                    appTitle,
+                  ),
+                ),
+              ),
+        actions: hideHeader
+            ? null
+            : Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: MoveWindow(),
+                  ),
+                  const WindowButtons()
+                ],
+              ),
       ),
       pane: NavigationPane(
         selected: index,

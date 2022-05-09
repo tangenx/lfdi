@@ -11,14 +11,14 @@ WindowEffect getWindowEffect() {
     // Detect Windows version (10 or 11) by build number (fuck Microsoft)
     if (windowsInfo.build != null) {
       int buildNumber = int.parse(windowsInfo.build!);
-      // Windows 10 earlier than 1803 (effects don't work on these systems)
+      // Windows 10 earlier than 1803
       if (buildNumber < 17134) {
-        return WindowEffect.disabled;
+        return WindowEffect.solid;
       }
 
       // Windows 10 1803 and higher
       if (buildNumber >= 17134 && buildNumber < 22000) {
-        return WindowEffect.disabled;
+        return WindowEffect.solid;
       }
 
       // Windows 11+

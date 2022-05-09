@@ -1,5 +1,4 @@
-import 'dart:io';
-
+import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lfdi/components/window_buttons.dart';
@@ -11,10 +10,6 @@ import 'package:lfdi/pages/gateway_settings.dart';
 import 'package:lfdi/pages/log_console.dart';
 import 'package:lfdi/pages/rpc_settings.dart';
 import 'package:lfdi/pages/settings.dart';
-import 'package:tray_manager/tray_manager.dart';
-import 'package:window_manager/window_manager.dart';
-
-import '../utils/debounce.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -23,24 +18,11 @@ class HomePage extends ConsumerStatefulWidget {
   ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends ConsumerState<HomePage>
-    with WindowListener, TrayListener {
+class _HomePageState extends ConsumerState<HomePage> {
   int index = 0;
-  int trayClickCount = 0;
-  int altF4ClickCount = 0;
-
-  late final void Function() resetClickCountDebounced;
 
   @override
   void initState() {
-    windowManager.addListener(this);
-    trayManager.addListener(this);
-
-    resetClickCountDebounced = debounce(
-      () => trayClickCount = 0,
-      const Duration(milliseconds: 500),
-    );
-
     final ws = ref.read(discordGatewayProvider);
     ws.addListener(
       name: 'onReconnect_showSnackbar',
@@ -65,132 +47,7 @@ class _HomePageState extends ConsumerState<HomePage>
       },
     );
 
-    initTray();
-
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    trayManager.removeListener(this);
-    windowManager.removeListener(this);
-    super.dispose();
-  }
-
-  @override
-  void onTrayIconRightMouseDown() {
-    trayManager.popUpContextMenu();
-  }
-
-  // tray functions
-  Future<void> initTray() async {
-    await trayManager.setIcon(
-      Platform.isWindows
-          ? 'assets/images/app_icon.ico'
-          : 'assets/images/lastfm discord smol.png',
-    );
-    await Future.delayed(const Duration(milliseconds: 200));
-    await trayManager.setContextMenu(trayMenuItems);
-  }
-
-  Future<void> toggleWindowState() async {
-    bool isVisible = await windowManager.isVisible();
-    if (isVisible) {
-      await windowManager.minimize();
-      return windowManager.hide();
-    }
-
-    await windowManager.show();
-    await windowManager.focus();
-  }
-
-  @override
-  void onTrayMenuItemClick(MenuItem menuItem) async {
-    switch (menuItem.key) {
-      case 'restore_window':
-        await toggleWindowState();
-        break;
-      case 'close_window':
-        final rpc = ref.read(rpcProvider);
-        final gateway = ref.read(discordGatewayProvider);
-
-        if (rpc.started) {
-          rpc.dispose();
-        }
-
-        if (gateway.started) {
-          gateway.dispose();
-        }
-
-        trayManager.removeListener(this);
-        trayManager.destroy();
-        windowManager.destroy();
-        break;
-      default:
-    }
-  }
-
-  @override
-  void onTrayIconMouseDown() async {
-    trayClickCount++;
-    resetClickCountDebounced();
-
-    if (trayClickCount == 2) {
-      await toggleWindowState();
-
-      trayClickCount = 0;
-    }
-  }
-
-  // window functions
-  @override
-  void onWindowClose() async {
-    bool _isPreventClose = await windowManager.isPreventClose();
-
-    if (_isPreventClose) {
-      altF4ClickCount++;
-      if (altF4ClickCount == 2) {
-        windowManager.destroy();
-      }
-
-      showDialog(
-        context: context,
-        builder: (_) {
-          return ContentDialog(
-            title: const Text('Close or minimize to tray'),
-            content: const Text(
-              'Choose what you want: close the app or minimize it to tray',
-            ),
-            actions: [
-              Button(
-                child: const Text('Minimize'),
-                onPressed: () async {
-                  altF4ClickCount = 0;
-                  Navigator.pop(context);
-                  await windowManager.minimize();
-                  await windowManager.hide();
-                },
-              ),
-              Button(
-                child: const Text('Close'),
-                onPressed: () async {
-                  altF4ClickCount = 0;
-                  Navigator.pop(context);
-                  windowManager.destroy();
-                },
-              ),
-              FilledButton(
-                child: const Text('Cancel'),
-                onPressed: () {
-                  altF4ClickCount = 0;
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          );
-        },
-      );
-    }
   }
 
   @override
@@ -209,8 +66,8 @@ class _HomePageState extends ConsumerState<HomePage>
             ),
           ),
         ),
-        title: const DragToMoveArea(
-          child: Align(
+        title: MoveWindow(
+          child: const Align(
             alignment: AlignmentDirectional.centerStart,
             child: Text(
               appTitle,
@@ -219,13 +76,11 @@ class _HomePageState extends ConsumerState<HomePage>
         ),
         actions: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+          children: [
             Expanded(
-              child: DragToMoveArea(
-                child: SizedBox(),
-              ),
+              child: MoveWindow(),
             ),
-            WindowButtons()
+            const WindowButtons()
           ],
         ),
       ),

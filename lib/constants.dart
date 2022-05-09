@@ -1,6 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:tray_manager/tray_manager.dart';
-import 'package:window_manager/window_manager.dart';
 
 // Window and tray
 const appTitle = 'Last.fm Discord Integrator';
@@ -17,14 +16,6 @@ List<MenuItem> trayMenuItems = [
     title: 'Close LFDI',
   )
 ];
-
-WindowOptions windowOptions = WindowOptions(
-  size: windowSize,
-  minimumSize: windowSize,
-  center: true,
-  skipTaskbar: false,
-  titleBarStyle: TitleBarStyle.hidden,
-);
 
 // Track
 const String defaultCoverURL =

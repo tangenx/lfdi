@@ -15,7 +15,6 @@ dependencies:
   flutter_riverpod: ^1.0.3
   system_theme: ^2.0.0
   flutter_acrylic: ^1.0.0+2
-  window_manager: ^0.2.2
   http: ^0.13.4
   url_launcher: ^6.1.0
   package_info_plus: ^1.4.2
@@ -28,7 +27,11 @@ dependencies:
   web_socket_channel: ^2.2.0
   spotify: ^0.7.0
   logger: ^1.1.0
-
+  bitsdojo_window:
+    git: 
+      url: https://github.com/alexmercerind/bitsdojo_window.git
+      path: bitsdojo_window
+      ref: 5e6ddd4b58bb357b23541181b4188ce5892ba7a3
 
 
 dev_dependencies:
@@ -39,6 +42,13 @@ dev_dependencies:
   msix: ^3.5.1
   hive_generator: ^1.1.2
   build_runner: ^2.1.10
+
+dependency_overrides:
+  bitsdojo_window_windows:
+    git:
+      url: https://github.com/alexmercerind/bitsdojo_window.git
+      path: bitsdojo_window_windows
+      ref: 5e6ddd4b58bb357b23541181b4188ce5892ba7a3
 
 flutter:
   uses-material-design: false

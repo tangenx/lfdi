@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:dart_discord_rpc/dart_discord_rpc.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart' as acryllic;
@@ -12,7 +15,7 @@ import 'package:lfdi/handlers/rpc.dart';
 import 'package:lfdi/theme.dart';
 import 'package:lfdi/utils/get_window_effect.dart';
 import 'package:spotify/spotify.dart';
-import 'package:window_manager/window_manager.dart';
+import 'package:system_theme/system_theme.dart';
 
 final rpcProvider = Provider((ref) => RPC());
 final discordGatewayProvider =
@@ -23,26 +26,36 @@ void main() async {
 
   // set up window
   await acryllic.Window.initialize();
-  await WindowManager.instance.ensureInitialized();
+  acryllic.Window.hideWindowControls();
   await Hive.initFlutter();
   await Hive.openBox('lfdi');
   logger.init();
 
-  windowManager.waitUntilReadyToShow(windowOptions, () async {
-    acryllic.WindowEffect windowEffect = getWindowEffect();
+  // windowManager.waitUntilReadyToShow(windowOptions, () async {
+  //   acryllic.WindowEffect windowEffect = getWindowEffect();
 
-    await acryllic.Window.setEffect(
-      effect: windowEffect,
-    );
-    await windowManager.setPreventClose(true);
+  //   await acryllic.Window.setEffect(
+  //     effect: windowEffect,
+  //   );
+  //   await windowManager.setPreventClose(true);
 
-    await windowManager.show();
-    await windowManager.focus();
-  });
+  //   await windowManager.show();
+  //   await windowManager.focus();
+  // });
 
   DiscordRPC.initialize();
 
   runApp(const ProviderScope(child: MyApp()));
+
+  doWhenWindowReady(() async {
+    appWindow
+      ..minSize = windowSize
+      ..size = windowSize
+      ..alignment = Alignment.center
+      ..title = 'Last.fm Discord Integrator';
+
+    appWindow.show();
+  });
 }
 
 class MyApp extends ConsumerWidget {
@@ -125,6 +138,19 @@ class MyApp extends ConsumerWidget {
         }
       }
     }
+
+    final isDarkMode = SystemTheme.isDarkMode;
+    acryllic.WindowEffect windowEffect = getWindowEffect();
+
+    acryllic.Window.setEffect(
+      effect: windowEffect,
+      color: Platform.isWindows
+          ? isDarkMode
+              ? const Color(0xCC222222)
+              : const Color(0xCCDDDDDD)
+          : Colors.transparent,
+      dark: isDarkMode,
+    );
 
     return FluentApp(
       title: 'Last.fm Discord Integrator',

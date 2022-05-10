@@ -20,10 +20,11 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
   final discordTokenController = TextEditingController();
   final spotifyApiKeyController = TextEditingController();
   final spotifyApiSecretController = TextEditingController();
-  var box = Hive.box('lfdi');
+  late Box box;
 
   @override
   void initState() {
+    box = Hive.box('lfdi');
     final discordToken = box.get('discordToken');
     final spotifyApiKey = box.get('spotifyApiKey');
     final spotifyApiSecret = box.get('spotifyApiSecret');

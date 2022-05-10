@@ -6,6 +6,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart' as acryllic;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:launch_at_startup/launch_at_startup.dart';
 import 'package:lfdi/constants.dart';
 import 'package:lfdi/globals.dart';
 
@@ -15,6 +16,7 @@ import 'package:lfdi/handlers/rpc.dart';
 import 'package:lfdi/theme.dart';
 import 'package:lfdi/utils/extract_windows_info.dart';
 import 'package:lfdi/utils/get_window_effect.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:spotify/spotify.dart';
 import 'package:system_theme/system_theme.dart';
 
@@ -24,6 +26,13 @@ final discordGatewayProvider =
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+  LaunchAtStartup.instance.setup(
+    appName: packageInfo.appName,
+    appPath: Platform.resolvedExecutable,
+  );
 
   WindowsVersionInfo windowsInfo = extractWindowsInfo();
 

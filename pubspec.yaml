@@ -32,6 +32,7 @@ dependencies:
       url: https://github.com/alexmercerind/bitsdojo_window.git
       path: bitsdojo_window
       ref: 5e6ddd4b58bb357b23541181b4188ce5892ba7a3
+  launch_at_startup: ^0.1.7
 
 
 dev_dependencies:

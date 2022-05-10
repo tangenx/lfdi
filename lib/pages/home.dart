@@ -6,6 +6,7 @@ import 'package:lfdi/constants.dart';
 import 'package:lfdi/icons/lfdi_icons.dart';
 import 'package:lfdi/main.dart';
 import 'package:lfdi/pages/about.dart';
+import 'package:lfdi/pages/app_settings.dart';
 import 'package:lfdi/pages/gateway_settings.dart';
 import 'package:lfdi/pages/log_console.dart';
 import 'package:lfdi/pages/rpc_settings.dart';
@@ -137,6 +138,10 @@ class _HomePageState extends ConsumerState<HomePage> {
         footerItems: [
           PaneItemSeparator(),
           PaneItem(
+            icon: const Icon(FluentIcons.settings),
+            title: const Text('App settings'),
+          ),
+          PaneItem(
             icon: const Icon(FluentIcons.info),
             title: const Text('About'),
           ),
@@ -149,6 +154,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           GatewaySettingsPage(),
           DiscordRPCPage(),
           LogConsole(),
+          AppSettingsPage(),
           AboutPage(),
         ],
       ),

@@ -39,41 +39,45 @@ class _LogConsoleState extends State<LogConsole> {
       header: const PageHeader(
         title: Text('Log Console'),
       ),
-      content: Container(
-          decoration: const BoxDecoration(
-            color: Colors.black,
-          ),
-          height: 340,
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            child: SelectableText.rich(
-              TextSpan(
-                children: logMessages
-                    .map(
-                      (e) => TextSpan(
-                        text: e['message']! + '\n',
-                        style: TextStyle(
-                          color: logTypeToColor[e['type']],
-                        ),
-                      ),
-                    )
-                    .toList(),
+      content: logMessages.isEmpty
+          ? const Center(
+              child: Text('No logs yet ¯\\_(ツ)_/¯'),
+            )
+          : Container(
+              decoration: const BoxDecoration(
+                color: Colors.black,
               ),
-            ),
-          )
-          // ListView.builder(
-          //   controller: _scrollController,
-          //   itemCount: logMessages.length,
-          //   shrinkWrap: true,
-          //   itemBuilder: (context, index) => SelectableText(
-          //     logMessages[index]['message']!,
-          //     style: TextStyle(
-          //       color: logTypeToColor[logMessages[index]['type']],
-          //       fontSize: 12,
-          //     ),
-          //   ),
-          // ),
-          ),
+              height: 340,
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                child: SelectableText.rich(
+                  TextSpan(
+                    children: logMessages
+                        .map(
+                          (e) => TextSpan(
+                            text: e['message']! + '\n',
+                            style: TextStyle(
+                              color: logTypeToColor[e['type']],
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ),
+              )
+              // ListView.builder(
+              //   controller: _scrollController,
+              //   itemCount: logMessages.length,
+              //   shrinkWrap: true,
+              //   itemBuilder: (context, index) => SelectableText(
+              //     logMessages[index]['message']!,
+              //     style: TextStyle(
+              //       color: logTypeToColor[logMessages[index]['type']],
+              //       fontSize: 12,
+              //     ),
+              //   ),
+              // ),
+              ),
     );
   }
 }

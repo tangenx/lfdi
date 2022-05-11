@@ -8,12 +8,12 @@ const windowSize = Size(755, 545);
 List<MenuItem> trayMenuItems = [
   MenuItem(
     key: 'restore_window',
-    title: 'Hide/Restore',
+    label: 'Hide/Restore',
   ),
-  MenuItem.separator,
+  MenuItem.separator(),
   MenuItem(
     key: 'close_window',
-    title: 'Close LFDI',
+    label: 'Close LFDI',
   )
 ];
 

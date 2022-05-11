@@ -57,7 +57,7 @@ class _WindowButtonsState extends ConsumerState<WindowButtons>
           : 'assets/images/lastfm discord smol.png',
     );
     await Future.delayed(const Duration(milliseconds: 200));
-    await trayManager.setContextMenu(trayMenuItems);
+    await trayManager.setContextMenu(Menu(items: trayMenuItems));
   }
 
   void toggleWindowState() {

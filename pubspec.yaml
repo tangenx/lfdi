@@ -18,7 +18,10 @@ dependencies:
   http: ^0.13.4
   url_launcher: ^6.1.0
   package_info_plus: ^1.4.2
-  tray_manager: ^0.1.4
+  tray_manager:
+    git:
+      url: https://github.com/leanflutter/tray_manager.git
+      ref: f075f39e978e7c664e81916d0c8da0b4955906cd
   fluent_ui:
     git:
       url: https://github.com/tangenx/fluent_ui.git
@@ -29,9 +32,12 @@ dependencies:
   logger: ^1.1.0
   bitsdojo_window:
     git: 
-      url: https://github.com/alexmercerind/bitsdojo_window.git
+      url: https://github.com/abutcher-gh/bitsdojo_window.git
       path: bitsdojo_window
-      ref: 5e6ddd4b58bb357b23541181b4188ce5892ba7a3
+      ref: b823ae5b9f2f82635067add7eadfc32d9054bc2b
+      # url: https://github.com/alexmercerind/bitsdojo_window.git
+      # path: bitsdojo_window
+      # ref: b5e9648081f73c05df612cd5b958d8e6cab77898
   launch_at_startup: ^0.1.7
 
 
@@ -40,16 +46,18 @@ dev_dependencies:
     sdk: flutter
 
   flutter_lints: ^1.0.0
-  msix: ^3.5.1
   hive_generator: ^1.1.2
   build_runner: ^2.1.10
 
 dependency_overrides:
   bitsdojo_window_windows:
     git:
-      url: https://github.com/alexmercerind/bitsdojo_window.git
+      url: https://github.com/abutcher-gh/bitsdojo_window.git
       path: bitsdojo_window_windows
-      ref: 5e6ddd4b58bb357b23541181b4188ce5892ba7a3
+      ref: b823ae5b9f2f82635067add7eadfc32d9054bc2b
+      # url: https://github.com/alexmercerind/bitsdojo_window.git
+      # path: bitsdojo_window_windows
+      # ref: b5e9648081f73c05df612cd5b958d8e6cab77898
 
 flutter:
   uses-material-design: false

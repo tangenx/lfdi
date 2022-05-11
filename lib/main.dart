@@ -60,6 +60,8 @@ void main() async {
       ..alignment = Alignment.center
       ..title = 'Last.fm Discord Integrator';
 
+    logger.info('Border size: ${appWindow.borderSize}');
+
     appWindow.show();
   });
 }

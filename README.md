@@ -21,32 +21,54 @@
 </div>
 
 <p align='center'>
-Shows what you are listening to in your <b>Discord</b> status 
+Shows what you are listening to in your <b>Discord</b> status
 </p>
 
-# Overview
+# Introduction
+
+You don't use Spotify ~~(that's fine)~~, but you want to show your music in your Discord status? LFDI can help you do that!
+
+# Table of contents
+
+- [Why LFDI?](#why-lfdi)
+- [Quick Overview](#quick-overview)
+- [Installation](#installation)
+- [Initial settings](#initial-settings)
+- [System Requirements](#system-requirements)
+- [Issues](#issues)
+- [Screenshots](#screenshots)
+
+## Why LFDI?
+
+- **Looks really cool**
+- Funny **app name**
+- Written in [Flutter][flutter] *(this is very important!)*
+- You can minimize the app to the system tray (no analogue can do that)
+- Written by [tαngenx][tangenx]                             <- it's me!
+- Works (no analogue can do that)
+- Uses a maximum of **80** MB of your RAM!
+
+[flutter]: https://flutter.dev
+[tangenx]: https://github.com/tangenx
+
+## Quick Overview
+
 LFDI updates your [Discord][Discord] status every 30 seconds, showing what you are listening to.
 
-The app needs your [last.fm][last.fm] [API key][last.fm API key] and username.
-
-[Discord]: https://discord.com/
-[last.fm]: https://last.fm/
-[last.fm API key]: https://www.last.fm/api/account/create
+You can customize your status! For example, you can **playing some music** or **listening to <your_application_music>**.
 
 <div align='center'>
 
-  ![LDFI window](https://i.imgur.com/5bDW7XO.png)
+  ![Status example 1](https://i.imgur.com/QFadjYD.png)
+
+  ![Status example 2](https://i.imgur.com/cfA9HfG.png)
 
 </div>
 
-Just click **Apply** and magic happens!
-
-~~**IMPORTANT**: Don't close the window, or there will be no magic!~~
-
-**You can minimize app to system tray!**
+As you can see, LFDI counts the number of times you've listened to the track and how much time you've spent listening to it!
 
 <details>
-  <summary>Just click on close button and choose <b>Minimize</b>.</summary>
+  <summary>You can minimize the application to the system tray and continue to do your business with your favorite music!</summary>
 
   <div align='center'>
 
@@ -56,47 +78,48 @@ Just click **Apply** and magic happens!
 
 </details>
 
-You can restore the window by right-clicking the app tray icon and selecting **Hide/Restore**.
+And you can also set the startup instead of with the system startup, and forget about the app altogether ~~(don't, please)~~!
 
-*Note*: You can hide or restore the app window simply by double-clicking the tray icon. What a beauty, isn't it?
+[Discord]: https://discord.com/
 
-## Discord status example
+## Installation
+
+- Open the [latest release page][Latest release]
+- Download the installer depending on your system ~~(please remember to make the release for MacOS)~~
+- Run the installer and follow the instructions
+
+[Latest release]: https://github.com/tangenx/lfdi/releases/latest
+
+## Initial settings
+
+The app needs your [last.fm API key][last.fm API key] and username.
+
+On the `Last.fm settings` page, enter Last.fm API key and username in the corresponding fields. Then click **Apply** and magic happens!
+
 <div align='center'>
 
-  ![Discord status example](https://i.imgur.com/G8GB9qk.png)
+  ![Last.fm settings form](https://i.imgur.com/q9m42iy.png)
 
 </div>
 
-<details>
-  <summary>You can hover over the cover of a track to see how many times you've listened to it and how much time you've spent listening to it!</summary>
+You now have **playing** statuses available to you. To use **listening to** statuses, go to the `Discord Gateway settings` page.
 
-  <div align='center'>
+**WARNING:** Using "listening" statuses [seems illegal](./docs/en/why%20the%20gateway%20seems%20illegal.md)!
 
-  ![Plays and time count](https://i.imgur.com/NZudqLs.jpg)
+To set up the Discord Gateway, [click here](./docs/en/gateway/configure.md).
 
-  </div>
-
-</details>
-
-<details>
-  <summary>You can also change the text of the status of <b>Playing</b>!</summary>
-
-  <div align='center'>
-
-  ![Change Playing status](https://i.imgur.com/BjMFkQp.png)
-  ###### *Oops it is debug window*
-
-  </div>
-
-</details>
+[last.fm API key]: https://www.last.fm/api/account/create
 
 ## System requirements
-- Windows 10+ (cuz flutter requires it)
+
+- Windows 7 or newer (Amazing, it works on Windows 7!)
 - Linux and MacOS builds in the future
 - That's all
 
 ## Issues
+
 Please leave your issues on [this page][issues]. It is very important because:
+
 - I don't know how to **code** ~~flutter apps~~
 - I understand only about **7**% of my code
 - The rest **93**% of my code is crap
@@ -105,3 +128,51 @@ Please leave your issues on [this page][issues]. It is very important because:
 Thanks!
 
 [issues]: https://github.com/tangenx/lfdi/issues
+
+## Screenshots
+
+<details>
+  <summary>Windows 11 (looks really great!)</summary>
+
+  <div align='center'>
+
+  ![Windows 11_1](https://i.imgur.com/0qeyNi8.png)
+
+  ![Windows 11_2](https://i.imgur.com/UP2hK3A.png)
+
+  </div>
+
+</details>
+
+<details>
+  <summary>Windows 10 (looks very funny)</summary>
+
+  <div align='center'>
+
+  ![Windows 10](https://i.imgur.com/7HNUsLl.png)
+
+  </div>
+
+</details>
+
+<details>
+  <summary>Windows 8/8.1</summary>
+
+  <div align='center'>
+
+  ![Windows 8.1](https://i.imgur.com/5AJTRK0.png)
+
+  </div>
+
+</details>
+
+<details>
+  <summary>Windows 7 (Amazing, it works on Windows 7!)</summary>
+
+  <div align='center'>
+
+  ![Windows 7](https://i.imgur.com/6g3Q5SI.png)
+
+  </div>
+
+</details>

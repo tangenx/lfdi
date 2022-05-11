@@ -51,8 +51,6 @@ void main() async {
 
   DiscordRPC.initialize();
 
-  runApp(const ProviderScope(child: MyApp()));
-
   doWhenWindowReady(() async {
     appWindow
       ..minSize = windowSize
@@ -64,6 +62,8 @@ void main() async {
 
     appWindow.show();
   });
+
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends ConsumerWidget {

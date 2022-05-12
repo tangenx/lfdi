@@ -53,25 +53,30 @@ const String helloAlreadyRecievedError = 'HELLO_ALREADY_RECIEVED';
 enum RPCAppName {
   someMusic,
   listeningToMusic,
+  music,
 }
 
 const Map<String, RPCAppName> discordAppIdToAppName = {
   defaultDiscordAppID: RPCAppName.listeningToMusic,
-  someMusicDiscordAppID: RPCAppName.someMusic
+  someMusicDiscordAppID: RPCAppName.someMusic,
+  musicDiscordAppID: RPCAppName.music,
 };
 
 const Map<RPCAppName, String> discordAppNameToAppId = {
   RPCAppName.listeningToMusic: defaultDiscordAppID,
   RPCAppName.someMusic: someMusicDiscordAppID,
+  RPCAppName.music: musicDiscordAppID,
 };
 
 const Map<RPCAppName, String> discordAppEnumToAppName = {
   RPCAppName.listeningToMusic: 'Listening to music',
   RPCAppName.someMusic: 'some music',
+  RPCAppName.music: 'music',
 };
 
 const String defaultDiscordAppID = '969612309209186354';
 const String someMusicDiscordAppID = '970076164947316746';
+const String musicDiscordAppID = '974413655649161276';
 
 // Used for Gateway Presence
 enum GatewayPresenceType {

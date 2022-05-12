@@ -187,7 +187,8 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
         const SizedBox(
           height: 10,
         ),
-        currentGatewayPresenceType == GatewayPresenceType.musicAppInHeader
+        currentGatewayPresenceType == GatewayPresenceType.musicAppInHeader &&
+                box.get('priorUsing') == 'discord'
             ? InfoLabel(
                 label: 'Music app',
                 child: Combobox<String>(

@@ -1,17 +1,17 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:tray_manager/tray_manager.dart';
+import 'package:tray_manager/tray_manager.dart' as tray;
 
 // Window and tray
 const appTitle = 'Last.fm Discord Integrator';
 const windowSize = Size(755, 545);
 
-List<MenuItem> trayMenuItems = [
-  MenuItem(
+List<tray.MenuItem> trayMenuItems = [
+  tray.MenuItem(
     key: 'restore_window',
     label: 'Hide/Restore',
   ),
-  MenuItem.separator(),
-  MenuItem(
+  tray.MenuItem.separator(),
+  tray.MenuItem(
     key: 'close_window',
     label: 'Close LFDI',
   )

@@ -7,10 +7,10 @@
     <img src="https://img.shields.io/badge/fluent-design-blue?style=flat-square&color=7A7574&labelColor=0078D7"/>
   </a>
   <a title="Coded on Flutter with love 💖" href="https://flutter.dev">
-    <img src="https://img.shields.io/badge/flutter-v2.10.5-blue">
+    <img src="https://img.shields.io/badge/flutter-v3.0.0-blue">
   </a>
   <a title="Thank you, Dart!" href="https://dart.dev">
-    <img src="https://img.shields.io/badge/dart-v2.16.2-blue">
+    <img src="https://img.shields.io/badge/dart-v2.17.0-blue">
   </a>  
 </p>
 

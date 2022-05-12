@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lfdi/constants.dart';
 import 'package:lfdi/main.dart';
 import 'package:lfdi/utils/debounce.dart';
-import 'package:tray_manager/tray_manager.dart';
+import 'package:tray_manager/tray_manager.dart' as tray;
 
 class WindowButtons extends ConsumerStatefulWidget {
   const WindowButtons({Key? key}) : super(key: key);
@@ -16,14 +16,14 @@ class WindowButtons extends ConsumerStatefulWidget {
 }
 
 class _WindowButtonsState extends ConsumerState<WindowButtons>
-    with TrayListener {
+    with tray.TrayListener {
   int trayClickCount = 0;
 
   late final void Function() resetClickCountDebounced;
 
   @override
   void initState() {
-    trayManager.addListener(this);
+    tray.trayManager.addListener(this);
 
     resetClickCountDebounced = debounce(
       () => trayClickCount = 0,
@@ -37,7 +37,7 @@ class _WindowButtonsState extends ConsumerState<WindowButtons>
 
   @override
   void dispose() {
-    trayManager.removeListener(this);
+    tray.trayManager.removeListener(this);
     appWindow.close();
 
     super.dispose();
@@ -46,18 +46,18 @@ class _WindowButtonsState extends ConsumerState<WindowButtons>
   // Tray functions
   @override
   void onTrayIconRightMouseDown() {
-    trayManager.popUpContextMenu();
+    tray.trayManager.popUpContextMenu();
   }
 
   // tray functions
   Future<void> initTray() async {
-    await trayManager.setIcon(
+    await tray.trayManager.setIcon(
       Platform.isWindows
           ? 'assets/images/app_icon.ico'
           : 'assets/images/lastfm discord smol.png',
     );
     await Future.delayed(const Duration(milliseconds: 200));
-    await trayManager.setContextMenu(Menu(items: trayMenuItems));
+    await tray.trayManager.setContextMenu(tray.Menu(items: trayMenuItems));
   }
 
   void toggleWindowState() {
@@ -72,7 +72,7 @@ class _WindowButtonsState extends ConsumerState<WindowButtons>
   }
 
   @override
-  void onTrayMenuItemClick(MenuItem menuItem) {
+  void onTrayMenuItemClick(tray.MenuItem menuItem) {
     switch (menuItem.key) {
       case 'restore_window':
         toggleWindowState();
@@ -89,8 +89,8 @@ class _WindowButtonsState extends ConsumerState<WindowButtons>
           gateway.dispose();
         }
 
-        trayManager.removeListener(this);
-        trayManager.destroy();
+        tray.trayManager.removeListener(this);
+        tray.trayManager.destroy();
         appWindow.close();
         break;
       default:

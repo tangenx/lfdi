@@ -11,7 +11,13 @@
   </a>
   <a title="Thank you, Dart!" href="https://dart.dev">
     <img src="https://img.shields.io/badge/dart-v2.16.2-blue">
-  </a>  
+  </a>
+  <a title="I don't understand if it works or not" href="">
+    <img src="https://img.shields.io/badge/works%3F-probably-yellow">
+  </a>
+  <a title="Just chill" href="">
+    <img src="https://img.shields.io/badge/author%20is-chilling-orange">
+  </a>
 </p>
 
 <div align='center'>

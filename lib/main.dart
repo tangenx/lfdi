@@ -129,15 +129,17 @@ class MyApp extends ConsumerWidget {
 
             // Check for Spotify dev app
             if (spotifyApiKey != null && spotifyApiSecret != null) {
-              webSocketManager.spotifyApi = SpotifyApi(
-                SpotifyApiCredentials(
-                  spotifyApiKey,
-                  spotifyApiSecret,
-                ),
-              );
+              if (spotifyApiKey.isNotEmpty && spotifyApiSecret.isNotEmpty) {
+                webSocketManager.spotifyApi = SpotifyApi(
+                  SpotifyApiCredentials(
+                    spotifyApiKey,
+                    spotifyApiSecret,
+                  ),
+                );
 
-              if (priorUsing == 'discord') {
-                webSocketManager.startUpdating();
+                if (priorUsing == 'discord') {
+                  webSocketManager.startUpdating();
+                }
               }
             }
           }

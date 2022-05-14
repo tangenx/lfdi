@@ -2,8 +2,11 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lfdi/api/api.dart';
+import 'package:lfdi/constants.dart';
+import 'package:lfdi/handlers/discord_websocket/websocket_manager.dart';
 import 'package:lfdi/main.dart';
 import 'package:lfdi/handlers/rpc.dart';
+import 'package:spotify/spotify.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsForm extends ConsumerStatefulWidget {
@@ -148,80 +151,154 @@ class _SettingsFormState extends ConsumerState<SettingsForm> {
               ),
             ],
           ),
-          Button(
-            child: const Text('Apply'),
-            onPressed: () async {
-              if (processing) {
-                return;
-              }
+          Row(
+            children: [
+              Button(
+                child: const Text('Apply'),
+                onPressed: () async {
+                  if (processing) {
+                    return;
+                  }
 
-              if (settingsFormKey.currentState!.validate()) {
-                setState(() {
-                  processing = true;
-                });
+                  if (settingsFormKey.currentState!.validate()) {
+                    setState(() {
+                      processing = true;
+                    });
 
-                final username = usernameController.text;
-                final apiKey = apiKeyController.text;
+                    final username = usernameController.text;
+                    final apiKey = apiKeyController.text;
 
-                final lastfmApiKey = box.get('apiKey');
-                final lastfmUsername = box.get('username');
+                    final lastfmApiKey = box.get('apiKey');
+                    final lastfmUsername = box.get('username');
 
-                // Check on change
-                if (lastfmUsername == username && lastfmApiKey == apiKey) {
-                  showSnackbar(
-                    context,
-                    const Snackbar(
-                      content: Text('This data has already been saved'),
-                    ),
-                  );
+                    // Check on change
+                    if (lastfmUsername == username && lastfmApiKey == apiKey) {
+                      showSnackbar(
+                        context,
+                        const Snackbar(
+                          content: Text('This data has already been saved'),
+                        ),
+                      );
+
+                      setState(() {
+                        processing = false;
+                      });
+                      return;
+                    }
+
+                    final testResponse = API
+                        .checkAPI(await API.getRecentTrack(username, apiKey));
+
+                    if (testResponse['status'] == 'error') {
+                      showSnackbar(
+                        context,
+                        Snackbar(
+                          content: Text(testResponse['message']),
+                        ),
+                      );
+
+                      setState(() {
+                        processing = false;
+                      });
+                      return;
+                    }
+
+                    if (testResponse['message']['recenttracks'] != null &&
+                        testResponse['message']['recenttracks']['track'] !=
+                            null) {
+                      box.putAll({
+                        'username': username,
+                        'apiKey': apiKey,
+                      });
+
+                      RPC rpc = ref.read(rpcProvider);
+                      DiscordWebSocketManager gateway =
+                          ref.read(discordGatewayProvider);
+                      rpc.initialize(apiKey: apiKey, username: username);
+
+                      final priorUsing = box.get('priorUsing');
+                      if (priorUsing == 'lastfm') {
+                        rpc.start();
+                      }
+
+                      if (priorUsing == 'discord') {
+                        gateway.lastFmApiKey = apiKey;
+                        gateway.lastFmUsername = username;
+
+                        final spotifyApiKey = box.get('spotifyApiKey');
+                        final spotifyApiSecret = box.get('spotifyApiSecret');
+                        final defaultMusicApp = box.get('defaultMusicApp');
+                        final presenceType = box.get('gatewayPresenceType');
+                        if (spotifyApiKey != null && spotifyApiSecret != null) {
+                          if (spotifyApiKey.isNotEmpty &&
+                              spotifyApiSecret.isNotEmpty) {
+                            gateway.spotifyApi = SpotifyApi(
+                              SpotifyApiCredentials(
+                                spotifyApiKey,
+                                spotifyApiSecret,
+                              ),
+                            );
+
+                            gateway.presenceType =
+                                stringIdToPresenceType[presenceType];
+                            gateway.defaultMusicApp = defaultMusicApp;
+
+                            gateway.startUpdating();
+                          }
+                        }
+                      }
+
+                      showSnackbar(
+                        context,
+                        const Snackbar(
+                          content: Text('Last.fm successfully configured'),
+                        ),
+                      );
+
+                      setState(() {
+                        processing = false;
+                      });
+                    }
+                  }
+                },
+              ),
+              Button(
+                child: const Text('Clear'),
+                onPressed: () {
+                  if (processing) {
+                    return;
+                  }
 
                   setState(() {
-                    processing = false;
-                  });
-                  return;
-                }
-
-                final testResponse =
-                    API.checkAPI(await API.getRecentTrack(username, apiKey));
-
-                if (testResponse['status'] == 'error') {
-                  showSnackbar(
-                    context,
-                    Snackbar(
-                      content: Text(testResponse['message']),
-                    ),
-                  );
-
-                  setState(() {
-                    processing = false;
-                  });
-                  return;
-                }
-
-                if (testResponse['message']['recenttracks'] != null &&
-                    testResponse['message']['recenttracks']['track'] != null) {
-                  box.putAll({
-                    'username': username,
-                    'apiKey': apiKey,
+                    processing = true;
                   });
 
-                  showSnackbar(
-                    context,
-                    const Snackbar(
-                      content: Text('Last.fm successfully configured'),
-                    ),
-                  );
+                  apiKeyController.text = '';
+                  usernameController.text = '';
+
+                  box.put('apiKey', '');
+                  box.put('username', '');
 
                   RPC rpc = ref.read(rpcProvider);
-                  rpc.initialize(apiKey: apiKey, username: username);
-                  rpc.start();
+                  rpc.dispose();
+
+                  DiscordWebSocketManager gateway =
+                      ref.read(discordGatewayProvider);
+                  gateway.dispose();
+
+                  showSnackbar(
+                    context,
+                    const Snackbar(
+                      content: Text('Successfully cleared.'),
+                    ),
+                  );
 
                   setState(() {
                     processing = false;
                   });
-                }
-              }
-            },
+                },
+              ),
+            ],
           ),
         ],
       ),

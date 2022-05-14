@@ -62,12 +62,23 @@ class DiscordWebSoket {
 
       // Handle a message
       webSocketMessagesHandler(webSocketMessage);
-    }, onDone: () {
+    }, onDone: () async {
       logger.error('WebSocket connection was closed.', name: 'DWS: Main');
       logger.error(
         'WebSocket close code: ${webSocketChannel?.closeCode}',
         name: 'DWS: Main',
       );
+
+      // If disconnection is not the user's will
+      if (webSocketChannel?.closeCode != null &&
+          webSocketChannel?.closeCode == 1005) {
+        if (listeners['onDisconnect'] != null) {
+          heartbeatTimer?.cancel();
+          isReconnecting = true;
+          await Future.delayed(const Duration(seconds: 1));
+          init();
+        }
+      }
       // Stop WebSocketManager death process if WebSocket trying reconnect
       if (isReconnecting) {
         // Stop updates from Manager (if started)
@@ -98,6 +109,7 @@ class DiscordWebSoket {
       if (listeners['onClose'] != null) {
         listeners['onClose']!();
       }
+      heartbeatTimer?.cancel();
     }, onError: (error) async {
       logger.error('WebSocket error $error.', name: 'DWS: Main');
 

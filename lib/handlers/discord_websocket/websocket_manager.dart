@@ -50,16 +50,18 @@ class DiscordWebSocketManager {
   final DiscordWebSoket ws = DiscordWebSoket();
 
   /// Init websockets and setup listeners
+  /// `test` flag should be used on Discord token or Spotify credentials checking
   void init({bool? test}) {
-    String isTestInstance = test != null && test ? 'Test Instance' : '';
+    String isTestInstance = test != null && test ? ' Test Instance' : '';
 
-    logger.debug('Triggered init', name: 'DWS $isTestInstance: Manager');
+    logger.debug('Triggered init', name: 'DWS$isTestInstance: Manager');
     if (initialized) {
       return;
     }
-    logger.info('Start init', name: 'DWS $isTestInstance: Manager');
+    logger.info('Start init', name: 'DWS$isTestInstance: Manager');
 
     if (test == null || !test) {
+      ws.addListener(name: 'onDisconnect', listener: () {});
       ws.addListener(
         name: 'onReconnect_Manager',
         listener: () {

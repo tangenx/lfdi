@@ -1,12 +1,6 @@
-import 'dart:io';
-
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lfdi/constants.dart';
-import 'package:lfdi/main.dart';
-import 'package:lfdi/utils/debounce.dart';
-import 'package:tray_manager/tray_manager.dart' as tray;
 
 class WindowButtons extends ConsumerStatefulWidget {
   const WindowButtons({Key? key}) : super(key: key);
@@ -15,103 +9,12 @@ class WindowButtons extends ConsumerStatefulWidget {
   ConsumerState<WindowButtons> createState() => _WindowButtonsState();
 }
 
-class _WindowButtonsState extends ConsumerState<WindowButtons>
-    with tray.TrayListener {
-  int trayClickCount = 0;
-
-  late final void Function() resetClickCountDebounced;
-
-  @override
-  void initState() {
-    tray.trayManager.addListener(this);
-
-    resetClickCountDebounced = debounce(
-      () => trayClickCount = 0,
-      const Duration(milliseconds: 500),
-    );
-
-    initTray();
-
-    super.initState();
-  }
-
+class _WindowButtonsState extends ConsumerState<WindowButtons> {
   @override
   void dispose() {
-    tray.trayManager.removeListener(this);
     appWindow.close();
 
     super.dispose();
-  }
-
-  // Tray functions
-  @override
-  void onTrayIconRightMouseDown() {
-    tray.trayManager.popUpContextMenu();
-  }
-
-  // tray functions
-  Future<void> initTray() async {
-    await tray.trayManager.setIcon(
-      Platform.isWindows
-          ? 'assets/images/app_icon.ico'
-          : 'assets/images/lastfm discord smol.png',
-    );
-    await Future.delayed(const Duration(milliseconds: 200));
-    await tray.trayManager.setContextMenu(tray.Menu(items: trayMenuItems));
-    if (runMinimized) {
-      await Future.delayed(const Duration(seconds: 1));
-      appWindow.minimize();
-      appWindow.hide();
-    }
-  }
-
-  void toggleWindowState() {
-    bool isVisible = appWindow.isVisible;
-    if (isVisible) {
-      appWindow.minimize();
-      return appWindow.hide();
-    }
-
-    appWindow.restore();
-    appWindow.show();
-  }
-
-  @override
-  void onTrayMenuItemClick(tray.MenuItem menuItem) {
-    switch (menuItem.key) {
-      case 'restore_window':
-        toggleWindowState();
-        break;
-      case 'close_window':
-        final rpc = ref.read(rpcProvider);
-        final gateway = ref.read(discordGatewayProvider);
-
-        if (rpc.started) {
-          rpc.dispose();
-        }
-
-        if (gateway.started) {
-          gateway.dispose();
-        }
-
-        tray.trayManager.removeListener(this);
-        tray.trayManager.destroy();
-        appWindow.close();
-        break;
-      default:
-    }
-  }
-
-  @override
-  void onTrayIconMouseDown() {
-    trayClickCount++;
-    resetClickCountDebounced();
-
-    if (trayClickCount == 2) {
-      toggleWindowState();
-
-      trayClickCount = 0;
-    }
   }
 
   void onWindowClose() {

@@ -13,6 +13,7 @@ import 'package:lfdi/handlers/discord_websocket/websocket_manager.dart';
 import 'package:lfdi/handlers/rpc.dart';
 import 'package:lfdi/pages/home.dart';
 import 'package:lfdi/theme.dart';
+import 'package:lfdi/tray.dart';
 import 'package:lfdi/utils/extract_windows_info.dart';
 import 'package:lfdi/utils/get_window_effect.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -172,6 +173,9 @@ class MyApp extends ConsumerWidget {
           : Colors.transparent,
       dark: isDarkMode,
     );
+
+    final tray = Tray();
+    tray.init();
 
     return FluentApp(
       title: 'Last.fm Discord Integrator',

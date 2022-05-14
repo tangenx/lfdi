@@ -9,7 +9,6 @@ import 'package:lfdi/handlers/discord_websocket/gateway_message.dart';
 import 'package:lfdi/handlers/discord_websocket/presence_generator.dart';
 import 'package:lfdi/handlers/track_handler.dart' as rpc_track;
 import 'package:spotify/spotify.dart';
-import 'package:oauth2/oauth2.dart';
 
 class DiscordWebSocketManager {
   String discordToken;
@@ -51,25 +50,28 @@ class DiscordWebSocketManager {
   final DiscordWebSoket ws = DiscordWebSoket();
 
   /// Init websockets and setup listeners
-  void init() {
-    logger.debug('Triggered init', name: 'DWS: Manager');
+  void init({bool? test}) {
+    String isTestInstance = test != null && test ? 'Test Instance' : '';
+
+    logger.debug('Triggered init', name: 'DWS $isTestInstance: Manager');
     if (initialized) {
       return;
     }
-    logger.info('Start init', name: 'DWS: Manager');
+    logger.info('Start init', name: 'DWS $isTestInstance: Manager');
 
-    ws.addListener(
-      name: 'onReconnect_Manager',
-      listener: () {
-        logger.debug('Triggered.', name: 'DWS: Manager onReconnect_Manager');
-        if (started) {
-          logger.info('Stop updating.',
-              name: 'DWS: Manager onReconnect_Manager');
-          stopUpdating();
-        }
-      },
-    );
-    ws.addListener(
+    if (test == null || !test) {
+      ws.addListener(
+        name: 'onReconnect_Manager',
+        listener: () {
+          logger.debug('Triggered.', name: 'DWS: Manager onReconnect_Manager');
+          if (started) {
+            logger.info('Stop updating.',
+                name: 'DWS: Manager onReconnect_Manager');
+            stopUpdating();
+          }
+        },
+      );
+      ws.addListener(
         name: 'onReconnected_Manager',
         listener: () async {
           logger.debug(
@@ -92,7 +94,9 @@ class DiscordWebSocketManager {
               }
             }
           }
-        });
+        },
+      );
+    }
 
     // Add listener to dispose manager after websocket closed state.
     ws.addListener(
@@ -105,21 +109,24 @@ class DiscordWebSocketManager {
         stopUpdating();
       },
     );
-    ws.addListener(
-      name: 'onReconnectOp7_Manager',
-      listener: () {
-        logger.debug('Triggered.', name: 'DWS: Manager onReconnectOp7_Manager');
-        initialized = true;
-        started = true;
-      },
-    );
-    ws.addListener(
-      name: 'onInvalidSession_Manager',
-      listener: () {
-        identifyIsSent = false;
-        sendIdentify();
-      },
-    );
+    if (test == null || !test) {
+      ws.addListener(
+        name: 'onReconnectOp7_Manager',
+        listener: () {
+          logger.debug('Triggered.',
+              name: 'DWS: Manager onReconnectOp7_Manager');
+          initialized = true;
+          started = true;
+        },
+      );
+      ws.addListener(
+        name: 'onInvalidSession_Manager',
+        listener: () {
+          identifyIsSent = false;
+          sendIdentify();
+        },
+      );
+    }
     ws.init();
     initialized = true;
     logger.info('Successfully initialized', name: 'DWS: Manager');
@@ -318,6 +325,7 @@ class DiscordWebSocketManager {
 
   void dispose() {
     logger.debug('Triggered dispose', name: 'DWS: Manager');
+    stopUpdating();
     ws.dispose();
   }
 

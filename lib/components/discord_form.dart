@@ -8,7 +8,11 @@ import 'package:lfdi/main.dart';
 import 'package:spotify/spotify.dart';
 
 class DiscordForm extends ConsumerStatefulWidget {
-  const DiscordForm({Key? key}) : super(key: key);
+  final Function updateState;
+  const DiscordForm({
+    Key? key,
+    required this.updateState,
+  }) : super(key: key);
 
   @override
   ConsumerState<DiscordForm> createState() => _DiscordFormState();
@@ -41,6 +45,20 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
     super.dispose();
   }
 
+  Widget buildInfoBar(String text) {
+    return Column(
+      children: [
+        InfoBar(
+          title: Text(text),
+          severity: InfoBarSeverity.warning,
+        ),
+        const SizedBox(
+          height: 10,
+        )
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -48,6 +66,10 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          (box.get('apiKey') == null && box.get('username') == null) ||
+                  (box.get('apiKey').isEmpty && box.get('username').isEmpty)
+              ? buildInfoBar('Set up Last.fm firstly.')
+              : const SizedBox(),
           TextFormBox(
             header: 'Discord User token',
             placeholder: 'Yes, your token. Not bot.',
@@ -116,6 +138,33 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
                     return;
                   }
 
+                  final token = discordTokenController.text;
+                  final spotifyApiKey = spotifyApiKeyController.text;
+                  final spotifyApiSecret = spotifyApiSecretController.text;
+
+                  if (token == box.get('discordToken') &&
+                      spotifyApiKey == box.get('spotifyApiKey') &&
+                      spotifyApiSecret == box.get('spotifyApiSecret')) {
+                    setState(() {
+                      processing = false;
+                    });
+
+                    showSnackbar(
+                      context,
+                      const Snackbar(
+                        content: Text(
+                          'Nothing to change.',
+                        ),
+                      ),
+                    );
+
+                    return;
+                  }
+
+                  DiscordWebSocketManager webSocketManagerInstance =
+                      ref.read(discordGatewayProvider);
+                  webSocketManagerInstance.dispose();
+
                   // Check lastfm
                   final lastfmApiKey = box.get('apiKey');
                   final lastfmUsername = box.get('username');
@@ -144,40 +193,35 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
                     });
                     // Test Discord
 
-                    final token = discordTokenController.text.toString();
+                    DiscordWebSocketManager webSocketTestManager =
+                        DiscordWebSocketManager(discordToken: token);
 
-                    DiscordWebSocketManager webSocketManager =
-                        ref.read(discordGatewayProvider);
+                    webSocketTestManager.lastFmApiKey = lastfmApiKey;
+                    webSocketTestManager.lastFmUsername = lastfmUsername;
 
-                    webSocketManager.lastFmApiKey = lastfmApiKey;
-                    webSocketManager.lastFmUsername = lastfmUsername;
-
-                    if (webSocketManager.identifyIsSent) {
-                      webSocketManager.reinit();
-                    }
-
-                    webSocketManager.discordToken = token;
+                    webSocketTestManager.discordToken = token;
 
                     bool isWebSocketDead = false;
-                    webSocketManager.addListener(
+                    webSocketTestManager.addListener(
                       name: 'onClose',
                       listener: () {
                         isWebSocketDead = true;
                       },
                     );
-                    webSocketManager.init();
+                    webSocketTestManager.init();
 
                     await Future.delayed(const Duration(seconds: 1));
-                    webSocketManager.sendIdentify();
+                    webSocketTestManager.sendIdentify();
                     await Future.delayed(const Duration(seconds: 3));
+                    webSocketTestManager.dispose();
 
                     if (isWebSocketDead) {
-                      webSocketManager.dispose();
-
                       showSnackbar(
                         context,
                         const Snackbar(
-                          content: Text('Invalid user token'),
+                          content: Text(
+                            'Invalid user token (if you\'re sure it\'s not, try again)',
+                          ),
                         ),
                       );
 
@@ -191,9 +235,6 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
                     box.put('discordToken', token);
 
                     // Test Spotify
-                    final spotifyApiKey = spotifyApiKeyController.text;
-                    final spotifyApiSecret = spotifyApiSecretController.text;
-
                     bool isSpotifyError = false;
 
                     try {
@@ -202,7 +243,9 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
                         spotifyApiSecret,
                       );
 
-                      final spotifyApi = SpotifyApi(credentials);
+                      // Thanks to github.com/evaqum
+                      final spotifyApi =
+                          await SpotifyApi.asyncFromCredentials(credentials);
                       await spotifyApi.search.get('metallica').first(2);
 
                       // If it ever stops working, I have a way
@@ -240,27 +283,30 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
                     box.put('spotifyApiKey', spotifyApiKey);
                     box.put('spotifyApiSecret', spotifyApiSecret);
 
-                    webSocketManager.spotifyApi = SpotifyApi(
+                    // Set up main instance
+                    webSocketManagerInstance.discordToken = token;
+                    webSocketManagerInstance.lastFmApiKey = lastfmApiKey;
+                    webSocketManagerInstance.lastFmUsername = lastfmUsername;
+                    webSocketManagerInstance.spotifyApi = SpotifyApi(
                       SpotifyApiCredentials(spotifyApiKey, spotifyApiSecret),
                     );
-
-                    webSocketManager.presenceType =
+                    webSocketManagerInstance.presenceType =
                         stringIdToPresenceType[box.get('gatewayPresenceType')];
-                    webSocketManager.defaultMusicApp =
+                    webSocketManagerInstance.defaultMusicApp =
                         box.get('defaultMusicApp');
 
-                    if (!webSocketManager.initialized) {
-                      webSocketManager.init();
+                    webSocketManagerInstance.init();
 
-                      final priorUsing = box.get('priorUsing');
+                    final priorUsing = box.get('priorUsing');
 
-                      if (priorUsing == 'discord') {
-                        if (!webSocketManager.started) {
-                          webSocketManager.startUpdating();
-                        }
+                    if (priorUsing == 'discord') {
+                      if (!webSocketManagerInstance.started) {
+                        webSocketManagerInstance.startUpdating();
                       }
                     }
                   }
+
+                  widget.updateState();
 
                   showSnackbar(
                     context,
@@ -307,11 +353,15 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
 
                       box.put('spotifyApiKey', '');
                       box.put('spotifyApiSecret', '');
+                      box.put('priorUsing', 'lastfm');
+
+                      final rpc = ref.read(rpcProvider);
+                      rpc.start();
 
                       showSnackbar(
                         context,
                         const Snackbar(
-                          content: Text('Done'),
+                          content: Text('Successfully cleared.'),
                         ),
                       );
 

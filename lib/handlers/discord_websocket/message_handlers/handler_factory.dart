@@ -1,6 +1,7 @@
 import 'package:lfdi/handlers/discord_websocket/message_handlers/handlers/dispatch.dart';
 import 'package:lfdi/handlers/discord_websocket/message_handlers/handlers/heartbeat_ack.dart';
 import 'package:lfdi/handlers/discord_websocket/message_handlers/handlers/hello.dart';
+import 'package:lfdi/handlers/discord_websocket/message_handlers/handlers/invalid_session.dart';
 import 'package:lfdi/handlers/discord_websocket/message_handlers/handlers/reconnect.dart';
 
 class GatewayHandlerFactory {
@@ -11,6 +12,8 @@ class GatewayHandlerFactory {
     'DispatchHandler': () => DispatchHandler(),
     // OP Code 7
     'ReconnectHandler': () => ReconnectHandler(),
+    // OP Code 9
+    'InvalidSessionHandler': () => InvalidSessionHandler(),
     // OP Code 10
     'HelloHandler': () => HelloHandler(),
     // OP Code 11
@@ -24,6 +27,10 @@ class GatewayHandlerFactory {
 
     if (operationCode == 7) {
       return instances['ReconnectHandler']!();
+    }
+
+    if (operationCode == 9) {
+      return instances['InvalidSessionHandler']!();
     }
 
     if (operationCode == 10) {

@@ -58,6 +58,11 @@ class _WindowButtonsState extends ConsumerState<WindowButtons>
     );
     await Future.delayed(const Duration(milliseconds: 200));
     await tray.trayManager.setContextMenu(tray.Menu(items: trayMenuItems));
+    if (runMinimized) {
+      await Future.delayed(const Duration(seconds: 1));
+      appWindow.minimize();
+      appWindow.hide();
+    }
   }
 
   void toggleWindowState() {

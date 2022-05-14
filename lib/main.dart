@@ -9,10 +9,9 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
 import 'package:lfdi/constants.dart';
 import 'package:lfdi/globals.dart';
-
 import 'package:lfdi/handlers/discord_websocket/websocket_manager.dart';
-import 'package:lfdi/pages/home.dart';
 import 'package:lfdi/handlers/rpc.dart';
+import 'package:lfdi/pages/home.dart';
 import 'package:lfdi/theme.dart';
 import 'package:lfdi/utils/extract_windows_info.dart';
 import 'package:lfdi/utils/get_window_effect.dart';
@@ -23,16 +22,17 @@ import 'package:system_theme/system_theme.dart';
 final rpcProvider = Provider((ref) => RPC());
 final discordGatewayProvider =
     Provider((ref) => DiscordWebSocketManager(discordToken: ''));
+late final bool runMinimized;
 
-void main() async {
+void main(List<String> arguments) async {
+  if (arguments.contains('--minimize')) {
+    runMinimized = true;
+  } else {
+    runMinimized = false;
+  }
   WidgetsFlutterBinding.ensureInitialized();
 
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
-
-  LaunchAtStartup.instance.setup(
-    appName: packageInfo.appName,
-    appPath: Platform.resolvedExecutable,
-  );
 
   WindowsVersionInfo windowsInfo = extractWindowsInfo();
 
@@ -45,7 +45,19 @@ void main() async {
 
   // set up Hive
   await Hive.initFlutter();
-  await Hive.openBox('lfdi');
+  Box lfdiBox = await Hive.openBox('lfdi');
+
+  bool? startMinimized = lfdiBox.get('startMinimized');
+  if (startMinimized == null) {
+    lfdiBox.put('startMinimized', false);
+    startMinimized = false;
+  }
+
+  LaunchAtStartup.instance.setup(
+    appName: packageInfo.appName,
+    appPath: '"${Platform.resolvedExecutable}"'
+        '${startMinimized ? ' --minimize' : ''}',
+  );
 
   logger.init();
 

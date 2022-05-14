@@ -162,7 +162,7 @@ class _WindowButtonsState extends ConsumerState<WindowButtons>
     return Row(
       children: [
         MinimizeWindowButton(colors: colors),
-        MaximizeWindowButton(colors: colors),
+        //MaximizeWindowButton(colors: colors),
         CloseWindowButton(
           colors: closeButtonColors,
           onPressed: onWindowClose,

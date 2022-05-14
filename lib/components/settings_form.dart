@@ -262,6 +262,9 @@ class _SettingsFormState extends ConsumerState<SettingsForm> {
                   }
                 },
               ),
+              const SizedBox(
+                width: 10,
+              ),
               Button(
                 child: const Text('Clear'),
                 onPressed: () {
@@ -276,8 +279,10 @@ class _SettingsFormState extends ConsumerState<SettingsForm> {
                   apiKeyController.text = '';
                   usernameController.text = '';
 
-                  box.put('apiKey', '');
-                  box.put('username', '');
+                  box.putAll({
+                    'username': '',
+                    'apiKey': '',
+                  });
 
                   RPC rpc = ref.read(rpcProvider);
                   rpc.dispose();

@@ -35,13 +35,18 @@ class _LogConsoleState extends State<LogConsole> {
 
   @override
   Widget build(BuildContext context) {
+    final typography = FluentTheme.of(context).typography;
+
     return ScaffoldPage.withPadding(
       header: const PageHeader(
         title: Text('Log Console'),
       ),
       content: logMessages.isEmpty
-          ? const Center(
-              child: Text('No logs yet ¯\\_(ツ)_/¯'),
+          ? Center(
+              child: Text(
+                'No logs yet ¯\\_(ツ)_/¯',
+                style: typography.bodyLarge,
+              ),
             )
           : Container(
               decoration: const BoxDecoration(

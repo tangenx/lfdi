@@ -41,213 +41,230 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
       currentMusicApp = gateway!.defaultMusicApp;
     });
 
-    return ScaffoldPage.scrollable(
-      header: const PageHeader(
-        title: Text('Discord Rich Presence Settings'),
-      ),
-      children: [
-        Text(
-          'Status preview',
-          style: typography.bodyLarge,
+    if (rpc!.initialized || gateway!.initialized) {
+      return ScaffoldPage.scrollable(
+        header: const PageHeader(
+          title: Text('Discord Rich Presence Settings'),
         ),
-        const SizedBox(
-          height: 10,
-        ),
-        const Align(
-          alignment: Alignment.centerLeft,
-          child: DiscordStatusPreview(),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        box.get('priorUsing') == 'lastfm'
-            ? InfoLabel(
-                label: '"Playing to" text',
-                child: Combobox<RPCAppName>(
-                  placeholder: const Text('Choose a playing text'),
-                  isExpanded: true,
-                  items: RPCAppName.values
-                      .map((e) => ComboboxItem<RPCAppName>(
-                            value: e,
-                            child: Text(
-                              discordAppEnumToAppName[e]!,
+        children: [
+          Text(
+            'Status preview',
+            style: typography.bodyLarge,
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: DiscordStatusPreview(),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          box.get('priorUsing') == 'lastfm'
+              ? InfoLabel(
+                  label: '"Playing to" text',
+                  child: Combobox<RPCAppName>(
+                    placeholder: const Text('Choose a playing text'),
+                    isExpanded: true,
+                    items: RPCAppName.values
+                        .map((e) => ComboboxItem<RPCAppName>(
+                              value: e,
+                              child: Text(
+                                discordAppEnumToAppName[e]!,
+                              ),
+                            ))
+                        .toList(),
+                    value: boxValue,
+                    onChanged: (value) async {
+                      if (!changing) {
+                        setState(() {
+                          changing = true;
+                        });
+
+                        if (value != null) {
+                          setState(() {
+                            boxValue = value;
+                          });
+
+                          String changingApplicationId =
+                              discordAppNameToAppId[value]!;
+
+                          String? storedApplicationId = box.get('discordAppID');
+
+                          if (storedApplicationId != null &&
+                              storedApplicationId == changingApplicationId) {
+                            setState(() {
+                              changing = false;
+                            });
+                            return;
+                          }
+
+                          box.put('discordAppID', changingApplicationId);
+
+                          rpc!.reinitialize(
+                              applicationid: changingApplicationId);
+
+                          showSnackbar(
+                            context,
+                            const Snackbar(
+                              content:
+                                  Text('Playing text successfully changed'),
                             ),
-                          ))
-                      .toList(),
-                  value: boxValue,
-                  onChanged: (value) async {
-                    if (!changing) {
+                          );
+
+                          setState(() {
+                            changing = false;
+                          });
+                        }
+                      }
+                    },
+                  ),
+                )
+              : InfoLabel(
+                  label: 'Presence style',
+                  child: Combobox<GatewayPresenceType>(
+                    placeholder: const Text('Choose a Presence style'),
+                    isExpanded: true,
+                    items: GatewayPresenceType.values
+                        .map((e) => ComboboxItem<GatewayPresenceType>(
+                              value: e,
+                              child: Text(
+                                presenceTypeToName[e]!,
+                              ),
+                            ))
+                        .toList(),
+                    value: currentGatewayPresenceType,
+                    onChanged: (value) {
+                      if (changing) {
+                        return;
+                      }
+
                       setState(() {
                         changing = true;
                       });
 
                       if (value != null) {
                         setState(() {
-                          boxValue = value;
+                          currentGatewayPresenceType = value;
                         });
+                      }
 
-                        String changingApplicationId =
-                            discordAppNameToAppId[value]!;
+                      GatewayPresenceType? presenceType = value;
 
-                        String? storedApplicationId = box.get('discordAppID');
+                      String changingPresenceType =
+                          presenceTypeToStringID[presenceType]!;
 
-                        if (storedApplicationId != null &&
-                            storedApplicationId == changingApplicationId) {
-                          setState(() {
-                            changing = false;
-                          });
-                          return;
-                        }
+                      String storedPresenceType =
+                          box.get('gatewayPresenceType');
 
-                        box.put('discordAppID', changingApplicationId);
-
-                        rpc!.reinitialize(applicationid: changingApplicationId);
-
-                        showSnackbar(
-                          context,
-                          const Snackbar(
-                            content: Text('Playing text successfully changed'),
-                          ),
-                        );
-
+                      if (storedPresenceType == changingPresenceType) {
                         setState(() {
                           changing = false;
                         });
+                        return;
                       }
-                    }
-                  },
-                ),
-              )
-            : InfoLabel(
-                label: 'Presence style',
-                child: Combobox<GatewayPresenceType>(
-                  placeholder: const Text('Choose a Presence style'),
-                  isExpanded: true,
-                  items: GatewayPresenceType.values
-                      .map((e) => ComboboxItem<GatewayPresenceType>(
-                            value: e,
-                            child: Text(
-                              presenceTypeToName[e]!,
-                            ),
-                          ))
-                      .toList(),
-                  value: currentGatewayPresenceType,
-                  onChanged: (value) {
-                    if (changing) {
-                      return;
-                    }
 
-                    setState(() {
-                      changing = true;
-                    });
+                      box.put('gatewayPresenceType', changingPresenceType);
 
-                    if (value != null) {
-                      setState(() {
-                        currentGatewayPresenceType = value;
-                      });
-                    }
+                      if (gateway!.started) {
+                        gateway!.stopUpdating();
+                      }
 
-                    GatewayPresenceType? presenceType = value;
+                      gateway!.presenceType = presenceType;
 
-                    String changingPresenceType =
-                        presenceTypeToStringID[presenceType]!;
+                      gateway!.startUpdating();
 
-                    String storedPresenceType = box.get('gatewayPresenceType');
-
-                    if (storedPresenceType == changingPresenceType) {
-                      setState(() {
-                        changing = false;
-                      });
-                      return;
-                    }
-
-                    box.put('gatewayPresenceType', changingPresenceType);
-
-                    if (gateway!.started) {
-                      gateway!.stopUpdating();
-                    }
-
-                    gateway!.presenceType = presenceType;
-
-                    gateway!.startUpdating();
-
-                    showSnackbar(
-                      context,
-                      const Snackbar(
-                        content: Text('Presence style successfully changed'),
-                      ),
-                    );
-
-                    setState(() {
-                      changing = false;
-                    });
-                  },
-                ),
-              ),
-        const SizedBox(
-          height: 10,
-        ),
-        currentGatewayPresenceType == GatewayPresenceType.musicAppInHeader &&
-                box.get('priorUsing') == 'discord'
-            ? InfoLabel(
-                label: 'Music app',
-                child: Combobox<String>(
-                  placeholder: const Text('Choose a Presence style'),
-                  isExpanded: true,
-                  items: musicApps
-                      .map(
-                        (e) => ComboboxItem<String>(
-                          child: Text(e),
-                          value: e,
+                      showSnackbar(
+                        context,
+                        const Snackbar(
+                          content: Text('Presence style successfully changed'),
                         ),
-                      )
-                      .toList(),
-                  value: currentMusicApp,
-                  onChanged: (value) {
-                    if (changing) {
-                      return;
-                    }
+                      );
 
-                    setState(() {
-                      changing = true;
-                    });
-
-                    if (value != null) {
-                      setState(() {
-                        currentMusicApp = value;
-                      });
-                    }
-
-                    String changingMusicApp = value!;
-
-                    String storedMusicApp = box.get('defaultMusicApp');
-
-                    if (storedMusicApp == changingMusicApp) {
                       setState(() {
                         changing = false;
                       });
-                      return;
-                    }
-
-                    box.put('defaultMusicApp', changingMusicApp);
-
-                    gateway!.defaultMusicApp = changingMusicApp;
-
-                    showSnackbar(
-                      context,
-                      const Snackbar(
-                        content: Text('Music app successfully changed'),
-                      ),
-                    );
-
-                    setState(() {
-                      changing = false;
-                    });
-                  },
+                    },
+                  ),
                 ),
-              )
-            : const SizedBox(),
-      ],
+          const SizedBox(
+            height: 10,
+          ),
+          currentGatewayPresenceType == GatewayPresenceType.musicAppInHeader &&
+                  box.get('priorUsing') == 'discord'
+              ? InfoLabel(
+                  label: 'Music app',
+                  child: Combobox<String>(
+                    placeholder: const Text('Choose a Presence style'),
+                    isExpanded: true,
+                    items: musicApps
+                        .map(
+                          (e) => ComboboxItem<String>(
+                            child: Text(e),
+                            value: e,
+                          ),
+                        )
+                        .toList(),
+                    value: currentMusicApp,
+                    onChanged: (value) {
+                      if (changing) {
+                        return;
+                      }
+
+                      setState(() {
+                        changing = true;
+                      });
+
+                      if (value != null) {
+                        setState(() {
+                          currentMusicApp = value;
+                        });
+                      }
+
+                      String changingMusicApp = value!;
+
+                      String storedMusicApp = box.get('defaultMusicApp');
+
+                      if (storedMusicApp == changingMusicApp) {
+                        setState(() {
+                          changing = false;
+                        });
+                        return;
+                      }
+
+                      box.put('defaultMusicApp', changingMusicApp);
+
+                      gateway!.defaultMusicApp = changingMusicApp;
+
+                      showSnackbar(
+                        context,
+                        const Snackbar(
+                          content: Text('Music app successfully changed'),
+                        ),
+                      );
+
+                      setState(() {
+                        changing = false;
+                      });
+                    },
+                  ),
+                )
+              : const SizedBox(),
+        ],
+      );
+    }
+
+    return ScaffoldPage.withPadding(
+      header: const PageHeader(
+        title: Text('Discord Rich Presence Settings'),
+      ),
+      content: Center(
+        child: Text(
+          'Set up Last.fm firstly.',
+          style: typography.bodyLarge,
+        ),
+      ),
     );
   }
 }

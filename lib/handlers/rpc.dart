@@ -12,7 +12,7 @@ final GlobalKey<SnackbarState> scaffoldKey = GlobalKey<SnackbarState>();
 class RPC {
   bool initialized = false;
   bool started = false;
-  late Timer timer;
+  Timer? timer;
   String username = '';
   String apiKey = '';
   String applicationId = defaultDiscordAppID;
@@ -154,7 +154,7 @@ class RPC {
 
     started = false;
     rpc?.clearPresence();
-    timer.cancel();
+    timer?.cancel();
   }
 
   /// Dispose the RPC
@@ -165,7 +165,7 @@ class RPC {
     }
     logger.info('Disposing...', name: 'RPC');
 
-    timer.cancel();
+    timer?.cancel();
     rpc?.updatePresence(DiscordPresence());
     started = false;
     initialized = false;

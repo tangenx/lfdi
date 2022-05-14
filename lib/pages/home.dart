@@ -88,6 +88,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     appTitle,
                   ),
                 ),
+                onDoubleTap: () {},
               ),
         actions: hideHeader
             ? null
@@ -95,7 +96,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
-                    child: MoveWindow(),
+                    child: MoveWindow(
+                      onDoubleTap: () {},
+                    ),
                   ),
                   const WindowButtons()
                 ],

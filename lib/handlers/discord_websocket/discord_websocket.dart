@@ -214,7 +214,7 @@ class DiscordWebSoket {
   void closeConnection() {
     logger.info('Closing connection', name: 'DWS: Main');
 
-    webSocketChannel!.sink.close();
+    webSocketChannel?.sink.close();
   }
 
   /// Dispose the WebSocket

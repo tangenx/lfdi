@@ -202,7 +202,9 @@ class DiscordWebSocketManager {
         try {
           search = await spotifyApi!.search
               .get(
-                '${rpc_track.TrackHandler.removeFeat(track.artist)} ${track.name}',
+                Uri.encodeComponent(
+                  '${rpc_track.TrackHandler.removeFeat(track.artist)} ${track.name}',
+                ),
               )
               .first(1);
         } on ExpirationException {
@@ -210,7 +212,9 @@ class DiscordWebSocketManager {
 
           search = await spotifyApi!.search
               .get(
-                '${rpc_track.TrackHandler.removeFeat(track.artist)} ${track.name}',
+                Uri.encodeComponent(
+                  '${rpc_track.TrackHandler.removeFeat(track.artist)} ${track.name}',
+                ),
               )
               .first(1);
         }

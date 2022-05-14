@@ -54,21 +54,21 @@ class DiscordWebSocketManager {
   void init({bool? test}) {
     String isTestInstance = test != null && test ? ' Test Instance' : '';
 
-    logger.debug('Triggered init', name: 'DWS$isTestInstance: Manager');
+    logger.debug('Triggered init', name: 'DWS$isTestInstance Manager');
     if (initialized) {
       return;
     }
-    logger.info('Start init', name: 'DWS$isTestInstance: Manager');
+    logger.info('Start init', name: 'DWS$isTestInstance Manager');
 
     if (test == null || !test) {
       ws.addListener(name: 'onDisconnect', listener: () {});
       ws.addListener(
         name: 'onReconnect_Manager',
         listener: () {
-          logger.debug('Triggered.', name: 'DWS: Manager onReconnect_Manager');
+          logger.debug('Triggered.', name: 'DWS Manager: onReconnect_Manager');
           if (started) {
             logger.info('Stop updating.',
-                name: 'DWS: Manager onReconnect_Manager');
+                name: 'DWS Manager: onReconnect_Manager');
             stopUpdating();
           }
         },
@@ -78,13 +78,13 @@ class DiscordWebSocketManager {
         listener: () async {
           logger.debug(
             'Triggered.',
-            name: 'DWS: Manager onReconnected_Manager',
+            name: 'DWS Manager: onReconnected_Manager',
           );
           if (initialized) {
             identifyIsSent = false;
             logger.info(
               'Sending identify.',
-              name: 'DWS: Manager onReconnected_Manager',
+              name: 'DWS Manager: onReconnected_Manager',
             );
             await Future.delayed(const Duration(seconds: 1));
             sendIdentify();
@@ -104,7 +104,7 @@ class DiscordWebSocketManager {
     ws.addListener(
       name: 'onClose_Manager',
       listener: () {
-        logger.debug('Triggered.', name: 'DWS: Manager onClose_Manager');
+        logger.debug('Triggered.', name: 'DWS Manager: onClose_Manager');
         initialized = false;
         identifyIsSent = false;
         started = false;
@@ -116,7 +116,7 @@ class DiscordWebSocketManager {
         name: 'onReconnectOp7_Manager',
         listener: () {
           logger.debug('Triggered.',
-              name: 'DWS: Manager onReconnectOp7_Manager');
+              name: 'DWS Manager: onReconnectOp7_Manager');
           initialized = true;
           started = true;
         },
@@ -131,15 +131,15 @@ class DiscordWebSocketManager {
     }
     ws.init();
     initialized = true;
-    logger.info('Successfully initialized', name: 'DWS: Manager');
+    logger.info('Successfully initialized', name: 'DWS Manager');
   }
 
   void reinit() {
-    logger.debug('Triggered reinit', name: 'DWS: Manager');
+    logger.debug('Triggered reinit', name: 'DWS Manager');
     if (!initialized) {
       return;
     }
-    logger.info('Start reinit', name: 'DWS: Manager');
+    logger.info('Start reinit', name: 'DWS Manager');
 
     dispose();
 
@@ -148,12 +148,12 @@ class DiscordWebSocketManager {
 
   /// Start updating Presence
   void startUpdating() {
-    logger.debug('Triggered startUpdating', name: 'DWS: Manager');
+    logger.debug('Triggered startUpdating', name: 'DWS Manager');
     if (!initialized || started) {
       return;
     }
 
-    logger.info('Presence updating started', name: 'DWS: Manager');
+    logger.info('Presence updating started', name: 'DWS Manager');
     if (!identifyIsSent) {
       sendIdentify();
     }
@@ -166,7 +166,7 @@ class DiscordWebSocketManager {
         if (response['status'] == 'error') {
           logger.warning(
             'Error getting recent tracks, abort.',
-            name: 'DWS: Manager',
+            name: 'DWS Manager',
           );
           return;
         }
@@ -177,7 +177,7 @@ class DiscordWebSocketManager {
         currentTrack = track;
 
         if (!track.nowPlaying) {
-          logger.warning('No playing tracks now, abort.', name: 'DWS: Manager');
+          logger.warning('No playing tracks now, abort.', name: 'DWS Manager');
           clearPresence();
           return;
         }
@@ -188,7 +188,7 @@ class DiscordWebSocketManager {
         if (trackInfo['status'] == 'error') {
           logger.warning(
             'Error getting track info, abort.',
-            name: 'DWS: Manager',
+            name: 'DWS Manager',
           );
           return;
         }
@@ -309,7 +309,7 @@ class DiscordWebSocketManager {
         );
 
         sendPresence(presence: presence);
-        logger.info('Presence updated.', name: 'DWS: Manager');
+        logger.info('Presence updated.', name: 'DWS Manager');
         if (ws.listeners['onTrackChange'] != null) {
           ws.listeners['onTrackChange']!();
         }
@@ -320,17 +320,18 @@ class DiscordWebSocketManager {
   }
 
   void stopUpdating() {
-    logger.info('Triggered stopUpdating.', name: 'DWS: Manager');
+    logger.info('Triggered stopUpdating.', name: 'DWS Manager');
     started = false;
     updatePresenceTimer?.cancel();
     logger.info(
       'updatePresenceTimer state: ${updatePresenceTimer?.isActive}.',
-      name: 'DWS: Manager',
+      name: 'DWS Manager',
     );
   }
 
   void dispose() {
-    logger.debug('Triggered dispose', name: 'DWS: Manager');
+    logger.debug('Triggered dispose', name: 'DWS Manager');
+    ws.removeListener(listenerName: 'onDisconnect');
     stopUpdating();
     ws.dispose();
   }
@@ -352,16 +353,16 @@ class DiscordWebSocketManager {
   }
 
   void sendIdentify() {
-    logger.debug('Triggered.', name: 'DWS: Manager sendIdentify');
+    logger.debug('Triggered.', name: 'DWS Manager: sendIdentify');
     if (identifyIsSent) {
       logger.warning(
         'Identify is sent, aborting.',
-        name: 'DWS: Manager sendIdentify',
+        name: 'DWS Manager: sendIdentify',
       );
       return;
     }
 
-    logger.info('Sending identify.', name: 'DWS: Manager sendIdentify');
+    logger.info('Sending identify.', name: 'DWS Manager: sendIdentify');
     DiscordGatewayMessage message = DiscordGatewayMessage(
       // OP Code 2 - Identify -	used for client handshake
       operationCode: 2,

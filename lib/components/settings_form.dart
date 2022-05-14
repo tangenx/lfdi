@@ -225,25 +225,37 @@ class _SettingsFormState extends ConsumerState<SettingsForm> {
                         gateway.lastFmApiKey = apiKey;
                         gateway.lastFmUsername = username;
 
-                        final spotifyApiKey = box.get('spotifyApiKey');
-                        final spotifyApiSecret = box.get('spotifyApiSecret');
-                        final defaultMusicApp = box.get('defaultMusicApp');
-                        final presenceType = box.get('gatewayPresenceType');
-                        if (spotifyApiKey != null && spotifyApiSecret != null) {
-                          if (spotifyApiKey.isNotEmpty &&
-                              spotifyApiSecret.isNotEmpty) {
-                            gateway.spotifyApi = SpotifyApi(
-                              SpotifyApiCredentials(
-                                spotifyApiKey,
-                                spotifyApiSecret,
-                              ),
-                            );
+                        final discordToken = box.get('discordToken');
 
-                            gateway.presenceType =
-                                stringIdToPresenceType[presenceType];
-                            gateway.defaultMusicApp = defaultMusicApp;
+                        if (discordToken != null) {
+                          if (discordToken.isNotEmpty) {
+                            gateway.discordToken = discordToken;
+                            final spotifyApiKey = box.get('spotifyApiKey');
+                            final spotifyApiSecret =
+                                box.get('spotifyApiSecret');
+                            final defaultMusicApp = box.get('defaultMusicApp');
+                            final presenceType = box.get('gatewayPresenceType');
 
-                            gateway.startUpdating();
+                            if (spotifyApiKey != null &&
+                                spotifyApiSecret != null) {
+                              if (spotifyApiKey.isNotEmpty &&
+                                  spotifyApiSecret.isNotEmpty) {
+                                gateway.spotifyApi = SpotifyApi(
+                                  SpotifyApiCredentials(
+                                    spotifyApiKey,
+                                    spotifyApiSecret,
+                                  ),
+                                );
+
+                                gateway.presenceType =
+                                    stringIdToPresenceType[presenceType];
+                                gateway.defaultMusicApp = defaultMusicApp;
+
+                                gateway.init();
+
+                                gateway.startUpdating();
+                              }
+                            }
                           }
                         }
                       }

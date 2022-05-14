@@ -259,17 +259,13 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
       header: const PageHeader(
         title: Text('Discord Rich Presence Settings'),
       ),
-      content: Center(
-        child: Column(
-          children: const [
-            Expanded(child: SizedBox()),
-            InfoBar(
-              title: Text('Set up Last.fm first.'),
-              severity: InfoBarSeverity.warning,
-            ),
-            Expanded(child: SizedBox()),
-          ],
-        ),
+      content: Column(
+        children: const [
+          InfoBar(
+            title: Text('Set up Last.fm first.'),
+            severity: InfoBarSeverity.warning,
+          ),
+        ],
       ),
     );
   }

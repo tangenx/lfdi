@@ -4,6 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lfdi/api/api.dart';
 import 'package:lfdi/main.dart';
 import 'package:lfdi/handlers/rpc.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsForm extends ConsumerStatefulWidget {
   const SettingsForm({Key? key}) : super(key: key);
@@ -75,34 +76,77 @@ class _SettingsFormState extends ConsumerState<SettingsForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TextFormBox(
-            header: 'API key',
-            placeholder: 'Get your key on last.fm/api/account/create',
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            controller: apiKeyController,
-            validator: (text) {
-              if (text == null || text.isEmpty) {
-                return 'Provide an API key';
-              }
+          Row(
+            children: [
+              SizedBox(
+                width: 400,
+                child: TextFormBox(
+                  header: 'API key',
+                  placeholder: 'Get your key on last.fm/api/account/create',
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  controller: apiKeyController,
+                  validator: (text) {
+                    if (text == null || text.isEmpty) {
+                      return 'Provide an API key';
+                    }
 
-              if (text.length != 32) {
-                return 'API key is invalid';
-              }
+                    if (text.length != 32) {
+                      return 'API key is invalid';
+                    }
 
-              return null;
-            },
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Button(
+                  child: const Text('Get'),
+                  onPressed: () {
+                    launchUrl(
+                      Uri.parse('https://www.last.fm/api/account/create'),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
-          TextFormBox(
-            header: 'Last.fm username',
-            placeholder: 'Get your username on last.fm/user/your_name_here',
-            controller: usernameController,
-            validator: (text) {
-              if (text == null || text.isEmpty) {
-                return 'Provide an username';
-              }
+          Row(
+            children: [
+              SizedBox(
+                width: 400,
+                child: TextFormBox(
+                  header: 'Last.fm username',
+                  placeholder:
+                      'Get your username on last.fm/user/your_name_here',
+                  controller: usernameController,
+                  validator: (text) {
+                    if (text == null || text.isEmpty) {
+                      return 'Provide an username';
+                    }
 
-              return null;
-            },
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Button(
+                  child: const Text('Get'),
+                  onPressed: () {
+                    launchUrl(
+                      Uri.parse('https://www.last.fm/settings/account'),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
           Button(
             child: const Text('Apply'),

@@ -30,6 +30,7 @@ void main(List<String> arguments) async {
   } else {
     runMinimized = false;
   }
+
   WidgetsFlutterBinding.ensureInitialized();
 
   PackageInfo packageInfo = await PackageInfo.fromPlatform();

@@ -68,7 +68,7 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
         children: [
           (box.get('apiKey') == null && box.get('username') == null) ||
                   (box.get('apiKey').isEmpty && box.get('username').isEmpty)
-              ? buildInfoBar('Set up Last.fm firstly.')
+              ? buildInfoBar('Set up Last.fm first.')
               : const SizedBox(),
           TextFormBox(
             header: 'Discord User token',

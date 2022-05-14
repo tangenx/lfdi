@@ -261,7 +261,7 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
       ),
       content: Center(
         child: Text(
-          'Set up Last.fm firstly.',
+          'Set up Last.fm first.',
           style: typography.bodyLarge,
         ),
       ),

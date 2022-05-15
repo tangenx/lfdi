@@ -19,6 +19,7 @@ import 'package:lfdi/utils/get_window_effect.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:spotify/spotify.dart';
 import 'package:system_theme/system_theme.dart';
+import 'package:window_manager/window_manager.dart';
 
 final rpcProvider = Provider((ref) => RPC());
 final discordGatewayProvider =
@@ -40,9 +41,15 @@ void main(List<String> arguments) async {
 
   // set up window
   await acryllic.Window.initialize();
-  if (windowsInfo.ntVersion != null &&
-      double.parse(windowsInfo.ntVersion!) >= 10) {
-    acryllic.Window.hideWindowControls();
+  await windowManager.ensureInitialized();
+  windowManager.setResizable(false);
+
+  if (windowsInfo.ntVersion != null) {
+    if (double.parse(windowsInfo.ntVersion!) >= 10) {
+      acryllic.Window.hideWindowControls();
+    } else {
+      windowManager.setPreventClose(true);
+    }
   }
 
   // set up Hive

@@ -45,6 +45,7 @@ dependencies:
       # path: bitsdojo_window
       # ref: b5e9648081f73c05df612cd5b958d8e6cab77898
   launch_at_startup: ^0.1.7
+  window_manager: ^0.2.3
 
 
 dev_dependencies:

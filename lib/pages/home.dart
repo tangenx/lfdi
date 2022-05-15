@@ -3,6 +3,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lfdi/components/window_buttons.dart';
 import 'package:lfdi/constants.dart';
+import 'package:lfdi/functions/show_close_dialog.dart';
 import 'package:lfdi/icons/lfdi_icons.dart';
 import 'package:lfdi/main.dart';
 import 'package:lfdi/pages/about.dart';
@@ -12,6 +13,7 @@ import 'package:lfdi/pages/log_console.dart';
 import 'package:lfdi/pages/rpc_settings.dart';
 import 'package:lfdi/pages/settings.dart';
 import 'package:lfdi/utils/extract_windows_info.dart';
+import 'package:window_manager/window_manager.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -20,8 +22,9 @@ class HomePage extends ConsumerStatefulWidget {
   ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends ConsumerState<HomePage> {
+class _HomePageState extends ConsumerState<HomePage> with WindowListener {
   int index = 0;
+  int altF4PressCount = 0;
 
   @override
   void initState() {
@@ -49,7 +52,34 @@ class _HomePageState extends ConsumerState<HomePage> {
       },
     );
 
+    windowManager.addListener(this);
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    windowManager.removeListener(this);
+
+    super.dispose();
+  }
+
+  @override
+  void onWindowClose() async {
+    bool isPreventClose = await windowManager.isPreventClose();
+
+    if (isPreventClose) {
+      altF4PressCount++;
+
+      if (altF4PressCount == 2) {
+        windowManager.destroy();
+      }
+
+      showCloseDialog(
+        context,
+        resetAltF4Counter: () => altF4PressCount = 0,
+      );
+    }
   }
 
   @override

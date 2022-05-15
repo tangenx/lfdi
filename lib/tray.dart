@@ -5,6 +5,7 @@ import 'package:lfdi/constants.dart';
 import 'package:lfdi/main.dart';
 import 'package:lfdi/utils/debounce.dart';
 import 'package:tray_manager/tray_manager.dart';
+import 'package:window_manager/window_manager.dart';
 
 class Tray with TrayListener {
   int trayClickCount = 0;
@@ -43,6 +44,7 @@ class Tray with TrayListener {
 
     appWindow.restore();
     appWindow.show();
+    windowManager.focus();
   }
 
   // Tray functions

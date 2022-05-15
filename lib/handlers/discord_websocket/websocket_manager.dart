@@ -171,6 +171,15 @@ class DiscordWebSocketManager {
           return;
         }
 
+        if (response['message']['recenttracks']['track'] == null ||
+            response['message']['recenttracks']['track'].length == 0) {
+          logger.warning(
+            'Recent track not received, abort.',
+            name: 'DWS Manager',
+          );
+          return;
+        }
+
         // Get curent scrobbling track
         rpc_track.Track track =
             rpc_track.TrackHandler.getTrack(response['message']);
@@ -188,6 +197,14 @@ class DiscordWebSocketManager {
         if (trackInfo['status'] == 'error') {
           logger.warning(
             'Error getting track info, abort.',
+            name: 'DWS Manager',
+          );
+          return;
+        }
+
+        if (trackInfo['message']['track'] == null) {
+          logger.warning(
+            'Track info not received, abort.',
             name: 'DWS Manager',
           );
           return;
@@ -306,9 +323,17 @@ class DiscordWebSocketManager {
           largeText: largeImageText,
           track: track,
           musicApp: defaultMusicApp!,
+          buttons: [
+            PresenceButton(
+              label: 'View Song',
+              url: rpc_track.TrackHandler.makeLastFmUrl(track),
+            )
+          ],
         );
 
-        sendPresence(presence: presence);
+        sendPresence(
+          presence: presence,
+        );
         logger.info('Presence updated.', name: 'DWS Manager');
         if (ws.listeners['onTrackChange'] != null) {
           ws.listeners['onTrackChange']!();
@@ -388,12 +413,14 @@ class DiscordWebSocketManager {
     identifyIsSent = true;
   }
 
-  void sendPresence({required DiscordPresence presence}) {
+  void sendPresence({
+    required DiscordPresence presence,
+  }) {
     DiscordGatewayMessage message = DiscordGatewayMessage(
       operationCode: 3,
       data: {
-        'status': 'offline',
-        'game': presence.toMap(),
+        'status': 'online',
+        'activities': [presence.toMap()],
         'afk': false,
         'since': 0,
       },

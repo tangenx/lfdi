@@ -11,7 +11,10 @@ dependencies:
   flutter:
     sdk: flutter
 
-  dart_discord_rpc: ^0.0.2
+  dart_discord_rpc:
+    git: 
+      url: https://github.com/alexmercerind/dart_discord_rpc.git
+      ref: 5760594e9a8417683fa969fe48c1e8593928fd35
   flutter_riverpod: ^1.0.3
   system_theme: ^2.0.0
   flutter_acrylic: ^1.0.0+2

@@ -23,14 +23,17 @@ class DiscordPresence {
   /// Second string in detalied view
   String? state;
 
+  /// Array of buttons (maximum 2)
+  List<PresenceButton>? buttons;
+
   DiscordPresence({
     this.name,
     this.type = 2,
     this.applicationId,
     this.assets,
     this.details,
-    this.url,
     this.state,
+    this.buttons,
   });
 
   Map toMap() {
@@ -40,8 +43,9 @@ class DiscordPresence {
       'application_id': applicationId,
       'assets': assets?.toMap(),
       'details': details,
-      'url': url,
       'state': state,
+      // 'buttons': buttons?.map((e) => e.toMap()).toList(),
+      'instance': true,
     };
   }
 
@@ -51,6 +55,7 @@ class DiscordPresence {
     required String largeImage,
     required String largeText,
     required String musicApp,
+    List<PresenceButton>? buttons,
   }) {
     DiscordPresence presence;
 
@@ -67,7 +72,7 @@ class DiscordPresence {
           ),
           details: track.name,
           state: track.artist,
-          url: 'https://github.com/tangenx/lfdi',
+          buttons: buttons,
         );
         break;
 
@@ -82,7 +87,7 @@ class DiscordPresence {
             smallText: 'github.com/tangenx/lfdi',
           ),
           details: track.album,
-          url: 'https://github.com/tangenx/lfdi',
+          buttons: buttons,
         );
         break;
 
@@ -97,6 +102,7 @@ class DiscordPresence {
             smallText: 'github.com/tangenx/lfdi',
           ),
           details: track.artist,
+          buttons: buttons,
         );
         break;
 
@@ -112,7 +118,7 @@ class DiscordPresence {
           ),
           details: track.name,
           state: track.artist,
-          url: 'https://github.com/tangenx/lfdi',
+          buttons: buttons,
         );
         break;
     }
@@ -157,6 +163,23 @@ class PresenceAssets {
       'large_text': largeText,
       'small_image': smallImage,
       'small_text': smallText,
+    };
+  }
+}
+
+class PresenceButton {
+  String? label;
+  String? url;
+
+  PresenceButton({
+    this.label,
+    this.url,
+  });
+
+  Map toMap() {
+    return {
+      'label': label,
+      'url': url,
     };
   }
 }

@@ -51,6 +51,18 @@ class TrackHandler {
   static String removeFeat(String trackName) {
     return trackName.replaceAll('feat.', '').replaceAll(' & ', ' ');
   }
+
+  static String makeLastFmUrl(Track track) {
+    String baseUrl = 'https://www.last.fm/music/';
+
+    // String artist = Uri.encodeComponent(track.artist.replaceAll(' ', '+'));
+    // String name = Uri.encodeComponent(track.name.replaceAll(' ', '+'));
+
+    String artist = track.artist.replaceAll(' ', '+');
+    String name = track.name.replaceAll(' ', '+');
+
+    return '$baseUrl$artist/_/$name';
+  }
 }
 
 class Track {

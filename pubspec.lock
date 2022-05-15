@@ -196,17 +196,12 @@ packages:
   dart_discord_rpc:
     dependency: "direct main"
     description:
-      name: dart_discord_rpc
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.0.2"
-  dart_discord_rpc_ffi:
-    dependency: transitive
-    description:
-      name: dart_discord_rpc_ffi
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.0.2"
+      path: "."
+      ref: "5760594e9a8417683fa969fe48c1e8593928fd35"
+      resolved-ref: "5760594e9a8417683fa969fe48c1e8593928fd35"
+      url: "https://github.com/alexmercerind/dart_discord_rpc.git"
+    source: git
+    version: "0.0.1"
   dart_style:
     dependency: transitive
     description:

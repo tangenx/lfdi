@@ -133,8 +133,8 @@ class RPC {
           smallImageText: 'github.com/tangenx/lfdi',
           details: track.name,
           state: track.artist,
-          button1Label: 'View song',
-          button1Url: TrackHandler.makeLastFmUrl(track),
+          // button1Label: 'View song',
+          // button1Url: TrackHandler.makeLastFmUrl(track),
         ),
       );
       logger.info('Track updated', name: 'RPC');

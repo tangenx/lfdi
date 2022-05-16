@@ -12,7 +12,7 @@ import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class DiscordWebSoket {
-  final baseUrl = 'wss://gateway.discord.gg/?v=6&encoding=json';
+  final baseUrl = 'wss://gateway.discord.gg/?v=9&encoding=json';
   IOWebSocketChannel? webSocketChannel;
 
   /// Used for heartbeating

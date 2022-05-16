@@ -393,6 +393,7 @@ class DiscordWebSocketManager {
       operationCode: 2,
       data: {
         'token': discordToken,
+        'intents': 1 << 0,
         'properties': {
           '\$os': 'windows',
           '\$browser': 'discord.js',
@@ -400,10 +401,8 @@ class DiscordWebSocketManager {
           '\$referrer': '',
           '\$referring_domain': '',
         },
-        'large_threshold': 250,
-        'compress': true,
-        // this property is taken from discord.js library
-        'version': 6,
+        // 'large_threshold': 250,
+        // 'compress': true,
       },
       eventName: null,
       sequence: null,

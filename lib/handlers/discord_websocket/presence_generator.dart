@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:lfdi/constants.dart';
 import 'package:lfdi/handlers/track_handler.dart' as rpc_track;
 
@@ -44,7 +46,12 @@ class DiscordPresence {
       'assets': assets?.toMap(),
       'details': details,
       'state': state,
-      // 'buttons': buttons?.map((e) => e.toMap()).toList(),
+      // 'buttons': [
+      //   jsonEncode({
+      //     'label': 'Open GitHub',
+      //     'url': 'https://github.com/',
+      //   }),
+      // ],
       'instance': true,
     };
   }

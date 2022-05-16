@@ -58,8 +58,8 @@ class TrackHandler {
     // String artist = Uri.encodeComponent(track.artist.replaceAll(' ', '+'));
     // String name = Uri.encodeComponent(track.name.replaceAll(' ', '+'));
 
-    String artist = track.artist.replaceAll(' ', '+');
-    String name = track.name.replaceAll(' ', '+');
+    String artist = Uri.encodeComponent(track.artist.replaceAll(' ', '+'));
+    String name = Uri.encodeComponent(track.name.replaceAll(' ', '+'));
 
     return '$baseUrl$artist/_/$name';
   }

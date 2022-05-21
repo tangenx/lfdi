@@ -252,6 +252,8 @@ class DiscordWebSoket {
 
 Map<int, String> opToName = {
   0: 'Dispatch',
+  7: 'Reconnect',
+  9: 'Invalid Session',
   10: 'Hello',
   11: 'Heartbeat ACK',
 };

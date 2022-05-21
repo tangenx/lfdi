@@ -21,11 +21,11 @@ class _DiscordStatusPreviewState extends ConsumerState<DiscordStatusPreview> {
   var box = Hive.box('lfdi');
 
   String trimText(String text) {
-    if (text.length < 26) {
+    if (text.length < 27) {
       return text;
     }
 
-    return text.substring(0, 26) + '...';
+    return text.substring(0, 27) + '...';
   }
 
   Widget buildLastfmPreview(RPC rpc) {

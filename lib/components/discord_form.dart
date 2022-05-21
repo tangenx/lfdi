@@ -6,6 +6,7 @@ import 'package:lfdi/globals.dart';
 import 'package:lfdi/handlers/discord_websocket/websocket_manager.dart';
 import 'package:lfdi/main.dart';
 import 'package:spotify/spotify.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DiscordForm extends ConsumerStatefulWidget {
   final Function updateState;
@@ -82,6 +83,27 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
 
               return null;
             },
+            suffix: Padding(
+              padding: const EdgeInsets.only(bottom: 2),
+              child: Button(
+                style: ButtonStyle(
+                  padding: ButtonState.all<EdgeInsets>(
+                    const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
+                  ),
+                ),
+                child: const Text('Get'),
+                onPressed: () {
+                  launchUrl(
+                    Uri.parse(
+                      'https://github.com/tangenx/lfdi/blob/lord/docs/en/gateway/configure.md#getting-a-discord-token',
+                    ),
+                  );
+                },
+              ),
+            ),
           ),
           const SizedBox(
             height: 10,
@@ -103,6 +125,27 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
 
               return null;
             },
+            suffix: Padding(
+              padding: const EdgeInsets.only(bottom: 2),
+              child: Button(
+                style: ButtonStyle(
+                  padding: ButtonState.all<EdgeInsets>(
+                    const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
+                  ),
+                ),
+                child: const Text('Get'),
+                onPressed: () {
+                  launchUrl(
+                    Uri.parse(
+                      'https://github.com/tangenx/lfdi/blob/lord/docs/en/gateway/configure.md#getting-the-spotify-client-id-and-client-secret',
+                    ),
+                  );
+                },
+              ),
+            ),
           ),
           const SizedBox(
             height: 10,

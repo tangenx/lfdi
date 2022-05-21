@@ -241,11 +241,11 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: HEAD
-      resolved-ref: "71f639cdadb9fabe920bec1890557b4a0bf37582"
+      ref: "87525a1588c34399239644b35bda3bae6490685f"
+      resolved-ref: "87525a1588c34399239644b35bda3bae6490685f"
       url: "https://github.com/tangenx/fluent_ui.git"
     source: git
-    version: "3.11.1"
+    version: "3.12.0"
   flutter:
     dependency: "direct main"
     description: flutter

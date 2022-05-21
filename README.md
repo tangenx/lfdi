@@ -1,10 +1,11 @@
 <div align='center'>
-  <img src="https://imgur.com/Nm4OzW0.png" alt="LFDI Logo"/>
+  <img src="https://imgur.com/Nm4OzW0.png#gh-dark-mode-only" alt="LFDI Logo"/>
+  <img src="https://imgur.com/Nm4OzW0.png#gh-light-mode-only" alt="LFDI Logo"/>
 </div>
 
 <p align='center'>
   <a title="Made with Fluent Design" href="https://github.com/bdlukaa/fluent_ui">
-    <img src="https://img.shields.io/badge/fluent-design-blue?style=flat-square&color=7A7574&labelColor=0078D7"/>
+    <img src="https://img.shields.io/badge/fluent-design-blue"/>
   </a>
   <a title="Coded on Flutter with love 💖" href="https://flutter.dev">
     <img src="https://img.shields.io/badge/flutter-v3.0.0-blue">
@@ -32,7 +33,8 @@ Shows what you are listening to in your <b>Discord</b> status
 
 # Introduction
 
-You don't use Spotify ~~(that's fine)~~, but you want to show your music in your Discord status? LFDI can help you do that!
+You don't use Spotify ~~(that's fine)~~, but you want to show your music
+in your Discord status? LFDI can help you do that!
 
 # Table of contents
 
@@ -59,9 +61,11 @@ You don't use Spotify ~~(that's fine)~~, but you want to show your music in your
 
 ## Quick Overview
 
-LFDI updates your [Discord][Discord] status every 30 seconds, showing what you are listening to.
+LFDI updates your [Discord][Discord] status every 30 seconds,
+showing what you are listening to.
 
-You can customize your status! For example, you can **playing some music** or **listening to <your_application_music>**.
+You can customize your status! For example, you can **playing some music**
+or **listening to <your_application_music>**.
 
 <div align='center'>
 
@@ -71,10 +75,12 @@ You can customize your status! For example, you can **playing some music** or **
 
 </div>
 
-As you can see, LFDI counts the number of times you've listened to the track and how much time you've spent listening to it!
+As you can see, LFDI counts the number of times you've listened to the track and
+how much time you've spent listening to it!
 
 <details>
-  <summary>You can minimize the application to the system tray and continue to do your business with your favorite music!</summary>
+  <summary>You can minimize the application to the system tray and continue
+  to do your business with your favorite music!</summary>
 
   <div align='center'>
 
@@ -84,14 +90,16 @@ As you can see, LFDI counts the number of times you've listened to the track and
 
 </details>
 
-And you can also set the startup instead of with the system startup, and forget about the app altogether ~~(don't, please)~~!
+And you can also set the startup instead of with the system startup,
+and forget about the app altogether ~~(don't, please)~~!
 
 [Discord]: https://discord.com/
 
 ## Installation
 
 - Open the [latest release page][Latest release]
-- Download the installer depending on your system ~~(please remember to make the release for MacOS)~~
+- Download the installer depending on your system
+~~(please remember to make the release for MacOS)~~
 - Run the installer and follow the instructions
 
 [Latest release]: https://github.com/tangenx/lfdi/releases/latest
@@ -100,7 +108,8 @@ And you can also set the startup instead of with the system startup, and forget 
 
 The app needs your [last.fm API key][last.fm API key] and username.
 
-On the `Last.fm settings` page, enter Last.fm API key and username in the corresponding fields. Then click **Apply** and magic happens!
+On the `Last.fm settings` page, enter Last.fm API key and username in the
+corresponding fields. Then click **Apply** and magic happens!
 
 <div align='center'>
 
@@ -108,7 +117,8 @@ On the `Last.fm settings` page, enter Last.fm API key and username in the corres
 
 </div>
 
-You now have **playing** statuses available to you. To use **listening to** statuses, go to the `Discord Gateway settings` page.
+You now have **playing** statuses available to you.
+To use **listening to** statuses, go to the `Discord Gateway settings` page.
 
 **WARNING:** Using "listening" statuses [seems illegal](./docs/en/why%20the%20gateway%20seems%20illegal.md)!
 
@@ -182,3 +192,23 @@ Thanks!
   </div>
 
 </details>
+
+<style>
+  .jpp_power {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 20px 0 0 0;
+  }
+</style>
+
+<div class="jpp_power">
+  <a title="j++" href="https://github.com/jppteam">
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+  srcset="https://i.imgur.com/BxcB86k.png" alt="J++ logo" width="300px"/>
+  <img src="https://i.imgur.com/YneSpeq.png" alt="J++ logo" width="300px"/>
+</picture>
+  </a>
+</div>

@@ -9,6 +9,7 @@
 .history
 .svn/
 /installer/
+.markdownlint.json
 
 # IntelliJ related
 *.iml

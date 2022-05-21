@@ -111,6 +111,29 @@ class _DiscordStatusPreviewState extends ConsumerState<DiscordStatusPreview> {
             ],
           ),
         ),
+        const SizedBox(
+          height: 6,
+        ),
+        Container(
+          width: 270,
+          height: 32,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(4),
+            color: const Color(0xFF4f545c),
+          ),
+          child: const Center(
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 2),
+              child: Text(
+                'View Song',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+          ),
+        )
       ],
     );
   }

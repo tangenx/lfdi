@@ -1,6 +1,9 @@
 <div align='center'>
-  <img src="https://imgur.com/Nm4OzW0.png#gh-dark-mode-only" alt="LFDI Logo"/>
-  <img src="https://imgur.com/Nm4OzW0.png#gh-light-mode-only" alt="LFDI Logo"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+  srcset="https://imgur.com/Nm4OzW0.png" alt="LFDI logo"/>
+  <img src="https://i.imgur.com/bC2UbSf.png" alt="LFDI logo"/>
+</picture>
 </div>
 
 <p align='center'>
@@ -193,17 +196,7 @@ Thanks!
 
 </details>
 
-<style>
-  .jpp_power {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    margin: 20px 0 0 0;
-  }
-</style>
-
-<div class="jpp_power">
+<div align="center">
   <a title="j++" href="https://github.com/jppteam">
 <picture>
   <source media="(prefers-color-scheme: dark)"

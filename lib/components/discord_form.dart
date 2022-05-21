@@ -80,10 +80,6 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
                 return 'Provide a token';
               }
 
-              if (text.length != 59) {
-                return 'Token is invalid';
-              }
-
               return null;
             },
           ),

@@ -125,6 +125,9 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
               return null;
             },
           ),
+          const SizedBox(
+            height: 10,
+          ),
           Row(
             children: [
               Button(

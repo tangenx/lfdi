@@ -79,77 +79,72 @@ class _SettingsFormState extends ConsumerState<SettingsForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              SizedBox(
-                width: 400,
-                child: TextFormBox(
-                  header: 'API key',
-                  placeholder: 'Get your key on last.fm/api/account/create',
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  controller: apiKeyController,
-                  validator: (text) {
-                    if (text == null || text.isEmpty) {
-                      return 'Provide an API key';
-                    }
+          TextFormBox(
+            header: 'API key',
+            placeholder: 'Get your key on last.fm/api/account/create',
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            controller: apiKeyController,
+            validator: (text) {
+              if (text == null || text.isEmpty) {
+                return 'Provide an API key';
+              }
 
-                    if (text.length != 32) {
-                      return 'API key is invalid';
-                    }
+              if (text.length != 32) {
+                return 'API key is invalid';
+              }
 
-                    return null;
-                  },
+              return null;
+            },
+            suffix: Button(
+              style: ButtonStyle(
+                padding: ButtonState.all<EdgeInsets>(
+                  const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
                 ),
               ),
-              const SizedBox(
-                width: 10,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Button(
-                  child: const Text('Get'),
-                  onPressed: () {
-                    launchUrl(
-                      Uri.parse('https://www.last.fm/api/account/create'),
-                    );
-                  },
-                ),
-              ),
-            ],
+              child: const Text('Get'),
+              onPressed: () {
+                launchUrl(
+                  Uri.parse('https://www.last.fm/api/account/create'),
+                );
+              },
+            ),
           ),
-          Row(
-            children: [
-              SizedBox(
-                width: 400,
-                child: TextFormBox(
-                  header: 'Last.fm username',
-                  placeholder:
-                      'Get your username on last.fm/user/your_name_here',
-                  controller: usernameController,
-                  validator: (text) {
-                    if (text == null || text.isEmpty) {
-                      return 'Provide an username';
-                    }
+          const SizedBox(
+            height: 10,
+          ),
+          TextFormBox(
+            header: 'Last.fm username',
+            placeholder: 'Get your username on last.fm/user/your_name_here',
+            controller: usernameController,
+            validator: (text) {
+              if (text == null || text.isEmpty) {
+                return 'Provide an username';
+              }
 
-                    return null;
-                  },
+              return null;
+            },
+            suffix: Button(
+              style: ButtonStyle(
+                padding: ButtonState.all<EdgeInsets>(
+                  const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
                 ),
               ),
-              const SizedBox(
-                width: 10,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Button(
-                  child: const Text('Get'),
-                  onPressed: () {
-                    launchUrl(
-                      Uri.parse('https://www.last.fm/settings/account'),
-                    );
-                  },
-                ),
-              ),
-            ],
+              child: const Text('Get'),
+              onPressed: () {
+                launchUrl(
+                  Uri.parse('https://www.last.fm/settings/account'),
+                );
+              },
+            ),
+          ),
+          const SizedBox(
+            height: 10,
           ),
           Row(
             children: [

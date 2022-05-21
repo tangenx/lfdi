@@ -95,21 +95,24 @@ class _SettingsFormState extends ConsumerState<SettingsForm> {
 
               return null;
             },
-            suffix: Button(
-              style: ButtonStyle(
-                padding: ButtonState.all<EdgeInsets>(
-                  const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 2,
+            suffix: Padding(
+              padding: const EdgeInsets.only(bottom: 2),
+              child: Button(
+                style: ButtonStyle(
+                  padding: ButtonState.all<EdgeInsets>(
+                    const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
                   ),
                 ),
+                child: const Text('Get'),
+                onPressed: () {
+                  launchUrl(
+                    Uri.parse('https://www.last.fm/api/account/create'),
+                  );
+                },
               ),
-              child: const Text('Get'),
-              onPressed: () {
-                launchUrl(
-                  Uri.parse('https://www.last.fm/api/account/create'),
-                );
-              },
             ),
           ),
           const SizedBox(
@@ -126,21 +129,24 @@ class _SettingsFormState extends ConsumerState<SettingsForm> {
 
               return null;
             },
-            suffix: Button(
-              style: ButtonStyle(
-                padding: ButtonState.all<EdgeInsets>(
-                  const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 2,
+            suffix: Padding(
+              padding: const EdgeInsets.only(bottom: 2),
+              child: Button(
+                style: ButtonStyle(
+                  padding: ButtonState.all<EdgeInsets>(
+                    const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
                   ),
                 ),
+                child: const Text('Get'),
+                onPressed: () {
+                  launchUrl(
+                    Uri.parse('https://www.last.fm/settings/account'),
+                  );
+                },
               ),
-              child: const Text('Get'),
-              onPressed: () {
-                launchUrl(
-                  Uri.parse('https://www.last.fm/settings/account'),
-                );
-              },
             ),
           ),
           const SizedBox(

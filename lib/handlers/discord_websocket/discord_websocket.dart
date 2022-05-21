@@ -28,11 +28,11 @@ class DiscordWebSoket {
   bool heartbeatIsConfigured = false;
   Timer? heartbeatTimer;
 
-  /// Session token (random string?)
-  String sessionToken = getRandomString(32);
+  /// Session token (just Discord token)
+  String sessionToken = '';
 
-  /// Session ID (even more random string?)
-  String sessionId = getRandomString(16);
+  /// Session ID (From `READY` event)
+  String sessionId = '';
 
   /// Used for reconnecting state
   bool isReconnecting = false;
@@ -219,6 +219,9 @@ class DiscordWebSoket {
 
   /// Dispose the WebSocket
   void dispose() {
+    sessionToken = '';
+    sessionId = '';
+
     logger.debug('Triggered dispose', name: 'DWS: Main');
     closeConnection();
 

@@ -129,6 +129,11 @@ class DiscordWebSocketManager {
         },
       );
     }
+
+    // Set websocket session token
+    ws.sessionToken = discordToken;
+
+    // Initialize websocket
     ws.init();
     initialized = true;
     logger.info('Successfully initialized', name: 'DWS Manager');

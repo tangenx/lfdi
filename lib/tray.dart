@@ -9,6 +9,7 @@ import 'package:window_manager/window_manager.dart';
 
 class Tray with TrayListener {
   int trayClickCount = 0;
+  bool isVisible = appWindow.isVisible;
 
   late final void Function() resetClickCountDebounced;
 
@@ -23,7 +24,8 @@ class Tray with TrayListener {
     await trayManager.setIcon(
       Platform.isWindows
           ? 'assets/images/app_icon.ico'
-          : 'assets/images/lastfm discord smol.png',
+          : 'assets/images/app_icon.ico',
+      //: 'assets/images/lastfm discord smol.png',
     );
 
     await Future.delayed(const Duration(milliseconds: 200));
@@ -36,10 +38,11 @@ class Tray with TrayListener {
   }
 
   void toggleWindowState() {
-    bool isVisible = appWindow.isVisible;
     if (isVisible) {
       appWindow.minimize();
-      return appWindow.hide();
+      appWindow.hide();
+      isVisible = !isVisible;
+      return;
     }
 
     appWindow.restore();

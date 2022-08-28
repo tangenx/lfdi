@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -84,12 +86,18 @@ class _HomePageState extends ConsumerState<HomePage> with WindowListener {
 
   @override
   Widget build(BuildContext context) {
-    WindowsVersionInfo windowsInfo = extractWindowsInfo();
     bool hideHeader = false;
 
-    if (windowsInfo.ntVersion != null &&
-        double.parse(windowsInfo.ntVersion!) < 10) {
-      hideHeader = true;
+    final String osType = Platform.operatingSystem;
+    if (osType == 'windows') {
+      WindowsVersionInfo windowsInfo = extractWindowsInfo();
+
+      if (windowsInfo.ntVersion != null &&
+          double.parse(windowsInfo.ntVersion!) < 10) {
+        hideHeader = true;
+      }
+    } else if (osType == 'linux') {
+      // hideHeader = true;
     }
 
     return NavigationView(

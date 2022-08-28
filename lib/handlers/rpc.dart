@@ -107,6 +107,12 @@ class RPC {
         return;
       }
 
+      if (trackInfo['message']['track']['userplaycount'] == null) {
+        logger.warning('Error getting user\'s track playcount, abort.',
+            name: 'RPC');
+        return;
+      }
+
       // build large image text
       String largeImageText = '';
 

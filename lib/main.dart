@@ -37,19 +37,26 @@ void main(List<String> arguments) async {
 
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
-  WindowsVersionInfo windowsInfo = extractWindowsInfo();
-
   // set up window
   await acryllic.Window.initialize();
   await windowManager.ensureInitialized();
   windowManager.setResizable(false);
 
-  if (windowsInfo.ntVersion != null) {
-    if (double.parse(windowsInfo.ntVersion!) >= 10) {
-      acryllic.Window.hideWindowControls();
-    } else {
-      windowManager.setPreventClose(true);
+  // check system and apply some settings
+  final String osType = Platform.operatingSystem;
+
+  if (osType == 'windows') {
+    WindowsVersionInfo windowsInfo = extractWindowsInfo();
+
+    if (windowsInfo.ntVersion != null) {
+      if (double.parse(windowsInfo.ntVersion!) >= 10) {
+        acryllic.Window.hideWindowControls();
+      } else {
+        windowManager.setPreventClose(true);
+      }
     }
+  } else if (osType == 'linux') {
+    windowManager.setPreventClose(true);
   }
 
   // set up Hive

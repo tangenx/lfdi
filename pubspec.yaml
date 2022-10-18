@@ -1,5 +1,5 @@
-name: lfdi
-description: Last.fm Discord Integrator
+name: lfi
+description: Last.fm Integrator
 
 publish_to: 'none' 
 version: 1.0.0-beta.8
@@ -10,6 +10,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
+  # State mamagement
+  flutter_bloc: ^8.0.1
+
+  # Object compare
+  equatable: ^2.0.5
+
+  # TODO: deal with the dependencies below
 
   dart_discord_rpc:
     git: 
@@ -51,14 +59,14 @@ dependencies:
   launch_at_startup: ^0.1.7
   window_manager: ^0.2.3
 
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  # TODO: deal with the dev_dependencies below
+
   flutter_lints: ^1.0.0
   hive_generator: ^1.1.2
-  build_runner: ^2.1.10
 
 dependency_overrides:
   bitsdojo_window_platform_interface:

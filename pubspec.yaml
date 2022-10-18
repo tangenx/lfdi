@@ -2,10 +2,10 @@ name: lfi
 description: Last.fm Integrator
 
 publish_to: 'none' 
-version: 1.0.0-beta.8
+version: 2.0.0-beta.0
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
+  sdk: '>=2.18.2 <3.0.0'
 
 dependencies:
   flutter:
@@ -16,6 +16,9 @@ dependencies:
 
   # Object compare
   equatable: ^2.0.5
+
+  # Functional programming (such as Either)
+  dartz: ^0.10.1
 
   # TODO: deal with the dependencies below
 

@@ -17,8 +17,17 @@ dependencies:
   # Object compare
   equatable: ^2.0.5
 
+  # Models generator
+  freezed_annotation: ^2.2.0
+
   # Functional programming (such as Either)
   dartz: ^0.10.1
+
+  # HTTP requests, but better
+  dio: ^5.1.1
+
+  # JSON serialization
+  json_annotation: ^4.7.0
 
   # TODO: deal with the dependencies below
 
@@ -29,7 +38,6 @@ dependencies:
   flutter_riverpod: ^1.0.3
   system_theme: ^2.0.0
   flutter_acrylic: ^1.0.0+2
-  http: ^0.13.4
   url_launcher: ^6.1.0
   package_info_plus: ^1.4.2
   tray_manager:
@@ -66,9 +74,16 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  # TODO: deal with the dev_dependencies below
+  flutter_lints: ^2.0.1
+  build_runner: ^2.3.2
 
-  flutter_lints: ^1.0.0
+  # Models generator
+  freezed: ^2.2.0
+
+  # JSON serialization
+  json_serializable: ^6.5.4
+
+  # TODO: deal with the dev_dependencies below
   hive_generator: ^1.1.2
 
 dependency_overrides:
@@ -111,9 +126,9 @@ flutter:
       - asset: assets/fonts/LFDI.ttf
 
 msix_config:
-  display_name: Last.fm Discord Integrator
+  display_name: Last.fm Integrator
   publisher_display_name: tangenx
-  identity_name: tangenx.lfdi
+  identity_name: tangenx.lfi
   msix_version: 1.0.0.0
-  logo_path: "D:\\Code Projects\\lfdi\\assets\\images\\logo_big.png"
+  logo_path: ".\\assets\\images\\logo_big.png"
   capabilities: internetClient

@@ -158,6 +158,13 @@ const List<String> musicApps = [
   'Zaycev.net',
   'Звук',
   'МТС Music',
+  'AIMP',
+  'MusicBee',
+  'foobar2000',
+  'Strawberry',
+  'Amarok',
+  'Winamp',
+  'WACUP'
 ];
 
 RegExp winRegExp = RegExp(

@@ -1,16 +1,29 @@
-# lfdi
+# Название
 
-A new Flutter project.
+Варианты названий:
 
-## Getting Started
+- lfi - оригинальное название придуманное ещё год назад - сокращение от *l*ast.*f*m *i*ntegrator
+- Wavelink (есть такой lavalink-адаптер на питоне)
+- Resonance
 
-This project is a starting point for a Flutter application.
+## Features
 
-A few resources to get you started if this is your first Flutter project:
+### Настройки
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Так-то всё приложение это много настроек..........
+Здесь, скорее всего, будут описаны настройки непосредственно приложения:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Автозапуск
+- Тема (темная/светлая/системная)
+- Язык (русский/английский)
+
+### Discord
+
+- Сетап аккаунта
+- Превью статуса
+
+### Интеграции
+
+- Last.fm
+- Spotify
+- хз дальше смотреть откуда можно тырить статус что слушаешь сейчас

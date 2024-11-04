@@ -12,6 +12,23 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # UI packages
+  fluent_ui: ^4.9.2
+  macos_ui: ^2.0.9
+  yaru: ^5.3.2
+
+  # Linux-related
+  handy_window: ^0.4.0
+
+  # Windows-related
+  flutter_acrylic: ^1.1.4
+
+  # Window managing
+  window_manager: ^0.4.3
+  
+  # Theming
+  system_theme: ^3.1.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

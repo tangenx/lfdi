@@ -151,6 +151,7 @@ class _DiscordStatusPreviewState extends ConsumerState<DiscordStatusPreview> {
             'https://cdn.discordapp.com/app-assets/970447707602833458/971488024401690635.png',
         nowPlaying: false,
         duration: Duration.zero,
+        createdAt: DateTime.now().millisecondsSinceEpoch,
       );
     } else {
       track = gateway.currentTrack!;

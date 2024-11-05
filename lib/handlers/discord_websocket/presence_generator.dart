@@ -26,6 +26,10 @@ class DiscordPresence {
   /// Array of buttons (maximum 2)
   List<PresenceButton>? buttons;
 
+  /// Timestamps
+  /// Unix timestamps for start and/or end of the activity
+  PresenceTimestamps? timestamps;
+
   DiscordPresence({
     this.name,
     this.type = 2,
@@ -34,6 +38,7 @@ class DiscordPresence {
     this.details,
     this.state,
     this.buttons,
+    this.timestamps,
   });
 
   Map toMap() {
@@ -44,6 +49,7 @@ class DiscordPresence {
       'assets': assets?.toMap(),
       'details': details,
       'state': state,
+      'timestamps': timestamps?.toMap(),
       // 'buttons': [
       //   jsonEncode({
       //     'label': 'Open GitHub',
@@ -61,6 +67,7 @@ class DiscordPresence {
     required String largeText,
     required String musicApp,
     List<PresenceButton>? buttons,
+    PresenceTimestamps? timestamps,
   }) {
     DiscordPresence presence;
 
@@ -78,6 +85,7 @@ class DiscordPresence {
           details: track.name,
           state: track.artist,
           buttons: buttons,
+          timestamps: timestamps,
         );
         break;
 
@@ -93,6 +101,7 @@ class DiscordPresence {
           ),
           details: track.album,
           buttons: buttons,
+          timestamps: timestamps,
         );
         break;
 
@@ -108,6 +117,7 @@ class DiscordPresence {
           ),
           details: track.artist,
           buttons: buttons,
+          timestamps: timestamps,
         );
         break;
 
@@ -124,6 +134,7 @@ class DiscordPresence {
           details: track.name,
           state: track.artist,
           buttons: buttons,
+          timestamps: timestamps,
         );
         break;
     }
@@ -185,6 +196,23 @@ class PresenceButton {
     return {
       'label': label,
       'url': url,
+    };
+  }
+}
+
+class PresenceTimestamps {
+  int? start;
+  int? end;
+
+  PresenceTimestamps({
+    this.start,
+    this.end,
+  });
+
+  Map toMap() {
+    return {
+      'start': start,
+      'end': end,
     };
   }
 }

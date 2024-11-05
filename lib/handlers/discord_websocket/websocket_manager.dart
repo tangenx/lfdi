@@ -47,6 +47,9 @@ class DiscordWebSocketManager {
   /// Current track
   rpc_track.Track? currentTrack;
 
+  /// Previous track
+  rpc_track.Track? previousTrack;
+
   final DiscordWebSoket ws = DiscordWebSoket();
 
   /// Init websockets and setup listeners
@@ -188,6 +191,11 @@ class DiscordWebSocketManager {
         // Get curent scrobbling track
         rpc_track.Track track =
             rpc_track.TrackHandler.getTrack(response['message']);
+
+        bool isNewTrackTheSameAsPrevious = previousTrack != null &&
+            '${previousTrack!.name} - ${previousTrack!.artist}' ==
+                '${track.name} - ${track.artist}';
+
         currentTrack = track;
 
         if (!track.nowPlaying) {
@@ -321,6 +329,10 @@ class DiscordWebSocketManager {
           coverId = '971488024401690635';
         }
 
+        if (!isNewTrackTheSameAsPrevious) {
+          previousTrack = currentTrack ?? track;
+        }
+
         // Building Presence
         DiscordPresence presence = DiscordPresence.generateWithType(
           type: presenceType!,
@@ -334,6 +346,15 @@ class DiscordWebSocketManager {
               url: rpc_track.TrackHandler.makeLastFmUrl(track),
             )
           ],
+          timestamps: isNewTrackTheSameAsPrevious
+              ? PresenceTimestamps(
+                  start: previousTrack!.createdAt,
+                  end: previousTrack!.createdAt + trackDurationMs,
+                )
+              : PresenceTimestamps(
+                  start: DateTime.now().millisecondsSinceEpoch,
+                  end: DateTime.now().millisecondsSinceEpoch + trackDurationMs,
+                ),
         );
 
         sendPresence(

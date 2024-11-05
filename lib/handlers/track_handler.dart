@@ -15,6 +15,7 @@ class TrackHandler {
           ? false
           : recentTrack['@attr']['nowplaying'] == 'true',
       duration: const Duration(seconds: 0),
+      createdAt: DateTime.now().millisecondsSinceEpoch,
     );
   }
 
@@ -73,6 +74,7 @@ class Track {
   String cover;
   bool nowPlaying;
   Duration duration;
+  int createdAt;
 
   Track({
     required this.artist,
@@ -82,5 +84,6 @@ class Track {
     required this.cover,
     required this.nowPlaying,
     required this.duration,
+    required this.createdAt,
   });
 }

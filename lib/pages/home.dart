@@ -28,11 +28,14 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<HomePage> with WindowListener {
   int index = 0;
   int altF4PressCount = 0;
+  late bool debugState;
   late Box box;
 
   @override
   void initState() {
     box = Hive.box('lfdi');
+
+    debugState = box.get('debug');
 
     final ws = ref.read(discordGatewayProvider);
     ws.addListener(
@@ -90,6 +93,13 @@ class _HomePageState extends ConsumerState<HomePage> with WindowListener {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<bool>(debugProvider, (previous, next) {
+      setState(() {
+        debugState = next;
+        index = next ? index + 1 : index - 1;
+      });
+    });
+
     bool hideHeader = false;
 
     final String osType = Platform.operatingSystem;
@@ -175,7 +185,7 @@ class _HomePageState extends ConsumerState<HomePage> with WindowListener {
             icon: const Icon(FluentIcons.preview_link),
             title: const Text('Discord Rich Presence'),
           ),
-          if (box.get('debug'))
+          if (debugState)
             PaneItem(
               icon: const Icon(FluentIcons.content_feed),
               title: const Text('Log Console'),
@@ -199,7 +209,7 @@ class _HomePageState extends ConsumerState<HomePage> with WindowListener {
           const SettingsPage(),
           const GatewaySettingsPage(),
           const DiscordRPCPage(),
-          if (box.get('debug')) const LogConsole(),
+          if (debugState) const LogConsole(),
           const AppSettingsPage(),
           const AboutPage(),
         ],

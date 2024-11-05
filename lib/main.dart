@@ -25,6 +25,7 @@ final rpcProvider = Provider((ref) => RPC());
 final discordGatewayProvider =
     Provider((ref) => DiscordWebSocketManager(discordToken: ''));
 final hideTokensProvider = StateProvider((ref) => true);
+final debugProvider = StateProvider((ref) => false);
 late final bool runMinimized;
 
 void main(List<String> arguments) async {
@@ -131,6 +132,7 @@ class MyApp extends ConsumerWidget {
     if (debug == null) {
       box.put('debug', false);
       debug = false;
+      ref.read(debugProvider.notifier).state = false;
     }
 
     if (hideTokens == null) {

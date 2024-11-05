@@ -18,7 +18,7 @@ class _AppSettingsPageState extends ConsumerState<AppSettingsPage> {
   final Future<PackageInfo> packageInfo = PackageInfo.fromPlatform();
   bool isLaunchAtStartup = false;
   bool startMinimized = false;
-  bool debug = false;
+  late bool debug;
   late bool hideTokens;
   late Box box;
 
@@ -26,6 +26,7 @@ class _AppSettingsPageState extends ConsumerState<AppSettingsPage> {
   void initState() {
     box = Hive.box('lfdi');
 
+    debug = box.get('debug');
     hideTokens = box.get('hideTokens');
 
     getStartupStatus();
@@ -35,7 +36,6 @@ class _AppSettingsPageState extends ConsumerState<AppSettingsPage> {
   Future<void> getStartupStatus() async {
     bool isStartupEnabled = await LaunchAtStartup.instance.isEnabled();
     bool startMinimizedEnabled = box.get('startMinimized');
-    bool debug = box.get('debug');
 
     setState(() {
       isLaunchAtStartup = isStartupEnabled;
@@ -113,7 +113,7 @@ class _AppSettingsPageState extends ConsumerState<AppSettingsPage> {
         ],
         const SizedBox(height: 16.0),
         Text(
-          'Debug console (will be applied on startup):',
+          'Debug console:',
           style: typography.body,
         ),
         const SizedBox(
@@ -124,6 +124,7 @@ class _AppSettingsPageState extends ConsumerState<AppSettingsPage> {
           content: Text(debug ? 'On' : 'Off'),
           onChanged: (value) {
             box.put('debug', value);
+            ref.read(debugProvider.notifier).state = value;
             setState(() => debug = value);
           },
         ),

@@ -16,7 +16,7 @@ dependencies:
       url: https://github.com/alexmercerind/dart_discord_rpc.git
       ref: 5760594e9a8417683fa969fe48c1e8593928fd35
   flutter_riverpod: ^1.0.3
-  system_theme: ^2.0.0
+  system_theme: 2.0.0
   flutter_acrylic: ^1.0.0+2
   http: ^0.13.4
   url_launcher: ^6.1.0
@@ -25,7 +25,7 @@ dependencies:
     git:
       url: https://github.com/leanflutter/tray_manager.git
       ref: f075f39e978e7c664e81916d0c8da0b4955906cd
-  fluent_ui:
+  fluent_ui: 
     git:
       url: https://github.com/tangenx/fluent_ui.git
       ref: 87525a1588c34399239644b35bda3bae6490685f

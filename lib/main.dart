@@ -105,6 +105,7 @@ class MyApp extends ConsumerWidget {
     final discordToken = box.get('discordToken');
     String? gatewayPresenceType = box.get('gatewayPresenceType');
     String? priorUsing = box.get('priorUsing');
+    bool? debug = box.get('debug');
 
     final spotifyApiKey = box.get('spotifyApiKey');
     final spotifyApiSecret = box.get('spotifyApiSecret');
@@ -123,6 +124,11 @@ class MyApp extends ConsumerWidget {
     if (priorUsing == null) {
       box.put('priorUsing', 'lastfm');
       priorUsing = 'lastfm';
+    }
+
+    if (debug == null) {
+      box.put('debug', false);
+      debug = false;
     }
 
     // Check for Last.fm username & apiKey

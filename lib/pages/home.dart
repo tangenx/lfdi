@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive/hive.dart';
 import 'package:lfdi/components/window_buttons.dart';
 import 'package:lfdi/constants.dart';
 import 'package:lfdi/functions/show_close_dialog.dart';
@@ -27,9 +28,12 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<HomePage> with WindowListener {
   int index = 0;
   int altF4PressCount = 0;
+  late Box box;
 
   @override
   void initState() {
+    box = Hive.box('lfdi');
+
     final ws = ref.read(discordGatewayProvider);
     ws.addListener(
       name: 'onReconnect_showSnackbar',
@@ -171,10 +175,11 @@ class _HomePageState extends ConsumerState<HomePage> with WindowListener {
             icon: const Icon(FluentIcons.preview_link),
             title: const Text('Discord Rich Presence'),
           ),
-          PaneItem(
-            icon: const Icon(FluentIcons.content_feed),
-            title: const Text('Log Console'),
-          ),
+          if (box.get('debug'))
+            PaneItem(
+              icon: const Icon(FluentIcons.content_feed),
+              title: const Text('Log Console'),
+            ),
         ],
         footerItems: [
           PaneItemSeparator(),
@@ -190,13 +195,13 @@ class _HomePageState extends ConsumerState<HomePage> with WindowListener {
       ),
       content: NavigationBody(
         index: index,
-        children: const [
-          SettingsPage(),
-          GatewaySettingsPage(),
-          DiscordRPCPage(),
-          LogConsole(),
-          AppSettingsPage(),
-          AboutPage(),
+        children: [
+          const SettingsPage(),
+          const GatewaySettingsPage(),
+          const DiscordRPCPage(),
+          if (box.get('debug')) const LogConsole(),
+          const AppSettingsPage(),
+          const AboutPage(),
         ],
       ),
     );

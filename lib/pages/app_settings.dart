@@ -16,20 +16,26 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
   final Future<PackageInfo> packageInfo = PackageInfo.fromPlatform();
   bool isLaunchAtStartup = false;
   bool startMinimized = false;
+  bool debug = false;
+  late Box box;
 
   @override
   void initState() {
+    box = Hive.box('lfdi');
+
     getStartupStatus();
     super.initState();
   }
 
   Future<void> getStartupStatus() async {
     bool isStartupEnabled = await LaunchAtStartup.instance.isEnabled();
-    bool startMinimizedEnabled = Hive.box('lfdi').get('startMinimized');
+    bool startMinimizedEnabled = box.get('startMinimized');
+    bool debug = box.get('debug');
 
     setState(() {
       isLaunchAtStartup = isStartupEnabled;
       startMinimized = startMinimizedEnabled;
+      debug = debug;
     });
   }
 
@@ -100,6 +106,22 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
             },
           ),
         ],
+        const SizedBox(height: 16.0),
+        Text(
+          'Debug console (will be applied on startup):',
+          style: typography.body,
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        ToggleSwitch(
+          checked: debug,
+          content: Text(debug ? 'On' : 'Off'),
+          onChanged: (value) {
+            box.put('debug', value);
+            setState(() => debug = value);
+          },
+        ),
       ],
     );
   }

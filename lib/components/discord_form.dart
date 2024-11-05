@@ -62,6 +62,8 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
 
   @override
   Widget build(BuildContext context) {
+    final hideTokens = ref.watch(hideTokensProvider);
+
     return Form(
       key: discordFormKey,
       child: Column(
@@ -76,6 +78,7 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
             placeholder: 'Yes, your token. Not bot.',
             autovalidateMode: AutovalidateMode.onUserInteraction,
             controller: discordTokenController,
+            obscureText: hideTokens,
             validator: (text) {
               if (text == null || text.isEmpty) {
                 return 'Provide a token';
@@ -114,6 +117,7 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
                 'Get your Client ID at developer.spotify.com/dashboard/applications',
             autovalidateMode: AutovalidateMode.onUserInteraction,
             controller: spotifyApiKeyController,
+            obscureText: hideTokens,
             validator: (text) {
               if (text == null || text.isEmpty) {
                 return 'Provide a Client ID';
@@ -156,6 +160,7 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
                 'Get your Client Secret at developer.spotify.com/dashboard/applications',
             autovalidateMode: AutovalidateMode.onUserInteraction,
             controller: spotifyApiSecretController,
+            obscureText: hideTokens,
             validator: (text) {
               if (text == null || text.isEmpty) {
                 return 'Provide a Client Secret';

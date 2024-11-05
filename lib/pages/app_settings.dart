@@ -1,27 +1,32 @@
 import 'dart:io';
 
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
+import 'package:lfdi/main.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-class AppSettingsPage extends StatefulWidget {
+class AppSettingsPage extends ConsumerStatefulWidget {
   const AppSettingsPage({Key? key}) : super(key: key);
 
   @override
-  State<AppSettingsPage> createState() => _AppSettingsPageState();
+  ConsumerState<AppSettingsPage> createState() => _AppSettingsPageState();
 }
 
-class _AppSettingsPageState extends State<AppSettingsPage> {
+class _AppSettingsPageState extends ConsumerState<AppSettingsPage> {
   final Future<PackageInfo> packageInfo = PackageInfo.fromPlatform();
   bool isLaunchAtStartup = false;
   bool startMinimized = false;
   bool debug = false;
+  late bool hideTokens;
   late Box box;
 
   @override
   void initState() {
     box = Hive.box('lfdi');
+
+    hideTokens = box.get('hideTokens');
 
     getStartupStatus();
     super.initState();
@@ -120,6 +125,23 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
           onChanged: (value) {
             box.put('debug', value);
             setState(() => debug = value);
+          },
+        ),
+        const SizedBox(height: 16.0),
+        Text(
+          'Hide API keys and tokens:',
+          style: typography.body,
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        ToggleSwitch(
+          checked: hideTokens,
+          content: Text(hideTokens ? 'Yes' : 'No'),
+          onChanged: (value) {
+            box.put('hideTokens', value);
+            ref.read(hideTokensProvider.notifier).state = value;
+            setState(() => hideTokens = value);
           },
         ),
       ],

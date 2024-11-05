@@ -74,6 +74,8 @@ class _SettingsFormState extends ConsumerState<SettingsForm> {
       (original colors are commented)
     */
 
+    final hideTokens = ref.watch(hideTokensProvider);
+
     return Form(
       key: settingsFormKey,
       child: Column(
@@ -84,6 +86,7 @@ class _SettingsFormState extends ConsumerState<SettingsForm> {
             placeholder: 'Get your key on last.fm/api/account/create',
             autovalidateMode: AutovalidateMode.onUserInteraction,
             controller: apiKeyController,
+            obscureText: hideTokens,
             validator: (text) {
               if (text == null || text.isEmpty) {
                 return 'Provide an API key';

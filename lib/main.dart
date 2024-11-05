@@ -24,6 +24,7 @@ import 'package:window_manager/window_manager.dart';
 final rpcProvider = Provider((ref) => RPC());
 final discordGatewayProvider =
     Provider((ref) => DiscordWebSocketManager(discordToken: ''));
+final hideTokensProvider = StateProvider((ref) => true);
 late final bool runMinimized;
 
 void main(List<String> arguments) async {
@@ -106,6 +107,7 @@ class MyApp extends ConsumerWidget {
     String? gatewayPresenceType = box.get('gatewayPresenceType');
     String? priorUsing = box.get('priorUsing');
     bool? debug = box.get('debug');
+    bool? hideTokens = box.get('hideTokens');
 
     final spotifyApiKey = box.get('spotifyApiKey');
     final spotifyApiSecret = box.get('spotifyApiSecret');
@@ -129,6 +131,12 @@ class MyApp extends ConsumerWidget {
     if (debug == null) {
       box.put('debug', false);
       debug = false;
+    }
+
+    if (hideTokens == null) {
+      box.put('hideTokens', true);
+      hideTokens = true;
+      ref.read(hideTokensProvider.notifier).state = true;
     }
 
     // Check for Last.fm username & apiKey

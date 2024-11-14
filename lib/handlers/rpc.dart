@@ -1,10 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter_discord_rpc/flutter_discord_rpc.dart';
+import 'package:hive/hive.dart';
 import 'package:lfdi/api/api.dart';
 import 'package:lfdi/constants.dart';
 import 'package:lfdi/globals.dart';
-import 'package:lfdi/handlers/track_handler.dart';
+import 'package:lfdi/handlers/track_handler.dart' as rpc_track;
+import 'package:spotify/spotify.dart';
 
 class RPC {
   bool initialized = false;
@@ -14,10 +16,14 @@ class RPC {
   String apiKey = '';
   FlutterDiscordRPC? rpc;
 
+  /// Spotify API instance
+  SpotifyApi? spotifyApi;
+
   /// Stores all listeners
   Map<String, Function> listeners = {};
 
-  Track currentTrack = Track(
+  /// Current track
+  rpc_track.Track currentTrack = rpc_track.Track(
     album: 'Test album',
     artist: 'Test artist',
     cover: defaultCoverURL,
@@ -47,8 +53,6 @@ class RPC {
     await FlutterDiscordRPC.initialize(defaultDiscordAppID);
     rpc = FlutterDiscordRPC.instance;
 
-    // rpc = DiscordRPC(applicationId: discordAppId ?? applicationId);
-
     this.username = username;
     this.apiKey = apiKey;
 
@@ -73,7 +77,8 @@ class RPC {
         return;
       }
 
-      Track track = TrackHandler.getTrack(response['message']);
+      rpc_track.Track track =
+          rpc_track.TrackHandler.getTrack(response['message']);
       currentTrack = track;
       if (!track.nowPlaying) {
         logger.warning('No playing tracks now, abort.', name: 'RPC');
@@ -94,6 +99,28 @@ class RPC {
         return;
       }
 
+      // Building track cover from Spotify
+      if (spotifyApi != null) {
+        String coverId;
+
+        final spotifyTrack = await getCurrentSpotifyTrack();
+        if (spotifyTrack != null) {
+          String? trackCoverUrl;
+
+          if (spotifyTrack.album != null) {
+            if (spotifyTrack.album!.images != null) {
+              trackCoverUrl = spotifyTrack.album!.images!.first.url;
+            }
+          }
+
+          coverId = trackCoverUrl ?? defaultCoverURL;
+        } else {
+          coverId = defaultCoverURL;
+        }
+
+        currentTrack.cover = coverId;
+      }
+
       // build large image text
       String largeImageText = '';
 
@@ -107,15 +134,20 @@ class RPC {
 
       if (trackDurationMs != 0 && track.playCount > 1) {
         track.duration = Duration(milliseconds: trackDurationMs);
-        largeImageText += ' (~${TrackHandler.getTotalListeningTime(track)})';
+        largeImageText +=
+            ' (~${rpc_track.TrackHandler.getTotalListeningTime(track)})';
       }
+
+      // Get duration from Spotify (why not)
 
       // update rich presence
       rpc?.setActivity(
         activity: RPCActivity(
           activityType: ActivityType.listening,
           assets: RPCAssets(
-            largeImage: track.cover.isEmpty ? defaultCoverURL : track.cover,
+            largeImage: currentTrack.cover.isEmpty
+                ? defaultCoverURL
+                : currentTrack.cover,
             largeText: largeImageText,
             smallImage:
                 'https://cdn.discordapp.com/app-icons/969612309209186354/9d9a045feac2fa39d2a1598ad2d06e25.png',
@@ -124,7 +156,7 @@ class RPC {
           buttons: [
             RPCButton(
               label: 'View song',
-              url: TrackHandler.makeLastFmUrl(track),
+              url: rpc_track.TrackHandler.makeLastFmUrl(track),
             ),
           ],
           details: track.name,
@@ -188,5 +220,72 @@ class RPC {
 
   void removeAllListeners() {
     listeners.clear();
+  }
+
+  Future<Track?> getCurrentSpotifyTrack() async {
+    logger.info('Search track: ${currentTrack.artist} - ${currentTrack.name}');
+    logger.info(
+      'Search query: ${rpc_track.TrackHandler.removeFeat(currentTrack.artist)} ${currentTrack.name}',
+    );
+    List<Page<dynamic>> search;
+
+    try {
+      search = await spotifyApi!.search
+          .get(
+            Uri.encodeComponent(
+              '${rpc_track.TrackHandler.removeFeat(currentTrack.artist)} ${currentTrack.name}',
+            ),
+          )
+          .first(1);
+    } on ExpirationException {
+      refreshSpotify();
+
+      search = await spotifyApi!.search
+          .get(
+            Uri.encodeComponent(
+              '${rpc_track.TrackHandler.removeFeat(currentTrack.artist)} ${currentTrack.name}',
+            ),
+          )
+          .first(1);
+    }
+
+    List<Track> results = [];
+
+    if (search.isNotEmpty) {
+      List listPages = [];
+
+      for (var pages in search) {
+        listPages.add(pages);
+      }
+
+      listPages.remove(listPages[4]);
+
+      for (var pages in listPages) {
+        if (pages.items != null &&
+            pages.items.length != 0 &&
+            pages.items!.first != null) {
+          for (var item in pages.items!) {
+            if (item is Track) {
+              results.add(item);
+            }
+          }
+        }
+      }
+    }
+
+    return results.isEmpty ? null : results.first;
+  }
+
+  void refreshSpotify() {
+    var box = Hive.box('lfdi');
+    final clientId = box.get('spotifyApiKey');
+    final clientSecret = box.get('spotifyApiSecret');
+
+    spotifyApi = SpotifyApi(
+      SpotifyApiCredentials(
+        clientId,
+        clientSecret,
+      ),
+    );
   }
 }

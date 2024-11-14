@@ -171,6 +171,13 @@ class MyApp extends ConsumerWidget {
             // Check for Spotify dev app
             if (spotifyApiKey != null && spotifyApiSecret != null) {
               if (spotifyApiKey.isNotEmpty && spotifyApiSecret.isNotEmpty) {
+                rpc.spotifyApi = SpotifyApi(
+                  SpotifyApiCredentials(
+                    spotifyApiKey,
+                    spotifyApiSecret,
+                  ),
+                );
+
                 webSocketManager.spotifyApi = SpotifyApi(
                   SpotifyApiCredentials(
                     spotifyApiKey,

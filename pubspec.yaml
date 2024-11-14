@@ -25,7 +25,7 @@ dependencies:
     git:
       url: https://github.com/leanflutter/tray_manager.git
       ref: f075f39e978e7c664e81916d0c8da0b4955906cd
-  fluent_ui: ^4.6.1 
+  fluent_ui: ^4.9.2
     # git:
     #   url: https://github.com/tangenx/fluent_ui.git
     #   ref: 87525a1588c34399239644b35bda3bae6490685f
@@ -91,7 +91,7 @@ dependency_overrides:
   #     ref: 21fc5740e614fefa90f627bafcc22093382f24a7
 
 flutter:
-  uses-material-design: false
+  uses-material-design: true
 
   assets:
     - assets/images/

@@ -60,7 +60,9 @@ class _DiscordStatusPreviewState extends ConsumerState<DiscordStatusPreview> {
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
                       child: Image(
                         image: ResizeImage(
-                          NetworkImage(track.cover),
+                          NetworkImage(
+                            track.cover.isEmpty ? defaultCoverURL : track.cover,
+                          ),
                           height: 60,
                           width: 60,
                         ),
@@ -94,16 +96,16 @@ class _DiscordStatusPreviewState extends ConsumerState<DiscordStatusPreview> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    discordAppEnumToAppName[
-                        discordAppIdToAppName[rpc.applicationId]]!,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      color: FluentTheme.of(context).brightness.isLight
-                          ? discordLightThemeLowerHeadingColor
-                          : discordDarkThemeLowerHeadingColor,
-                    ),
-                  ),
+                  // Text(
+                  //   discordAppEnumToAppName[
+                  //       discordAppIdToAppName[rpc.applicationId]]!,
+                  //   style: TextStyle(
+                  //     fontWeight: FontWeight.w700,
+                  //     color: FluentTheme.of(context).brightness.isLight
+                  //         ? discordLightThemeLowerHeadingColor
+                  //         : discordDarkThemeLowerHeadingColor,
+                  //   ),
+                  // ),
                   Text(trimText(track.name)),
                   Text(trimText(track.artist)),
                 ],
@@ -224,7 +226,9 @@ class _DiscordStatusPreviewState extends ConsumerState<DiscordStatusPreview> {
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
                       child: Image(
                         image: ResizeImage(
-                          NetworkImage(track.cover),
+                          NetworkImage(track.cover.isEmpty
+                              ? 'https://cdn.discordapp.com/app-assets/970447707602833458/971488024401690635.png'
+                              : track.cover),
                           height: 60,
                           width: 60,
                         ),

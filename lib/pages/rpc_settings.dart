@@ -102,9 +102,6 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
 
                           box.put('discordAppID', changingApplicationId);
 
-                          rpc!.reinitialize(
-                              applicationid: changingApplicationId);
-
                           displayInfoBar(
                             context,
                             builder: (context, close) => const InfoBar(

@@ -58,23 +58,6 @@ class RPC {
     logger.info('Initialize complete', name: 'RPC');
   }
 
-  /// Required for changing ApplicationID
-  reinitialize({
-    required String applicationid,
-  }) {
-    logger.debug('Triggered reinit', name: 'RPC');
-    dispose();
-
-    initialize(
-      username: username,
-      apiKey: apiKey,
-      discordAppId: applicationid,
-    );
-
-    start();
-    logger.info('Reinit complete', name: 'RPC');
-  }
-
   /// Start the RPC
   start() {
     logger.debug('Triggered start', name: 'RPC');
@@ -132,7 +115,7 @@ class RPC {
       // update rich presence
       rpc?.setActivity(
         activity: RPCActivity(
-          activityType: ActivityType.playing,
+          activityType: ActivityType.listening,
           assets: RPCAssets(
             largeImage: track.cover,
             largeText: largeImageText,

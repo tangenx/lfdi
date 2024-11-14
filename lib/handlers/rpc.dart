@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:dart_discord_rpc/dart_discord_rpc.dart';
+import 'package:flutter_discord_rpc/flutter_discord_rpc.dart';
 import 'package:lfdi/api/api.dart';
 import 'package:lfdi/constants.dart';
 import 'package:lfdi/globals.dart';
@@ -13,7 +13,7 @@ class RPC {
   String username = '';
   String apiKey = '';
   String applicationId = defaultDiscordAppID;
-  DiscordRPC? rpc;
+  FlutterDiscordRPC? rpc;
 
   /// Stores all listeners
   Map<String, Function> listeners = {};
@@ -45,14 +45,16 @@ class RPC {
 
     initialized = true;
 
-    // ignore: unnecessary_this
-    rpc = DiscordRPC(applicationId: discordAppId ?? this.applicationId);
+    await FlutterDiscordRPC.initialize(discordAppId ?? applicationId);
+    rpc = FlutterDiscordRPC.instance;
+
+    // rpc = DiscordRPC(applicationId: discordAppId ?? applicationId);
 
     this.username = username;
     this.apiKey = apiKey;
     applicationId = discordAppId ?? defaultDiscordAppID;
 
-    rpc?.start(autoRegister: true);
+    rpc?.connect(autoRetry: true, retryDelay: const Duration(seconds: 10));
     logger.info('Initialize complete', name: 'RPC');
   }
 
@@ -94,7 +96,7 @@ class RPC {
       currentTrack = track;
       if (!track.nowPlaying) {
         logger.warning('No playing tracks now, abort.', name: 'RPC');
-        rpc?.clearPresence();
+        rpc?.clearActivity();
         return;
       }
 
@@ -128,19 +130,27 @@ class RPC {
       }
 
       // update rich presence
-      rpc?.updatePresence(
-        DiscordPresence(
-          largeImageKey: track.cover,
-          largeImageText: largeImageText,
-          smallImageKey:
-              'https://cdn.discordapp.com/app-icons/969612309209186354/9d9a045feac2fa39d2a1598ad2d06e25.png',
-          smallImageText: 'github.com/tangenx/lfdi',
+      rpc?.setActivity(
+        activity: RPCActivity(
+          activityType: ActivityType.playing,
+          assets: RPCAssets(
+            largeImage: track.cover,
+            largeText: largeImageText,
+            smallImage:
+                'https://cdn.discordapp.com/app-icons/969612309209186354/9d9a045feac2fa39d2a1598ad2d06e25.png',
+            smallText: 'github.com/tangenx/lfdi',
+          ),
+          buttons: [
+            RPCButton(
+              label: 'View song',
+              url: TrackHandler.makeLastFmUrl(track),
+            ),
+          ],
           details: track.name,
           state: track.artist,
-          button1Label: 'View song',
-          button1Url: TrackHandler.makeLastFmUrl(track),
         ),
       );
+
       logger.info('Track updated', name: 'RPC');
       if (listeners['onTrackChange'] != null) {
         listeners['onTrackChange']!();
@@ -159,7 +169,7 @@ class RPC {
     logger.info('Stopping...', name: 'RPC');
 
     started = false;
-    rpc?.clearPresence();
+    rpc?.clearActivity();
     timer?.cancel();
   }
 
@@ -172,10 +182,11 @@ class RPC {
     logger.info('Disposing...', name: 'RPC');
 
     timer?.cancel();
-    rpc?.updatePresence(DiscordPresence());
+    rpc?.clearActivity();
     started = false;
     initialized = false;
-    rpc?.shutDown();
+    rpc?.disconnect();
+    rpc?.dispose();
   }
 
   /// Set up listeners (must before init)

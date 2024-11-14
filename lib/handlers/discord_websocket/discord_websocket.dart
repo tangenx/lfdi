@@ -7,7 +7,6 @@ import 'package:lfdi/globals.dart';
 import 'package:lfdi/handlers/discord_websocket/gateway_message.dart';
 import 'package:lfdi/handlers/discord_websocket/message_handlers/handler_data.dart';
 import 'package:lfdi/handlers/discord_websocket/message_handlers/handler_factory.dart';
-import 'package:lfdi/utils/generate_random_string.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 

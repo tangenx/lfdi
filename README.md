@@ -11,10 +11,10 @@
     <img src="https://img.shields.io/badge/fluent-design-blue"/>
   </a>
   <a title="Coded on Flutter with love 💖" href="https://flutter.dev">
-    <img src="https://img.shields.io/badge/flutter-v3.0.0-blue">
+    <img src="https://img.shields.io/badge/flutter-v3.22.0-blue">
   </a>
   <a title="Thank you, Dart!" href="https://dart.dev">
-    <img src="https://img.shields.io/badge/dart-v2.17.0-blue">
+    <img src="https://img.shields.io/badge/dart-v3.4.0-blue">
   </a>
    <a title="I don't understand if it works or not" href="">
     <img src="https://img.shields.io/badge/works%3F-probably-yellow">

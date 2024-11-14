@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:bitsdojo_window/bitsdojo_window.dart';
-import 'package:dart_discord_rpc/dart_discord_rpc.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart' as acryllic;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -78,8 +77,6 @@ void main(List<String> arguments) async {
   );
 
   logger.init();
-
-  DiscordRPC.initialize();
 
   doWhenWindowReady(() async {
     appWindow
@@ -211,8 +208,8 @@ class MyApp extends ConsumerWidget {
       title: 'Last.fm Discord Integrator',
       themeMode: ThemeMode.system,
       color: systemAccentColor,
-      theme: lightTheme,
-      darkTheme: darkTheme,
+      theme: lightTheme(context),
+      darkTheme: darkTheme(context),
       home: const HomePage(),
     );
   }

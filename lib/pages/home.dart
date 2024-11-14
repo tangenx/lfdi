@@ -41,10 +41,13 @@ class _HomePageState extends ConsumerState<HomePage> with WindowListener {
     ws.addListener(
       name: 'onReconnect_showSnackbar',
       listener: () {
-        showSnackbar(
+        displayInfoBar(
           context,
-          const Snackbar(
-            content: Text('Reconnecting to Gateway...'),
+          builder: (context, close) => const InfoBar(
+            title: Text(
+              'Reconnecting to Gateway...',
+            ),
+            severity: InfoBarSeverity.info,
           ),
         );
       },
@@ -52,10 +55,13 @@ class _HomePageState extends ConsumerState<HomePage> with WindowListener {
     ws.addListener(
       name: 'onConnect_showSnackbar',
       listener: () {
-        showSnackbar(
+        displayInfoBar(
           context,
-          const Snackbar(
-            content: Text('Connected to Gateway.'),
+          builder: (context, close) => const InfoBar(
+            title: Text(
+              'Connected to Gateway.',
+            ),
+            severity: InfoBarSeverity.info,
           ),
         );
       },
@@ -170,6 +176,7 @@ class _HomePageState extends ConsumerState<HomePage> with WindowListener {
           PaneItem(
             icon: const Icon(LFDIIcons.lastfm),
             title: const Text('Last.fm settings'),
+            body: const SettingsPage(),
           ),
           PaneItem(
             icon: const SizedBox(
@@ -180,15 +187,18 @@ class _HomePageState extends ConsumerState<HomePage> with WindowListener {
               ),
             ),
             title: const Text('Discord Gateway settings'),
+            body: const GatewaySettingsPage(),
           ),
           PaneItem(
             icon: const Icon(FluentIcons.preview_link),
             title: const Text('Discord Rich Presence'),
+            body: const DiscordRPCPage(),
           ),
           if (debugState)
             PaneItem(
               icon: const Icon(FluentIcons.content_feed),
               title: const Text('Log Console'),
+              body: const LogConsole(),
             ),
         ],
         footerItems: [
@@ -196,22 +206,13 @@ class _HomePageState extends ConsumerState<HomePage> with WindowListener {
           PaneItem(
             icon: const Icon(FluentIcons.settings),
             title: const Text('App settings'),
+            body: const AppSettingsPage(),
           ),
           PaneItem(
             icon: const Icon(FluentIcons.info),
             title: const Text('About'),
+            body: const AboutPage(),
           ),
-        ],
-      ),
-      content: NavigationBody(
-        index: index,
-        children: [
-          const SettingsPage(),
-          const GatewaySettingsPage(),
-          const DiscordRPCPage(),
-          if (debugState) const LogConsole(),
-          const AppSettingsPage(),
-          const AboutPage(),
         ],
       ),
     );

@@ -64,11 +64,11 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
           box.get('priorUsing') == 'lastfm'
               ? InfoLabel(
                   label: '"Playing to" text',
-                  child: Combobox<RPCAppName>(
+                  child: ComboBox<RPCAppName>(
                     placeholder: const Text('Choose a playing text'),
                     isExpanded: true,
                     items: RPCAppName.values
-                        .map((e) => ComboboxItem<RPCAppName>(
+                        .map((e) => ComboBoxItem<RPCAppName>(
                               value: e,
                               child: Text(
                                 discordAppEnumToAppName[e]!,
@@ -105,11 +105,13 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
                           rpc!.reinitialize(
                               applicationid: changingApplicationId);
 
-                          showSnackbar(
+                          displayInfoBar(
                             context,
-                            const Snackbar(
-                              content:
-                                  Text('Playing text successfully changed'),
+                            builder: (context, close) => const InfoBar(
+                              title: Text(
+                                'Playing text successfully changed',
+                              ),
+                              severity: InfoBarSeverity.success,
                             ),
                           );
 
@@ -123,11 +125,11 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
                 )
               : InfoLabel(
                   label: 'Presence style',
-                  child: Combobox<GatewayPresenceType>(
+                  child: ComboBox<GatewayPresenceType>(
                     placeholder: const Text('Choose a Presence style'),
                     isExpanded: true,
                     items: GatewayPresenceType.values
-                        .map((e) => ComboboxItem<GatewayPresenceType>(
+                        .map((e) => ComboBoxItem<GatewayPresenceType>(
                               value: e,
                               child: Text(
                                 presenceTypeToName[e]!,
@@ -175,10 +177,13 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
 
                       gateway!.startUpdating();
 
-                      showSnackbar(
+                      displayInfoBar(
                         context,
-                        const Snackbar(
-                          content: Text('Presence style successfully changed'),
+                        builder: (context, close) => const InfoBar(
+                          title: Text(
+                            'Presence style successfully changed',
+                          ),
+                          severity: InfoBarSeverity.success,
                         ),
                       );
 
@@ -195,12 +200,12 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
                   box.get('priorUsing') == 'discord'
               ? InfoLabel(
                   label: 'Music app',
-                  child: Combobox<String>(
+                  child: ComboBox<String>(
                     placeholder: const Text('Choose a Presence style'),
                     isExpanded: true,
                     items: musicApps
                         .map(
-                          (e) => ComboboxItem<String>(
+                          (e) => ComboBoxItem<String>(
                             child: Text(e),
                             value: e,
                           ),
@@ -237,10 +242,13 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
 
                       gateway!.defaultMusicApp = changingMusicApp;
 
-                      showSnackbar(
+                      displayInfoBar(
                         context,
-                        const Snackbar(
-                          content: Text('Music app successfully changed'),
+                        builder: (context, close) => const InfoBar(
+                          title: Text(
+                            'Music app successfully changed',
+                          ),
+                          severity: InfoBarSeverity.success,
                         ),
                       );
 
@@ -259,8 +267,8 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
       header: const PageHeader(
         title: Text('Discord Rich Presence Settings'),
       ),
-      content: Column(
-        children: const [
+      content: const Column(
+        children: [
           InfoBar(
             title: Text('Set up Last.fm first.'),
             severity: InfoBarSeverity.warning,

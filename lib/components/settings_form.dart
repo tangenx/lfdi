@@ -81,74 +81,78 @@ class _SettingsFormState extends ConsumerState<SettingsForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TextFormBox(
-            header: 'API key',
-            placeholder: 'Get your key on last.fm/api/account/create',
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            controller: apiKeyController,
-            obscureText: hideTokens,
-            validator: (text) {
-              if (text == null || text.isEmpty) {
-                return 'Provide an API key';
-              }
+          InfoLabel(
+            label: 'API key',
+            child: TextFormBox(
+              placeholder: 'Get your key on last.fm/api/account/create',
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              controller: apiKeyController,
+              obscureText: hideTokens,
+              validator: (text) {
+                if (text == null || text.isEmpty) {
+                  return 'Provide an API key';
+                }
 
-              if (text.length != 32) {
-                return 'API key is invalid';
-              }
+                if (text.length != 32) {
+                  return 'API key is invalid';
+                }
 
-              return null;
-            },
-            suffix: Padding(
-              padding: const EdgeInsets.only(bottom: 2),
-              child: Button(
-                style: ButtonStyle(
-                  padding: ButtonState.all<EdgeInsets>(
-                    const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 2,
+                return null;
+              },
+              suffix: Padding(
+                padding: const EdgeInsets.only(bottom: 2),
+                child: Button(
+                  style: ButtonStyle(
+                    padding: ButtonState.all<EdgeInsets>(
+                      const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
                     ),
                   ),
+                  child: const Text('Get'),
+                  onPressed: () {
+                    launchUrl(
+                      Uri.parse('https://www.last.fm/api/account/create'),
+                    );
+                  },
                 ),
-                child: const Text('Get'),
-                onPressed: () {
-                  launchUrl(
-                    Uri.parse('https://www.last.fm/api/account/create'),
-                  );
-                },
               ),
             ),
           ),
           const SizedBox(
             height: 10,
           ),
-          TextFormBox(
-            header: 'Last.fm username',
-            placeholder: 'Get your username on last.fm/user/your_name_here',
-            controller: usernameController,
-            validator: (text) {
-              if (text == null || text.isEmpty) {
-                return 'Provide an username';
-              }
+          InfoLabel(
+            label: 'Last.fm username',
+            child: TextFormBox(
+              placeholder: 'Get your username on last.fm/user/your_name_here',
+              controller: usernameController,
+              validator: (text) {
+                if (text == null || text.isEmpty) {
+                  return 'Provide an username';
+                }
 
-              return null;
-            },
-            suffix: Padding(
-              padding: const EdgeInsets.only(bottom: 2),
-              child: Button(
-                style: ButtonStyle(
-                  padding: ButtonState.all<EdgeInsets>(
-                    const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 2,
+                return null;
+              },
+              suffix: Padding(
+                padding: const EdgeInsets.only(bottom: 2),
+                child: Button(
+                  style: ButtonStyle(
+                    padding: ButtonState.all<EdgeInsets>(
+                      const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
                     ),
                   ),
+                  child: const Text('Get'),
+                  onPressed: () {
+                    launchUrl(
+                      Uri.parse('https://www.last.fm/settings/account'),
+                    );
+                  },
                 ),
-                child: const Text('Get'),
-                onPressed: () {
-                  launchUrl(
-                    Uri.parse('https://www.last.fm/settings/account'),
-                  );
-                },
               ),
             ),
           ),
@@ -177,10 +181,13 @@ class _SettingsFormState extends ConsumerState<SettingsForm> {
 
                     // Check on change
                     if (lastfmUsername == username && lastfmApiKey == apiKey) {
-                      showSnackbar(
+                      displayInfoBar(
                         context,
-                        const Snackbar(
-                          content: Text('This data has already been saved'),
+                        builder: (context, close) => const InfoBar(
+                          title: Text(
+                            'This data has already been saved',
+                          ),
+                          severity: InfoBarSeverity.warning,
                         ),
                       );
 
@@ -194,10 +201,13 @@ class _SettingsFormState extends ConsumerState<SettingsForm> {
                         .checkAPI(await API.getRecentTrack(username, apiKey));
 
                     if (testResponse['status'] == 'error') {
-                      showSnackbar(
+                      displayInfoBar(
                         context,
-                        Snackbar(
-                          content: Text(testResponse['message']),
+                        builder: (context, close) => InfoBar(
+                          title: Text(
+                            testResponse['message'],
+                          ),
+                          severity: InfoBarSeverity.error,
                         ),
                       );
 
@@ -264,10 +274,13 @@ class _SettingsFormState extends ConsumerState<SettingsForm> {
                         }
                       }
 
-                      showSnackbar(
+                      displayInfoBar(
                         context,
-                        const Snackbar(
-                          content: Text('Last.fm successfully configured'),
+                        builder: (context, close) => const InfoBar(
+                          title: Text(
+                            'Last.fm successfully configured',
+                          ),
+                          severity: InfoBarSeverity.success,
                         ),
                       );
 
@@ -307,10 +320,13 @@ class _SettingsFormState extends ConsumerState<SettingsForm> {
                       ref.read(discordGatewayProvider);
                   gateway.dispose();
 
-                  showSnackbar(
+                  displayInfoBar(
                     context,
-                    const Snackbar(
-                      content: Text('Successfully cleared.'),
+                    builder: (context, close) => const InfoBar(
+                      title: Text(
+                        'Successfully cleared.',
+                      ),
+                      severity: InfoBarSeverity.success,
                     ),
                   );
 

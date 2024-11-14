@@ -2,24 +2,24 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/foundation.dart';
 import 'package:system_theme/system_theme.dart';
 
-ThemeData lightTheme = ThemeData(
-  brightness: Brightness.light,
-  accentColor: systemAccentColor,
-  visualDensity: VisualDensity.standard,
-  focusTheme: FocusThemeData(
-    glowFactor: is10footScreen() ? 2.0 : 0.0,
-  ),
-);
+FluentThemeData lightTheme(BuildContext context) => FluentThemeData(
+      brightness: Brightness.light,
+      accentColor: systemAccentColor,
+      visualDensity: VisualDensity.standard,
+      focusTheme: FocusThemeData(
+        glowFactor: is10footScreen(context) ? 2.0 : 0.0,
+      ),
+    );
 
-ThemeData darkTheme = ThemeData(
-  brightness: Brightness.dark,
-  micaBackgroundColor: Colors.transparent,
-  accentColor: systemAccentColor,
-  visualDensity: VisualDensity.standard,
-  focusTheme: FocusThemeData(
-    glowFactor: is10footScreen() ? 2.0 : 0.0,
-  ),
-);
+FluentThemeData darkTheme(BuildContext context) => FluentThemeData(
+      brightness: Brightness.dark,
+      micaBackgroundColor: Colors.transparent,
+      accentColor: systemAccentColor,
+      visualDensity: VisualDensity.standard,
+      focusTheme: FocusThemeData(
+        glowFactor: is10footScreen(context) ? 2.0 : 0.0,
+      ),
+    );
 
 AccentColor get systemAccentColor {
   if (defaultTargetPlatform == TargetPlatform.windows ||

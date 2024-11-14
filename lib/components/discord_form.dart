@@ -73,105 +73,111 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
                   (box.get('apiKey').isEmpty && box.get('username').isEmpty)
               ? buildInfoBar('Set up Last.fm first.')
               : const SizedBox(),
-          TextFormBox(
-            header: 'Discord User token',
-            placeholder: 'Yes, your token. Not bot.',
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            controller: discordTokenController,
-            obscureText: hideTokens,
-            validator: (text) {
-              if (text == null || text.isEmpty) {
-                return 'Provide a token';
-              }
+          InfoLabel(
+            label: 'Discord User token',
+            child: TextFormBox(
+              placeholder: 'Yes, your token. Not bot.',
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              controller: discordTokenController,
+              obscureText: hideTokens,
+              validator: (text) {
+                if (text == null || text.isEmpty) {
+                  return 'Provide a token';
+                }
 
-              return null;
-            },
-            suffix: Padding(
-              padding: const EdgeInsets.only(bottom: 2),
-              child: Button(
-                style: ButtonStyle(
-                  padding: ButtonState.all<EdgeInsets>(
-                    const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 2,
+                return null;
+              },
+              suffix: Padding(
+                padding: const EdgeInsets.only(bottom: 2),
+                child: Button(
+                  style: ButtonStyle(
+                    padding: ButtonState.all<EdgeInsets>(
+                      const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
                     ),
                   ),
+                  child: const Text('Get'),
+                  onPressed: () {
+                    launchUrl(
+                      Uri.parse(
+                        'https://github.com/tangenx/lfdi/blob/lord/docs/en/gateway/configure.md#getting-a-discord-token',
+                      ),
+                    );
+                  },
                 ),
-                child: const Text('Get'),
-                onPressed: () {
-                  launchUrl(
-                    Uri.parse(
-                      'https://github.com/tangenx/lfdi/blob/lord/docs/en/gateway/configure.md#getting-a-discord-token',
-                    ),
-                  );
-                },
               ),
             ),
           ),
           const SizedBox(
             height: 10,
           ),
-          TextFormBox(
-            header: 'Spotify App Client ID',
-            placeholder:
-                'Get your Client ID at developer.spotify.com/dashboard/applications',
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            controller: spotifyApiKeyController,
-            obscureText: hideTokens,
-            validator: (text) {
-              if (text == null || text.isEmpty) {
-                return 'Provide a Client ID';
-              }
+          InfoLabel(
+            label: 'Spotify App Client ID',
+            child: TextFormBox(
+              placeholder:
+                  'Get your Client ID at developer.spotify.com/dashboard/applications',
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              controller: spotifyApiKeyController,
+              obscureText: hideTokens,
+              validator: (text) {
+                if (text == null || text.isEmpty) {
+                  return 'Provide a Client ID';
+                }
 
-              if (text.length != 32) {
-                return 'Client ID is invalid';
-              }
+                if (text.length != 32) {
+                  return 'Client ID is invalid';
+                }
 
-              return null;
-            },
-            suffix: Padding(
-              padding: const EdgeInsets.only(bottom: 2),
-              child: Button(
-                style: ButtonStyle(
-                  padding: ButtonState.all<EdgeInsets>(
-                    const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 2,
+                return null;
+              },
+              suffix: Padding(
+                padding: const EdgeInsets.only(bottom: 2),
+                child: Button(
+                  style: ButtonStyle(
+                    padding: ButtonState.all<EdgeInsets>(
+                      const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
                     ),
                   ),
+                  child: const Text('Get'),
+                  onPressed: () {
+                    launchUrl(
+                      Uri.parse(
+                        'https://github.com/tangenx/lfdi/blob/lord/docs/en/gateway/configure.md#getting-the-spotify-client-id-and-client-secret',
+                      ),
+                    );
+                  },
                 ),
-                child: const Text('Get'),
-                onPressed: () {
-                  launchUrl(
-                    Uri.parse(
-                      'https://github.com/tangenx/lfdi/blob/lord/docs/en/gateway/configure.md#getting-the-spotify-client-id-and-client-secret',
-                    ),
-                  );
-                },
               ),
             ),
           ),
           const SizedBox(
             height: 10,
           ),
-          TextFormBox(
-            header: 'Spotify App Client Secret',
-            placeholder:
-                'Get your Client Secret at developer.spotify.com/dashboard/applications',
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            controller: spotifyApiSecretController,
-            obscureText: hideTokens,
-            validator: (text) {
-              if (text == null || text.isEmpty) {
-                return 'Provide a Client Secret';
-              }
+          InfoLabel(
+            label: 'Spotify App Client Secret',
+            child: TextFormBox(
+              placeholder:
+                  'Get your Client Secret at developer.spotify.com/dashboard/applications',
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              controller: spotifyApiSecretController,
+              obscureText: hideTokens,
+              validator: (text) {
+                if (text == null || text.isEmpty) {
+                  return 'Provide a Client Secret';
+                }
 
-              if (text.length != 32) {
-                return 'Client Secret is invalid';
-              }
+                if (text.length != 32) {
+                  return 'Client Secret is invalid';
+                }
 
-              return null;
-            },
+                return null;
+              },
+            ),
           ),
           const SizedBox(
             height: 10,
@@ -196,10 +202,10 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
                       processing = false;
                     });
 
-                    showSnackbar(
+                    displayInfoBar(
                       context,
-                      const Snackbar(
-                        content: Text(
+                      builder: (context, close) => const InfoBar(
+                        title: Text(
                           'Nothing to change.',
                         ),
                       ),
@@ -224,12 +230,13 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
                       processing = false;
                     });
 
-                    showSnackbar(
+                    displayInfoBar(
                       context,
-                      const Snackbar(
-                        content: Text(
+                      builder: (context, close) => const InfoBar(
+                        title: Text(
                           'Set up Last.fm firstly.',
                         ),
+                        severity: InfoBarSeverity.warning,
                       ),
                     );
                   }
@@ -263,12 +270,13 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
                     webSocketTestManager.dispose();
 
                     if (isWebSocketDead) {
-                      showSnackbar(
+                      displayInfoBar(
                         context,
-                        const Snackbar(
-                          content: Text(
+                        builder: (context, close) => const InfoBar(
+                          title: Text(
                             'Invalid user token (if you\'re sure it\'s not, try again)',
                           ),
+                          severity: InfoBarSeverity.error,
                         ),
                       );
 
@@ -311,12 +319,13 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
                     }
 
                     if (isSpotifyError) {
-                      showSnackbar(
+                      displayInfoBar(
                         context,
-                        const Snackbar(
-                          content: Text(
+                        builder: (context, close) => const InfoBar(
+                          title: Text(
                             'Spotify Client ID or Client Secret is invalid.',
                           ),
+                          severity: InfoBarSeverity.error,
                         ),
                       );
 
@@ -355,12 +364,13 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
 
                   widget.updateState();
 
-                  showSnackbar(
+                  displayInfoBar(
                     context,
-                    const Snackbar(
-                      content: Text(
+                    builder: (context, close) => const InfoBar(
+                      title: Text(
                         'Gateway successfully configured.',
                       ),
+                      severity: InfoBarSeverity.success,
                     ),
                   );
 
@@ -405,10 +415,13 @@ class _DiscordFormState extends ConsumerState<DiscordForm> {
                       final rpc = ref.read(rpcProvider);
                       rpc.start();
 
-                      showSnackbar(
+                      displayInfoBar(
                         context,
-                        const Snackbar(
-                          content: Text('Successfully cleared.'),
+                        builder: (context, close) => const InfoBar(
+                          title: Text(
+                            'Successfully cleared.',
+                          ),
+                          severity: InfoBarSeverity.success,
                         ),
                       );
 

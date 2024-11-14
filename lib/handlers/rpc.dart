@@ -12,7 +12,6 @@ class RPC {
   Timer? timer;
   String username = '';
   String apiKey = '';
-  String applicationId = defaultDiscordAppID;
   FlutterDiscordRPC? rpc;
 
   /// Stores all listeners
@@ -45,14 +44,13 @@ class RPC {
 
     initialized = true;
 
-    await FlutterDiscordRPC.initialize(discordAppId ?? applicationId);
+    await FlutterDiscordRPC.initialize(defaultDiscordAppID);
     rpc = FlutterDiscordRPC.instance;
 
     // rpc = DiscordRPC(applicationId: discordAppId ?? applicationId);
 
     this.username = username;
     this.apiKey = apiKey;
-    applicationId = discordAppId ?? defaultDiscordAppID;
 
     rpc?.connect(autoRetry: true, retryDelay: const Duration(seconds: 10));
     logger.info('Initialize complete', name: 'RPC');
@@ -117,7 +115,7 @@ class RPC {
         activity: RPCActivity(
           activityType: ActivityType.listening,
           assets: RPCAssets(
-            largeImage: track.cover,
+            largeImage: track.cover.isEmpty ? defaultCoverURL : track.cover,
             largeText: largeImageText,
             smallImage:
                 'https://cdn.discordapp.com/app-icons/969612309209186354/9d9a045feac2fa39d2a1598ad2d06e25.png',

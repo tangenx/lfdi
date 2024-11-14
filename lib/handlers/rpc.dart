@@ -99,11 +99,13 @@ class RPC {
         return;
       }
 
+      final Track? spotifyTrack =
+          spotifyApi != null ? await getCurrentSpotifyTrack() : null;
+
       // Building track cover from Spotify
       if (spotifyApi != null) {
         String coverId;
 
-        final spotifyTrack = await getCurrentSpotifyTrack();
         if (spotifyTrack != null) {
           String? trackCoverUrl;
 
@@ -131,6 +133,14 @@ class RPC {
 
       String trackDuration = trackInfo['message']['track']['duration'] ?? '0';
       int trackDurationMs = int.parse(trackDuration);
+
+      // Get duration from Spotify (why not)
+      if (trackDurationMs == 0) {
+        logger.info('Last.fm didnt give the duration, look at Spotify...');
+        if (spotifyTrack != null) {
+          trackDurationMs = spotifyTrack.durationMs ?? 0;
+        }
+      }
 
       if (trackDurationMs != 0 && track.playCount > 1) {
         track.duration = Duration(milliseconds: trackDurationMs);

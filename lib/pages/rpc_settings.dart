@@ -28,18 +28,18 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
     rpc = ref.read(rpcProvider);
     gateway = ref.read(discordGatewayProvider);
 
+    setState(() {
+      boxValue = discordAppIdToAppName[rpc!.applicationId];
+      currentGatewayPresenceType = gateway!.presenceType;
+      currentMusicApp = gateway!.defaultMusicApp;
+    });
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final typography = FluentTheme.of(context).typography;
-
-    setState(() {
-      boxValue = discordAppIdToAppName[rpc!.applicationId];
-      currentGatewayPresenceType = gateway!.presenceType;
-      currentMusicApp = gateway!.defaultMusicApp;
-    });
 
     if (rpc!.initialized || gateway!.initialized) {
       return ScaffoldPage.scrollable(
@@ -106,7 +106,7 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
                             context,
                             builder: (context, close) => const InfoBar(
                               title: Text(
-                                'Playing text successfully changed',
+                                'Playing text successfully changed. Restart the app to apply.',
                               ),
                               severity: InfoBarSeverity.success,
                             ),

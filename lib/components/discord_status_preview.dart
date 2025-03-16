@@ -285,7 +285,6 @@ class _DiscordStatusPreviewState extends ConsumerState<DiscordStatusPreview> {
     rpc.addListener(
       name: 'onTrackChange',
       listener: () {
-        print('update status preview');
         if (mounted) {
           setState(() {});
         }

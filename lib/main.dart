@@ -171,18 +171,30 @@ class MyApp extends ConsumerWidget {
             // Check for Spotify dev app
             if (spotifyApiKey != null && spotifyApiSecret != null) {
               if (spotifyApiKey.isNotEmpty && spotifyApiSecret.isNotEmpty) {
-                rpc.spotifyApi = SpotifyApi(
+                final spotifyApi = SpotifyApi(
                   SpotifyApiCredentials(
                     spotifyApiKey,
                     spotifyApiSecret,
                   ),
                 );
 
-                webSocketManager.spotifyApi = SpotifyApi(
-                  SpotifyApiCredentials(
-                    spotifyApiKey,
-                    spotifyApiSecret,
-                  ),
+                spotifyApi.search.get('metallica').first(1).then(
+                  (value) {
+                    logger.info(
+                      'Spotify is available.',
+                      name: 'Main',
+                    );
+
+                    webSocketManager.spotifyApi = spotifyApi;
+                    rpc.spotifyApi = spotifyApi;
+                  },
+                ).catchError(
+                  (error) {
+                    logger.warning(
+                      'Caught Spotify exception: ${error.message}',
+                      name: 'Main',
+                    );
+                  },
                 );
 
                 if (priorUsing == 'discord') {

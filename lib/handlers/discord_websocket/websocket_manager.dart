@@ -229,26 +229,28 @@ class DiscordWebSocketManager {
         logger.info(
           'Search query: ${rpc_track.TrackHandler.removeFeat(track.artist)} ${track.name}',
         );
-        List<Page<dynamic>> search;
+        List<Page<dynamic>> search = [];
 
-        try {
-          search = await spotifyApi!.search
-              .get(
-                Uri.encodeComponent(
-                  '${rpc_track.TrackHandler.removeFeat(track.artist)} ${track.name}',
-                ),
-              )
-              .first(1);
-        } on ExpirationException {
-          refreshSpotify();
+        if (spotifyApi != null) {
+          try {
+            search = await spotifyApi!.search
+                .get(
+                  Uri.encodeComponent(
+                    '${rpc_track.TrackHandler.removeFeat(track.artist)} ${track.name}',
+                  ),
+                )
+                .first(1);
+          } on ExpirationException {
+            refreshSpotify();
 
-          search = await spotifyApi!.search
-              .get(
-                Uri.encodeComponent(
-                  '${rpc_track.TrackHandler.removeFeat(track.artist)} ${track.name}',
-                ),
-              )
-              .first(1);
+            search = await spotifyApi!.search
+                .get(
+                  Uri.encodeComponent(
+                    '${rpc_track.TrackHandler.removeFeat(track.artist)} ${track.name}',
+                  ),
+                )
+                .first(1);
+          }
         }
 
         List<Track> results = [];

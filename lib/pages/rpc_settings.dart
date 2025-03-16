@@ -15,6 +15,7 @@ class DiscordRPCPage extends ConsumerStatefulWidget {
 }
 
 class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
+  RPCAppName? boxValue;
   GatewayPresenceType? currentGatewayPresenceType;
   bool changing = false;
   String? currentMusicApp;
@@ -35,6 +36,7 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
     final typography = FluentTheme.of(context).typography;
 
     setState(() {
+      boxValue = discordAppIdToAppName[rpc!.applicationId];
       currentGatewayPresenceType = gateway!.presenceType;
       currentMusicApp = gateway!.defaultMusicApp;
     });
@@ -59,135 +61,139 @@ class _DiscordRPCPageState extends ConsumerState<DiscordRPCPage> {
           const SizedBox(
             height: 10,
           ),
-          // box.get('priorUsing') == 'lastfm'
-          //     ? InfoLabel(
-          //         label: '"Playing to" text',
-          //         child: ComboBox<RPCAppName>(
-          //           placeholder: const Text('Choose a playing text'),
-          //           isExpanded: true,
-          //           items: RPCAppName.values
-          //               .map((e) => ComboBoxItem<RPCAppName>(
-          //                     value: e,
-          //                     child: Text(
-          //                       discordAppEnumToAppName[e]!,
-          //                     ),
-          //                   ))
-          //               .toList(),
-          //           value: boxValue,
-          //           onChanged: (value) async {
-          //             if (!changing) {
-          //               setState(() {
-          //                 changing = true;
-          //               });
+          box.get('priorUsing') == 'lastfm'
+              ? InfoLabel(
+                  label: '"Listening to" text',
+                  child: ComboBox<RPCAppName>(
+                    placeholder: const Text('Choose a playing text'),
+                    isExpanded: true,
+                    items: RPCAppName.values
+                        .map((e) => ComboBoxItem<RPCAppName>(
+                              value: e,
+                              child: Text(
+                                discordAppEnumToAppName[e]!,
+                              ),
+                            ))
+                        .toList(),
+                    value: boxValue,
+                    onChanged: (value) async {
+                      if (!changing) {
+                        setState(() {
+                          changing = true;
+                        });
 
-          //               if (value != null) {
-          //                 setState(() {
-          //                   boxValue = value;
-          //                 });
+                        if (value != null) {
+                          setState(() {
+                            boxValue = value;
+                          });
 
-          //                 String changingApplicationId =
-          //                     discordAppNameToAppId[value]!;
+                          String changingApplicationId =
+                              discordAppNameToAppId[value]!;
 
-          //                 String? storedApplicationId = box.get('discordAppID');
+                          String? storedApplicationId = box.get('discordAppID');
 
-          //                 if (storedApplicationId != null &&
-          //                     storedApplicationId == changingApplicationId) {
-          //                   setState(() {
-          //                     changing = false;
-          //                   });
-          //                   return;
-          //                 }
+                          if (storedApplicationId != null &&
+                              storedApplicationId == changingApplicationId) {
+                            setState(() {
+                              changing = false;
+                            });
+                            return;
+                          }
 
-          //                 box.put('discordAppID', changingApplicationId);
+                          box.put('discordAppID', changingApplicationId);
 
-          //                 displayInfoBar(
-          //                   context,
-          //                   builder: (context, close) => const InfoBar(
-          //                     title: Text(
-          //                       'Playing text successfully changed',
-          //                     ),
-          //                     severity: InfoBarSeverity.success,
-          //                   ),
-          //                 );
+                          displayInfoBar(
+                            context,
+                            builder: (context, close) => const InfoBar(
+                              title: Text(
+                                'Playing text successfully changed',
+                              ),
+                              severity: InfoBarSeverity.success,
+                            ),
+                          );
 
-          //                 setState(() {
-          //                   changing = false;
-          //                 });
-          //               }
-          //             }
-          //           },
-          //         ),
-          //       )
-          //     : InfoLabel(
-          //         label: 'Presence style',
-          //         child: ComboBox<GatewayPresenceType>(
-          //           placeholder: const Text('Choose a Presence style'),
-          //           isExpanded: true,
-          //           items: GatewayPresenceType.values
-          //               .map((e) => ComboBoxItem<GatewayPresenceType>(
-          //                     value: e,
-          //                     child: Text(
-          //                       presenceTypeToName[e]!,
-          //                     ),
-          //                   ))
-          //               .toList(),
-          //           value: currentGatewayPresenceType,
-          //           onChanged: (value) {
-          //             if (changing) {
-          //               return;
-          //             }
+                          if (rpc?.listeners['onTrackChange'] != null) {
+                            rpc?.listeners['onTrackChange']!();
+                          }
 
-          //             setState(() {
-          //               changing = true;
-          //             });
+                          setState(() {
+                            changing = false;
+                          });
+                        }
+                      }
+                    },
+                  ),
+                )
+              : InfoLabel(
+                  label: 'Presence style',
+                  child: ComboBox<GatewayPresenceType>(
+                    placeholder: const Text('Choose a Presence style'),
+                    isExpanded: true,
+                    items: GatewayPresenceType.values
+                        .map((e) => ComboBoxItem<GatewayPresenceType>(
+                              value: e,
+                              child: Text(
+                                presenceTypeToName[e]!,
+                              ),
+                            ))
+                        .toList(),
+                    value: currentGatewayPresenceType,
+                    onChanged: (value) {
+                      if (changing) {
+                        return;
+                      }
 
-          //             if (value != null) {
-          //               setState(() {
-          //                 currentGatewayPresenceType = value;
-          //               });
-          //             }
+                      setState(() {
+                        changing = true;
+                      });
 
-          //             GatewayPresenceType? presenceType = value;
+                      if (value != null) {
+                        setState(() {
+                          currentGatewayPresenceType = value;
+                        });
+                      }
 
-          //             String changingPresenceType =
-          //                 presenceTypeToStringID[presenceType]!;
+                      GatewayPresenceType? presenceType = value;
 
-          //             String storedPresenceType =
-          //                 box.get('gatewayPresenceType');
+                      String changingPresenceType =
+                          presenceTypeToStringID[presenceType]!;
 
-          //             if (storedPresenceType == changingPresenceType) {
-          //               setState(() {
-          //                 changing = false;
-          //               });
-          //               return;
-          //             }
+                      String storedPresenceType =
+                          box.get('gatewayPresenceType');
 
-          //             box.put('gatewayPresenceType', changingPresenceType);
+                      if (storedPresenceType == changingPresenceType) {
+                        setState(() {
+                          changing = false;
+                        });
+                        return;
+                      }
 
-          //             if (gateway!.started) {
-          //               gateway!.stopUpdating();
-          //             }
+                      box.put('gatewayPresenceType', changingPresenceType);
 
-          //             gateway!.presenceType = presenceType;
+                      if (gateway!.started) {
+                        gateway!.stopUpdating();
+                      }
 
-          //             gateway!.startUpdating();
+                      gateway!.presenceType = presenceType;
 
-          //             displayInfoBar(
-          //               context,
-          //               builder: (context, close) => const InfoBar(
-          //                 title: Text(
-          //                   'Presence style successfully changed',
-          //                 ),
-          //                 severity: InfoBarSeverity.success,
-          //               ),
-          //             );
+                      gateway!.startUpdating();
 
-          //             setState(() {
-          //               changing = false;
-          //             });
-          //           },
-          //         ),
-          //       ),
+                      displayInfoBar(
+                        context,
+                        builder: (context, close) => const InfoBar(
+                          title: Text(
+                            'Presence style successfully changed',
+                          ),
+                          severity: InfoBarSeverity.success,
+                        ),
+                      );
+
+                      setState(() {
+                        changing = false;
+                      });
+                    },
+                  ),
+                ),
           const SizedBox(
             height: 10,
           ),

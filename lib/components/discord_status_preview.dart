@@ -35,7 +35,7 @@ class _DiscordStatusPreviewState extends ConsumerState<DiscordStatusPreview> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'PLAYING A GAME',
+          'Listening to ${discordAppEnumToAppName[discordAppIdToAppName[rpc.applicationId]]}',
           style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w900,
@@ -285,6 +285,7 @@ class _DiscordStatusPreviewState extends ConsumerState<DiscordStatusPreview> {
     rpc.addListener(
       name: 'onTrackChange',
       listener: () {
+        print('update status preview');
         if (mounted) {
           setState(() {});
         }

@@ -14,6 +14,7 @@ class RPC {
   Timer? timer;
   String username = '';
   String apiKey = '';
+  String applicationId = defaultDiscordAppID;
   FlutterDiscordRPC? rpc;
 
   /// Spotify API instance
@@ -50,11 +51,12 @@ class RPC {
 
     initialized = true;
 
-    await FlutterDiscordRPC.initialize(defaultDiscordAppID);
+    await FlutterDiscordRPC.initialize(discordAppId ?? applicationId);
     rpc = FlutterDiscordRPC.instance;
 
     this.username = username;
     this.apiKey = apiKey;
+    applicationId = discordAppId ?? defaultDiscordAppID;
 
     rpc?.connect(autoRetry: true, retryDelay: const Duration(seconds: 10));
     logger.info('Initialize complete', name: 'RPC');

@@ -91,7 +91,7 @@ dependency_overrides:
   #     ref: 21fc5740e614fefa90f627bafcc22093382f24a7
 
 flutter:
-  uses-material-design: true
+  uses-material-design: false
 
   assets:
     - assets/images/

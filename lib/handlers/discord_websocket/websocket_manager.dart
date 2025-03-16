@@ -328,7 +328,9 @@ class DiscordWebSocketManager {
                 : '971488024401690635';
           }
         } else {
-          coverId = '971488024401690635';
+          coverId = currentTrack!.cover.isNotEmpty
+              ? currentTrack!.cover
+              : '971488024401690635';
         }
 
         if (!isNewTrackTheSameAsPrevious) {

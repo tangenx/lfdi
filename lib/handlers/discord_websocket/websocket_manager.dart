@@ -292,8 +292,9 @@ class DiscordWebSocketManager {
 
         // Get duration from Spotify (why not)
         if (trackDurationMs == 0) {
-          logger.info('Last.fm didnt give the duration, look at Spotify...');
           if (results.isNotEmpty) {
+            logger.info('Last.fm didnt give the duration, look at Spotify...');
+
             trackDurationMs = results.first.durationMs ?? 0;
           }
         }

@@ -138,8 +138,9 @@ class RPC {
 
       // Get duration from Spotify (why not)
       if (trackDurationMs == 0) {
-        logger.info('Last.fm didnt give the duration, look at Spotify...');
         if (spotifyTrack != null) {
+          logger.info('Last.fm didnt give the duration, look at Spotify...');
+
           trackDurationMs = spotifyTrack.durationMs ?? 0;
         }
       }

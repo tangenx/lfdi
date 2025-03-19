@@ -1,235 +1,125 @@
-import 'dart:io';
+import 'package:flutter/material.dart';
 
-import 'package:bitsdojo_window/bitsdojo_window.dart';
-import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter_acrylic/flutter_acrylic.dart' as acryllic;
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive_flutter/adapters.dart';
-import 'package:launch_at_startup/launch_at_startup.dart';
-import 'package:lfdi/constants.dart';
-import 'package:lfdi/globals.dart';
-import 'package:lfdi/handlers/discord_websocket/websocket_manager.dart';
-import 'package:lfdi/handlers/rpc.dart';
-import 'package:lfdi/pages/home.dart';
-import 'package:lfdi/theme.dart';
-import 'package:lfdi/tray.dart';
-import 'package:lfdi/utils/extract_windows_info.dart';
-import 'package:lfdi/utils/get_window_effect.dart';
-import 'package:package_info_plus/package_info_plus.dart';
-import 'package:spotify/spotify.dart';
-import 'package:system_theme/system_theme.dart';
-import 'package:window_manager/window_manager.dart';
-
-final rpcProvider = Provider((ref) => RPC());
-final discordGatewayProvider =
-    Provider((ref) => DiscordWebSocketManager(discordToken: ''));
-final hideTokensProvider = StateProvider((ref) => true);
-final debugProvider = StateProvider((ref) => false);
-late final bool runMinimized;
-
-void main(List<String> arguments) async {
-  if (arguments.contains('--minimize')) {
-    runMinimized = true;
-  } else {
-    runMinimized = false;
-  }
-
-  WidgetsFlutterBinding.ensureInitialized();
-
-  PackageInfo packageInfo = await PackageInfo.fromPlatform();
-
-  // set up window
-  await acryllic.Window.initialize();
-  await windowManager.ensureInitialized();
-  windowManager.setResizable(false);
-
-  // check system and apply some settings
-  final String osType = Platform.operatingSystem;
-
-  if (osType == 'windows') {
-    WindowsVersionInfo windowsInfo = extractWindowsInfo();
-
-    if (windowsInfo.ntVersion != null) {
-      if (double.parse(windowsInfo.ntVersion!) >= 10) {
-        acryllic.Window.hideWindowControls();
-      } else {
-        windowManager.setPreventClose(true);
-      }
-    }
-  } else if (osType == 'linux') {
-    windowManager.setPreventClose(true);
-  }
-
-  // set up Hive
-  await Hive.initFlutter();
-  Box lfdiBox = await Hive.openBox('lfdi');
-
-  bool? startMinimized = lfdiBox.get('startMinimized');
-  if (startMinimized == null) {
-    lfdiBox.put('startMinimized', false);
-    startMinimized = false;
-  }
-
-  LaunchAtStartup.instance.setup(
-    appName: packageInfo.appName,
-    appPath: '"${Platform.resolvedExecutable}"'
-        '${startMinimized ? ' --minimize' : ''}',
-  );
-
-  logger.init();
-
-  doWhenWindowReady(() async {
-    appWindow
-      ..minSize = windowSize
-      ..size = windowSize
-      ..alignment = Alignment.center
-      ..title = 'Last.fm Discord Integrator';
-
-    appWindow.show();
-  });
-
-  runApp(const ProviderScope(child: MyApp()));
+void main() {
+  runApp(const MyApp());
 }
 
-class MyApp extends ConsumerWidget {
-  const MyApp({Key? key}) : super(key: key);
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        // This is the theme of your application.
+        //
+        // TRY THIS: Try running your application with "flutter run". You'll see
+        // the application has a purple toolbar. Then, without quitting the app,
+        // try changing the seedColor in the colorScheme below to Colors.green
+        // and then invoke "hot reload" (save your changes or press the "hot
+        // reload" button in a Flutter-supported IDE, or press "r" if you used
+        // the command line to start the app).
+        //
+        // Notice that the counter didn't reset back to zero; the application
+        // state is not lost during the reload. To reset the state, use hot
+        // restart instead.
+        //
+        // This works for code too, not just values: Most code changes can be
+        // tested with just a hot reload.
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key, required this.title});
+
+  // This widget is the home page of your application. It is stateful, meaning
+  // that it has a State object (defined below) that contains fields that affect
+  // how it looks.
+
+  // This class is the configuration for the state. It holds the values (in this
+  // case the title) provided by the parent (in this case the App widget) and
+  // used by the build method of the State. Fields in a Widget subclass are
+  // always marked "final".
+
+  final String title;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    var box = Hive.box('lfdi');
+  State<MyHomePage> createState() => _MyHomePageState();
+}
 
-    final username = box.get('username');
-    final apiKey = box.get('apiKey');
-    final discordApplicationId = box.get('discordAppID');
-    final discordToken = box.get('discordToken');
-    String? gatewayPresenceType = box.get('gatewayPresenceType');
-    String? priorUsing = box.get('priorUsing');
-    bool? debug = box.get('debug');
-    bool? hideTokens = box.get('hideTokens');
+class _MyHomePageState extends State<MyHomePage> {
+  int _counter = 0;
 
-    final spotifyApiKey = box.get('spotifyApiKey');
-    final spotifyApiSecret = box.get('spotifyApiSecret');
-    String? defaultMusicApp = box.get('defaultMusicApp');
+  void _incrementCounter() {
+    setState(() {
+      // This call to setState tells the Flutter framework that something has
+      // changed in this State, which causes it to rerun the build method below
+      // so that the display can reflect the updated values. If we changed
+      // _counter without calling setState(), then the build method would not be
+      // called again, and so nothing would appear to happen.
+      _counter++;
+    });
+  }
 
-    if (gatewayPresenceType == null) {
-      box.put('gatewayPresenceType', 'listeningToMusic');
-      gatewayPresenceType = 'listeningToMusic';
-    }
-
-    if (defaultMusicApp == null) {
-      box.put('defaultMusicApp', 'Spotify');
-      defaultMusicApp = 'Spotify';
-    }
-
-    if (priorUsing == null) {
-      box.put('priorUsing', 'lastfm');
-      priorUsing = 'lastfm';
-    }
-
-    if (debug == null) {
-      box.put('debug', false);
-      debug = false;
-      ref.read(debugProvider.notifier).state = false;
-    }
-
-    if (hideTokens == null) {
-      box.put('hideTokens', true);
-      hideTokens = true;
-      ref.read(hideTokensProvider.notifier).state = true;
-    }
-
-    // Check for Last.fm username & apiKey
-    if (username != null && apiKey != null) {
-      if (username.isNotEmpty && apiKey.isNotEmpty) {
-        // Set up RPC
-        RPC rpc = ref.read(rpcProvider);
-        rpc.initialize(
-          username: username,
-          apiKey: apiKey,
-          discordAppId: discordApplicationId ?? defaultDiscordAppID,
-        );
-
-        if (priorUsing == 'lastfm') {
-          rpc.start();
-        }
-
-        // Check for Discord token
-        if (discordToken != null) {
-          if (discordToken.isNotEmpty) {
-            // Set up Gateway
-            DiscordWebSocketManager webSocketManager =
-                ref.read(discordGatewayProvider);
-            webSocketManager.discordToken = discordToken;
-            webSocketManager.lastFmApiKey = apiKey;
-            webSocketManager.lastFmUsername = username;
-            webSocketManager.presenceType =
-                stringIdToPresenceType[box.get('gatewayPresenceType')];
-            webSocketManager.defaultMusicApp = box.get('defaultMusicApp');
-
-            webSocketManager.init();
-
-            // Check for Spotify dev app
-            if (spotifyApiKey != null && spotifyApiSecret != null) {
-              if (spotifyApiKey.isNotEmpty && spotifyApiSecret.isNotEmpty) {
-                final spotifyApi = SpotifyApi(
-                  SpotifyApiCredentials(
-                    spotifyApiKey,
-                    spotifyApiSecret,
-                  ),
-                );
-
-                spotifyApi.search.get('metallica').first(1).then(
-                  (value) {
-                    logger.info(
-                      'Spotify is available.',
-                      name: 'Main',
-                    );
-
-                    webSocketManager.spotifyApi = spotifyApi;
-                    rpc.spotifyApi = spotifyApi;
-                  },
-                ).catchError(
-                  (error) {
-                    logger.warning(
-                      'Caught Spotify exception: ${error.message}',
-                      name: 'Main',
-                    );
-                  },
-                );
-
-                if (priorUsing == 'discord') {
-                  webSocketManager.startUpdating();
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
-    final isDarkMode = SystemTheme.isDarkMode;
-    acryllic.WindowEffect windowEffect = getWindowEffect();
-
-    acryllic.Window.setEffect(
-      effect: windowEffect,
-      color: Platform.isWindows
-          ? isDarkMode
-              ? const Color(0xCC222222)
-              : const Color(0xCCDDDDDD)
-          : Colors.transparent,
-      dark: isDarkMode,
-    );
-
-    final tray = Tray();
-    tray.init();
-
-    return FluentApp(
-      title: 'Last.fm Discord Integrator',
-      themeMode: ThemeMode.system,
-      color: systemAccentColor,
-      theme: lightTheme(context),
-      darkTheme: darkTheme(context),
-      home: const HomePage(),
+  @override
+  Widget build(BuildContext context) {
+    // This method is rerun every time setState is called, for instance as done
+    // by the _incrementCounter method above.
+    //
+    // The Flutter framework has been optimized to make rerunning build methods
+    // fast, so that you can just rebuild anything that needs updating rather
+    // than having to individually change instances of widgets.
+    return Scaffold(
+      appBar: AppBar(
+        // TRY THIS: Try changing the color here to a specific color (to
+        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
+        // change color while the other colors stay the same.
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        // Here we take the value from the MyHomePage object that was created by
+        // the App.build method, and use it to set our appbar title.
+        title: Text(widget.title),
+      ),
+      body: Center(
+        // Center is a layout widget. It takes a single child and positions it
+        // in the middle of the parent.
+        child: Column(
+          // Column is also a layout widget. It takes a list of children and
+          // arranges them vertically. By default, it sizes itself to fit its
+          // children horizontally, and tries to be as tall as its parent.
+          //
+          // Column has various properties to control how it sizes itself and
+          // how it positions its children. Here we use mainAxisAlignment to
+          // center the children vertically; the main axis here is the vertical
+          // axis because Columns are vertical (the cross axis would be
+          // horizontal).
+          //
+          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
+          // action in the IDE, or press "p" in the console), to see the
+          // wireframe for each widget.
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text(
+              'You have pushed the button this many times:',
+            ),
+            Text(
+              '$_counter',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _incrementCounter,
+        tooltip: 'Increment',
+        child: const Icon(Icons.add),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

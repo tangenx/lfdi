@@ -351,14 +351,16 @@ class DiscordWebSocketManager {
               url: rpc_track.TrackHandler.makeLastFmUrl(track),
             )
           ],
-          timestamps: isNewTrackTheSameAsPrevious
-              ? PresenceTimestamps(
-                  start: previousTrack!.createdAt,
-                  end: previousTrack!.createdAt + trackDurationMs,
-                )
+          timestamps: trackDurationMs == 0
+              ? null
               : PresenceTimestamps(
-                  start: DateTime.now().millisecondsSinceEpoch,
-                  end: DateTime.now().millisecondsSinceEpoch + trackDurationMs,
+                  start: isNewTrackTheSameAsPrevious
+                      ? previousTrack!.createdAt
+                      : DateTime.now().millisecondsSinceEpoch,
+                  end: (isNewTrackTheSameAsPrevious
+                          ? previousTrack!.createdAt
+                          : DateTime.now().millisecondsSinceEpoch) +
+                      trackDurationMs,
                 ),
         );
 

@@ -1,18 +1,18 @@
 name: lfdi
 description: Last.fm Discord Integrator
 
-publish_to: 'none' 
+publish_to: "none"
 version: 1.0.0-beta.10
 
 environment:
-  sdk: '>=3.1.0 <4.0.0'
+  sdk: ">=3.1.0 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
   # dart_discord_rpc:
-  #   git: 
+  #   git:
   #     url: https://github.com/alexmercerind/dart_discord_rpc.git
   #     ref: 5760594e9a8417683fa969fe48c1e8593928fd35
   flutter_riverpod: ^1.0.3
@@ -25,7 +25,8 @@ dependencies:
     git:
       url: https://github.com/leanflutter/tray_manager.git
       ref: f075f39e978e7c664e81916d0c8da0b4955906cd
-  fluent_ui: ^4.9.2
+  fluent_ui:
+    ^4.9.2
     # git:
     #   url: https://github.com/tangenx/fluent_ui.git
     #   ref: 87525a1588c34399239644b35bda3bae6490685f
@@ -33,25 +34,25 @@ dependencies:
   hive_flutter: ^1.1.0
   web_socket_channel: ^2.2.0
   spotify: #^0.7.0
-    git: 
+    git:
       url: https://github.com/tangenx/spotify-dart.git
       ref: 57e3fb38b615d49f2056d638ab8d094bde84c21d
   logger: ^1.1.0
-  bitsdojo_window: ^0.1.6
-    # git: 
+  bitsdojo_window:
+    ^0.1.6
+    # git:
     #   url: https://github.com/tangenx/bitsdojo_window.git
     #   path: bitsdojo_window
     #   ref: 21fc5740e614fefa90f627bafcc22093382f24a7
-      # url: https://github.com/abutcher-gh/bitsdojo_window.git
-      # path: bitsdojo_window
-      # ref: b823ae5b9f2f82635067add7eadfc32d9054bc2b
-      # url: https://github.com/alexmercerind/bitsdojo_window.git
-      # path: bitsdojo_window
-      # ref: b5e9648081f73c05df612cd5b958d8e6cab77898
+    # url: https://github.com/abutcher-gh/bitsdojo_window.git
+    # path: bitsdojo_window
+    # ref: b823ae5b9f2f82635067add7eadfc32d9054bc2b
+    # url: https://github.com/alexmercerind/bitsdojo_window.git
+    # path: bitsdojo_window
+    # ref: b5e9648081f73c05df612cd5b958d8e6cab77898
   launch_at_startup: ^0.1.7
   window_manager: ^0.2.3
   flutter_discord_rpc: ^1.0.0
-
 
 dev_dependencies:
   flutter_test:
@@ -99,7 +100,7 @@ flutter:
   fonts:
     - family: LFDI
       fonts:
-      - asset: assets/fonts/LFDI.ttf
+        - asset: assets/fonts/LFDI.ttf
 
 msix_config:
   display_name: Last.fm Discord Integrator
